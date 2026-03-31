@@ -128,6 +128,8 @@
   font-size: 0.92rem;
   outline: none;
   transition: border-color 130ms, box-shadow 130ms;
+  width: 100%;
+  box-sizing: border-box;
 }
 .lf-label input:focus {
   border-color: var(--lm-accent);
