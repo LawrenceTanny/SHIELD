@@ -128,18 +128,30 @@ async function getAlertLogsCollection() {
 async function fetchLiveDisastersData() {
   const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=10';
   const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
+  const requestTimeoutMs = 15000;
 
-  const [usgsResponse, nasaResponse] = await Promise.all([
-    fetch(usgsUrl),
-    fetch(nasaUrl)
+  const fetchJsonWithTimeout = async (url) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), requestTimeoutMs);
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return await response.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
+
+  const [usgsResult, nasaResult] = await Promise.allSettled([
+    fetchJsonWithTimeout(usgsUrl),
+    fetchJsonWithTimeout(nasaUrl)
   ]);
 
-  if (!usgsResponse.ok || !nasaResponse.ok) {
-    throw new Error(`Disaster providers unavailable. USGS=${usgsResponse.status} NASA=${nasaResponse.status}`);
-  }
-
-  const usgsData = await usgsResponse.json();
-  const nasaData = await nasaResponse.json();
+  const usgsData = usgsResult.status === 'fulfilled' ? usgsResult.value : null;
+  const nasaData = nasaResult.status === 'fulfilled' ? nasaResult.value : null;
 
   const allDisasters = [];
   if (usgsData.features) {
@@ -166,6 +178,10 @@ async function fetchLiveDisastersData() {
 
       allDisasters.push(normalizedDisaster);
     });
+  }
+
+  if (usgsResult.status === 'rejected') {
+    console.warn('USGS disaster fetch failed:', usgsResult.reason?.message || usgsResult.reason);
   }
 
   if (nasaData.events) {
@@ -199,6 +215,10 @@ async function fetchLiveDisastersData() {
 
       allDisasters.push(normalizedDisaster);
     });
+  }
+
+  if (nasaResult.status === 'rejected') {
+    console.warn('NASA disaster fetch failed:', nasaResult.reason?.message || nasaResult.reason);
   }
 
   return allDisasters;
