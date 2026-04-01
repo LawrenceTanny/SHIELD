@@ -44,6 +44,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
   padding: 0 20px;
   height: var(--header-h);
   border-bottom: 2px solid rgba(255,255,255,0.08);
@@ -347,6 +348,9 @@ body {
 /* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 4000;
     padding: 0 12px;
     height: var(--header-h);
     gap: 8px;
@@ -415,6 +419,9 @@ body {
   }
 
   .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 4000;
     padding: 0 10px;
     height: var(--header-h);
     gap: 6px;

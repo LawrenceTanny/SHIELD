@@ -12,7 +12,7 @@ export default function AboutUs() {
     const apiPartners = [
         { id: 1, name: "NASA (EONET API)", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" },
         { id: 2, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg" },
-        { id: 3, name: "DOST-PAGASA", logo: "public/API/pagasa-logo.png" },
+        { id: 3, name: "DOST-PAGASA", logo: "public/API/PAGASA.png" },
         { id: 4, name: "Mediastack", logo: "https://mediastack.com/site_images/mediastack_logo.svg" },
         { id: 5, name: "API Partner Name", logo: "" },
     ];

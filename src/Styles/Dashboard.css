@@ -38,6 +38,7 @@ body {
 /* ── Dashboard wrapper (used in Header layout) ── */
 .dashboard-wrapper {
   height: 100%;
+  min-height: 100dvh;
   overflow: hidden;
   font-family: "Geist", sans-serif;
   font-weight: 400;
@@ -919,11 +920,73 @@ body {
 @media (max-width: 767px) and (min-width: 640px) {
   :root {
     --topbar-h: 65px;
-    --panel-w: 0px;
+    --panel-w: 190px;
   }
 
   .danger-panel {
-    display: none;
+    display: flex;
+    top: calc(var(--topbar-h) + 6px);
+    left: 8px;
+    bottom: calc(var(--footer-h) + 42px);
+    width: var(--panel-w);
+    border-radius: 12px;
+    z-index: 1200;
+  }
+
+  .danger-head {
+    padding: 8px 10px;
+  }
+
+  .danger-head h2 {
+    font-size: 0.9rem;
+    letter-spacing: 0;
+  }
+
+  .count-pill {
+    padding: 3px 6px;
+    font-size: 0.62rem;
+  }
+
+  .hr {
+    margin: -2px 8px 8px 8px;
+  }
+
+  .danger-list {
+    gap: 7px;
+    padding: 8px;
+  }
+
+  .danger-item {
+    min-height: 86px;
+    padding: 7px 7px 5px 22px;
+    border-radius: 9px;
+  }
+
+  .danger-item::before {
+    width: 11px;
+  }
+
+  .di-title {
+    margin-right: 6px;
+    font-size: 0.78rem;
+    line-height: 1.1;
+  }
+
+  .di-source {
+    font-size: 0.54rem;
+  }
+
+  .di-meta {
+    font-size: 0.64rem;
+  }
+
+  .di-time {
+    font-size: 0.53rem;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
   }
 
   .dashboard-settings-btn {
@@ -944,6 +1007,7 @@ body {
     top: calc(var(--topbar-h) + 6px);
     bottom: calc(var(--footer-h) + 40px);
     border-radius: 0;
+    z-index: 1400;
   }
 
   .settings-head {
@@ -1010,6 +1074,10 @@ body {
     margin-bottom: 50px;
     margin-right: 6px;
   }
+
+  .map-wrap {
+    margin-left: calc(var(--panel-w) + 14px);
+  }
 }
 
 /* MOBILE PORTRAIT - < 640px */
@@ -1021,7 +1089,71 @@ body {
   }
 
   .danger-panel {
-    display: none !important;
+    display: flex !important;
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--footer-h) + 8px);
+    width: auto;
+    max-height: 32dvh;
+    border-radius: 10px;
+    z-index: 1250;
+  }
+
+  .danger-head {
+    padding: 7px 10px;
+  }
+
+  .danger-head h2 {
+    font-size: 0.85rem;
+    letter-spacing: 0;
+  }
+
+  .count-pill {
+    padding: 2px 6px;
+    font-size: 0.58rem;
+  }
+
+  .hr {
+    margin: -1px 8px 6px 8px;
+  }
+
+  .danger-list {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .danger-item {
+    min-height: 72px;
+    padding: 6px 7px 4px 20px;
+    border-radius: 8px;
+  }
+
+  .danger-item::before {
+    width: 10px;
+  }
+
+  .di-title {
+    margin-right: 4px;
+    font-size: 0.72rem;
+    line-height: 1.1;
+  }
+
+  .di-source {
+    font-size: 0.5rem;
+  }
+
+  .di-meta {
+    font-size: 0.6rem;
+  }
+
+  .di-time {
+    font-size: 0.5rem;
+  }
+
+  .status-dot {
+    width: 5px;
+    height: 5px;
   }
 
   .dashboard-settings-btn {
@@ -1040,9 +1172,9 @@ body {
   .settings-drawer {
     width: 220px;
     top: calc(var(--topbar-h) + 4px);
-    bottom: calc(var(--footer-h) + 8px);
+    bottom: calc(var(--footer-h) + 42px);
     border-radius: 0;
-    z-index: 1050;
+    z-index: 1400;
     min-height: 0;
   }
 
@@ -1139,7 +1271,7 @@ body {
   }
 
   .leaflet-bottom.leaflet-right {
-    bottom: calc(var(--footer-h) + 10px);
+    bottom: calc(var(--footer-h) + 46px);
     margin-bottom: 0;
     margin-right: 4px;
   }
