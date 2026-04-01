@@ -386,6 +386,42 @@ body {
   z-index: 0;        
 }
 
+.weather-badge {
+  position: absolute;
+  bottom: calc(var(--footer-h) + 14px);
+  right: 18px;
+  z-index: 1250;
+  min-width: 132px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 68, 0, 0.45);
+  backdrop-filter: blur(8px);
+  background: hsl(from var(--surface) h s l / 0.24);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  padding: 8px 10px;
+  color: #f4f4f4;
+  text-align: right;
+}
+
+.weather-temp {
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #ffb18f;
+}
+
+.weather-condition {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.weather-location {
+  margin-top: 2px;
+  font-size: 0.68rem;
+  opacity: 0.84;
+}
+
 .map-canvas {
   position: absolute;
   inset: 0;
@@ -400,6 +436,24 @@ body {
 .leaflet-bottom.leaflet-right {
   margin-bottom: 60px; 
   margin-right: 12px;
+}
+
+.leaflet-bottom.leaflet-left {
+  margin-bottom: 8px;
+  margin-left: 8px;
+}
+
+.leaflet-control-attribution {
+  background: rgba(5, 12, 26, 0.55) !important;
+  color: rgba(230, 230, 230, 0.88) !important;
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-size: 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.leaflet-control-attribution a {
+  color: rgba(255, 179, 149, 0.95) !important;
 }
 
 .map-wrap::after {
@@ -911,6 +965,25 @@ body {
     margin-right: 8px;
   }
 
+  .weather-badge {
+    bottom: calc(var(--footer-h) + 10px);
+    right: 12px;
+    min-width: 122px;
+    padding: 7px 9px;
+  }
+
+  .weather-temp {
+    font-size: 1.25rem;
+  }
+
+  .weather-condition {
+    font-size: 0.72rem;
+  }
+
+  .weather-location {
+    font-size: 0.62rem;
+  }
+
   .map-wrap {
     margin-left: calc(var(--panel-w) + 20px);
   }
@@ -1073,6 +1146,26 @@ body {
   .leaflet-bottom.leaflet-right {
     margin-bottom: 50px;
     margin-right: 6px;
+  }
+
+  .weather-badge {
+    bottom: calc(var(--footer-h) + 54px);
+    right: 8px;
+    min-width: 112px;
+    padding: 6px 8px;
+    border-radius: 12px;
+  }
+
+  .weather-temp {
+    font-size: 1.06rem;
+  }
+
+  .weather-condition {
+    font-size: 0.66rem;
+  }
+
+  .weather-location {
+    font-size: 0.58rem;
   }
 
   .map-wrap {
@@ -1274,6 +1367,37 @@ body {
     bottom: calc(var(--footer-h) + 46px);
     margin-bottom: 0;
     margin-right: 4px;
+  }
+
+  .leaflet-bottom.leaflet-left {
+    bottom: calc(var(--footer-h) + 4px);
+    margin-bottom: 0;
+    margin-left: 4px;
+  }
+
+  .leaflet-control-attribution {
+    font-size: 0.52rem;
+    padding: 2px 4px;
+  }
+
+  .weather-badge {
+    bottom: calc(var(--footer-h) + 180px);
+    right: 8px;
+    min-width: 96px;
+    padding: 5px 7px;
+    border-radius: 10px;
+  }
+
+  .weather-temp {
+    font-size: 0.94rem;
+  }
+
+  .weather-condition {
+    font-size: 0.6rem;
+  }
+
+  .weather-location {
+    font-size: 0.52rem;
   }
 
   .leaflet-control {

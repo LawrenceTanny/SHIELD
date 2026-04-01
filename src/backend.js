@@ -254,11 +254,64 @@ app.get('/api/news', async (req, res) => {
 
 // API PARA SA PHILIPHINE WEATHER, SA FRONT END KO NA AAYUSIN NA BASE SA CITY NG USER.
 app.get('/api/weather', async (req, res) => {
-  try {
-    const response = await fetch('https://www.panahon.gov.ph/api/v1/aws');
-    const data = await response.json();
+  const PH_WEATHER_POINTS = [
+    { name: 'Laoag', lat: 18.1978, lng: 120.5952 },
+    { name: 'Baguio', lat: 16.4023, lng: 120.5960 },
+    { name: 'Manila', lat: 14.5995, lng: 120.9842 },
+    { name: 'Legazpi', lat: 13.1391, lng: 123.7438 },
+    { name: 'Cebu', lat: 10.3157, lng: 123.8854 },
+    { name: 'Iloilo', lat: 10.7202, lng: 122.5621 },
+    { name: 'Tacloban', lat: 11.2433, lng: 125.0040 },
+    { name: 'Cagayan de Oro', lat: 8.4542, lng: 124.6319 },
+    { name: 'Davao', lat: 7.1907, lng: 125.4553 },
+    { name: 'General Santos', lat: 6.1164, lng: 125.1716 }
+  ];
 
-    res.status(200).json(data);
+  try {
+    const apiKey = process.env.OPENWEATHERMAP_API_KEY; 
+    
+    if (!apiKey) {
+      return res.status(500).json({ message: "Weather API key missing." });
+    }
+
+    const requests = PH_WEATHER_POINTS.map((point) => {
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${point.lat}&lon=${point.lng}&appid=${apiKey}&units=metric`;
+      return fetch(url)
+        .then(async (response) => {
+          const data = await response.json();
+          if (!response.ok) return null;
+
+          return {
+            id: String(data.id || point.name.toLowerCase().replace(/\s+/g, '-')),
+            name: point.name,
+            city: data.name || point.name,
+            lat: data.coord?.lat ?? point.lat,
+            lng: data.coord?.lon ?? point.lng,
+            temp_c: typeof data.main?.temp === 'number' ? Math.round(data.main.temp) : null,
+            weather: data.weather?.[0]?.main || 'Weather',
+            description: data.weather?.[0]?.description || '',
+            humidity: data.main?.humidity ?? null,
+            icon: data.weather?.[0]?.icon
+              ? `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+              : null
+          };
+        })
+        .catch(() => null);
+    });
+
+    const settled = await Promise.all(requests);
+    const stations = settled.filter(Boolean);
+
+    if (stations.length === 0) {
+      return res.status(502).json({ message: 'Weather providers unavailable right now.' });
+    }
+
+    return res.status(200).json({
+      source: 'openweathermap-ph',
+      fetchedAt: new Date().toISOString(),
+      stations,
+      coverage: 'philippines'
+    });
 
   } catch (error) {
     console.error("Error fetching weather:", error);
