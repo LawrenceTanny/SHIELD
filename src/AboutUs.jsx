@@ -2,17 +2,17 @@ import "./Styles/AboutUs.css";
 
 export default function AboutUs() {
     const developers = [
-        { id: 1, name: "Lawrence Tan", position: "Lead Developer", photo: "public/Profiles/Lawrence.png" },
-        { id: 2, name: "Sunset Raven", position: "Frontend Developer", photo: "public/Profiles/Wyeth.jpg" },
-        { id: 3, name: "Clark Antonii", position: "Frontend Developer", photo: "public/Profiles/Clark.png" },
-        { id: 4, name: "Kent Hipolito", position: "Backend Developer", photo: "public/Profiles/Kent.jpg" },
-        { id: 5, name: "Erl Samson", position: "Backend Developer", photo: "public/Profiles/Erl.png" },
+        { id: 1, name: "Lawrence Tan", position: "Lead Developer", photo: "Profiles/Lawrence.png" },
+        { id: 2, name: "Sunset Raven", position: "Frontend Developer", photo: "Profiles/Wyeth.jpg" },
+        { id: 3, name: "Clark Antonii", position: "Frontend Developer", photo: "Profiles/Clark.png" },
+        { id: 4, name: "Kent Hipolito", position: "Backend Developer", photo: "Profiles/Kent.jpg" },
+        { id: 5, name: "Erl Samson", position: "Backend Developer", photo: "Profiles/Erl.png" },
     ];
 
     const apiPartners = [
         { id: 1, name: "NASA (EONET API)", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" },
         { id: 2, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg" },
-        { id: 3, name: "DOST-PAGASA", logo: "public/API/PAGASA.png" },
+        { id: 3, name: "DOST-PAGASA", logo: "API/PAGASA.png" },
         { id: 4, name: "Mediastack", logo: "https://mediastack.com/site_images/mediastack_logo.svg" },
         { id: 5, name: "API Partner Name", logo: "" },
     ];
