@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
+import { ZoomControl } from "react-leaflet";
+import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/App.css";
 import Login from "./Login";
 import AccountSettings from "./AccountSettings";
@@ -10,21 +12,21 @@ const DISASTERS = [
   { id: 3, type: "Flood",             title: "Heavy Rainfall Advisory",         severity: "Low",    city: "Sorsogon City", lat: 12.9716, lng: 124.0053, source: "PAGASA",     updatedAt: "2026-03-14 10:20", status: "Monitoring" },
   { id: 4, type: "Landslide",         title: "Soil Movement Risk",              severity: "High",   city: "Tabaco City",   lat: 13.3587, lng: 123.7338, source: "Local DRRM", updatedAt: "2026-03-14 10:50", status: "Active"     },
   { id: 5, type: "Volcanic Activity", title: "Increased unrest near Kanlaon",  severity: "Medium", city: "Canlaon City",  lat: 10.3865, lng: 123.1966, source: "PHIVOLCS",   updatedAt: "2026-03-14 11:15", status: "Monitoring" },
-  { id: 6, type: "Thunderstorm",      title: "Severe thunderstorm warning",     severity: "Low",    city: "Davao City",    lat:  7.1907, lng: 125.4553, source: "PAGASA",     updatedAt: "2026-03-14 11:40", status: "Active"     },
+  { id: 6, type: "Thunderstorm",      title: "Severe thunderstorm warning",     severity: "Low",    city: "Davao City",    lat:  7.1907, lng: 125.4553, source: "PAGASA",     updatedAt: "2026-03-14 11:40", status: "Active"     }
 ];
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
 
 function severityClass(lvl) {
-  if (lvl === "High")   return "sev-high";
-  if (lvl === "Medium") return "sev-med";
-  return "sev-low";
+  if (lvl === "High")   return "#FD694F";
+  if (lvl === "Medium") return "#FDCE4F";
+  return "#6AB144";
 }
 function severityColor(lvl) {
-  if (lvl === "High")   return "#ff4d6d";
-  if (lvl === "Medium") return "#ffd166";
-  return "#06d6a0";
+  if (lvl === "High")   return "#FD694F";
+  if (lvl === "Medium") return "#FDCE4F";
+  return "#6AB144";
 }
 
 function MapController({ focused }) {
@@ -100,7 +102,7 @@ export default function App() {
 
   return (
     <div className="app">
-
+      
       {/* HEADER */}
       <header className="topbar">
         <div className="brand">
@@ -144,28 +146,56 @@ export default function App() {
             <h2>Active Dangers</h2>
             <span className="count-pill">{filtered.length}</span>
           </div>
+          <hr className="hr"></hr>
           <ul className="danger-list">
-            {filtered.map((d) => (
-              <li
-                key={d.id}
-                className={"danger-item" + (d.id === focusedId ? " is-focused" : "")}
-                onClick={() => toggle(d.id)}
-              >
-                <div className="di-row">
-                  <span className={"badge " + severityClass(d.severity)}>{d.severity}</span>
-                  <span className="di-source">{d.source}</span>
+            <AnimatePresence mode="popLayout">
+              
+              {filtered.map((d) => (
+                <motion.li 
+                  key={d.id} 
+                  layout
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                  whileHover={{ 
+                    y: -5, 
+                    backgroundColor: "#E2E2E2", 
+                    transition: { duration: 0.2 } 
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`danger-item sev-${d.severity.toLowerCase()} type-${d.type.toLowerCase().replace(/\s+/g, '-')} ${focusedId === d.id ? 'is-focused' : ''}`}
+                  onClick={() => toggle(d.id)}
+                  style={{
+                    backgroundColor: focusedId === d.id ? "rgba(116, 116, 116, 0.09)" : "#D9D9D9"
+                  }}
+                >
+                <div className="di-content-wrapper">
+                  <div className="di-row">
+                    <h3 className="di-title">{d.title}</h3>
+                    <span className="di-source">{d.source}</span>
+                  </div>
+                  <div className="di-meta-row">
+                    {/* The status dot */}
+                    <span className={`status-dot ${d.status.toLowerCase()}`}></span>
+                    {/* The city text */}
+                    <p className="di-meta">{d.city}</p>
+                  </div>
+
+                  <div className="di-time-row">
+                    <span className="di-time">{d.updatedAt}</span>
+                  </div>
                 </div>
-                <p className="di-title">{d.title}</p>
-                <p className="di-meta">{d.type} &middot; {d.city} &middot; <em>{d.status}</em></p>
-                <p className="di-time">{d.updatedAt}</p>
-              </li>
+                
+              </motion.li>
             ))}
+            </AnimatePresence>
           </ul>
         </aside>
 
         {/* MAP */}
         <main className="map-wrap">
           <MapContainer
+            zoomControl={false}
             center={PH_CENTER}
             zoom={6}
             minZoom={5}
@@ -174,6 +204,7 @@ export default function App() {
             scrollWheelZoom
             className="map-canvas"
           >
+            <ZoomControl position="bottomright" />
             <MapController focused={focused} />
             <TileLayer
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'
@@ -194,13 +225,19 @@ export default function App() {
                   }}
                   eventHandlers={{ click: () => toggle(item.id) }}
                 >
-                  <Popup>
-                    <strong>{item.title}</strong><br />
-                    {item.type} &middot; {item.city}<br />
-                    Severity: <b>{item.severity}</b><br />
-                    Source: {item.source}<br />
-                    <span style={{ opacity: 0.7, fontSize: "0.82em" }}>{item.updatedAt}</span>
-                  </Popup>
+                  <Popup className="custom-popup">
+                  <div style={{ color: '#D9D9D9', fontFamily: 'Geist' }}>
+                    <h4 style={{ margin: 0, color: severityColor(item.severity) }}>
+                      {item.type.toUpperCase()}
+                    </h4>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '400', margin: '5px 0' }}>
+                      {item.title}
+                    </p>
+                    <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                      {item.city} • {item.source}
+                    </div>
+                  </div>
+                </Popup>
                 </CircleMarker>
               );
             })}
@@ -219,6 +256,7 @@ export default function App() {
           <h3>Settings</h3>
           <button className="icon-btn" onClick={() => setSettingsOpen(false)}><IconX /></button>
         </div>
+        <hr className="hr-settings"></hr>
         <section className="settings-section">
           <p className="settings-label">Notifications</p>
           <label className="settings-toggle">
@@ -234,23 +272,47 @@ export default function App() {
             <input type="checkbox" checked={inclNeighbors} onChange={(e) => setInclNeighbors(e.target.checked)} /> Include neighboring cities
           </label>
         </section>
+        <hr className="hr-settings"></hr>
         <section className="settings-section">
-          <p className="settings-label">Filter Dangers</p>
-          <label className="settings-field">
-            <span>Disaster Type</span>
-            <select value={selType} onChange={(e) => setSelType(e.target.value)}>
-              {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </label>
-          <label className="settings-field">
-            <span>Severity</span>
-            <select value={selSev} onChange={(e) => setSelSev(e.target.value)}>
-              {["All", "High", "Medium", "Low"].map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </label>
+          <div className="filter-group">
+          <span className="settings-label">Disaster Type</span>
+          <div className="filter-list">
+            {typeOptions.map((t) => (
+              <button 
+                key={t} 
+                className={`filter-item ${selType === t ? 'active' : ''} type-${t.toLowerCase()}`}
+                onClick={() => setSelType(t)}
+              >
+                {t !== "All" && (
+                  <span className={`filter-indicator type-${t.toLowerCase().replace(/\s+/g, '-')}`} />
+                )}
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+          <div className="filter-group">
+    <span className="settings-label">Severity</span>
+    <div className="filter-list">
+      {["All", "High", "Medium", "Low"].map((s) => (
+        <button 
+          key={s} 
+          className={`filter-item ${selSev === s ? 'active' : ''}`}
+          onClick={() => setSelSev(s)}
+        >{s !== "All" && (
+              <span className={`severity-dot dot-${s.toLowerCase()}`} />
+            )}  
+          {s}
+        </button>
+      ))}
+    </div>
+  </div>
         </section>
       </aside>
-      {settingsOpen && <div className="settings-backdrop" onClick={() => setSettingsOpen(false)} />}
+      {settingsOpen && <div 
+  className={`settings-backdrop ${settingsOpen ? "active" : ""}`} 
+  onClick={() => setSettingsOpen(false)} 
+/>}
 
       {loginOpen        && <Login            onClose={() => setLoginOpen(false)}        />}
       {acctSettingsOpen && <AccountSettings  onClose={() => setAcctSettingsOpen(false)} />}
