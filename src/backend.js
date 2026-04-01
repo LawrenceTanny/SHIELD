@@ -24,7 +24,7 @@ const PROVINCE_KEYWORDS = {
   'Albay': ['albay', 'legazpi', 'tabaco', 'ligao', 'daraga'],
   'Camarines Sur': ['camarines sur', 'naga', 'iriga', 'cam sur'],
   'Sorsogon': ['sorsogon', 'sorsogon city'],
-  'Batangas': ['batangas', 'lipa', 'tanauan', 'nasugbu'],
+  'Batangas': ['batangas', 'lipa', 'tanauan', 'nasugbu', 'taal', 'agoncillo', 'hukay', 'lemery', 'balayan', 'bauan', 'calaca', 'san nicolas'],
   'Cebu': ['cebu', 'cebu city', 'mandaue', 'lapu-lapu'],
   'Iloilo': ['iloilo', 'iloilo city'],
   'Leyte': ['leyte', 'tacloban'],
@@ -49,6 +49,46 @@ function extractMatchedProvinces(disaster) {
   }
 
   return matched;
+}
+
+function buildProvinceRegex(province) {
+  const escapedProvince = escapeRegex(province);
+  return new RegExp(`(^|\\b)${escapedProvince}(\\b|$)|${escapedProvince}\\s+province`, 'i');
+}
+
+function normalizeLocationLabel(place) {
+  if (!place) return 'Unknown location';
+
+  const stripped = String(place)
+    .replace(/^\d+(?:\.\d+)?\s*km\s+[A-Z]{1,3}\s+of\s+/i, '')
+    .replace(/,\s*Philippines\s*$/i, '')
+    .trim();
+
+  return stripped || String(place).trim();
+}
+
+function attachProvinceHint(disaster) {
+  const matchedProvinces = extractMatchedProvinces(disaster);
+  const province = matchedProvinces[0] || null;
+  const cityText = String(disaster.city || '').trim();
+
+  if (!province) {
+    return {
+      ...disaster,
+      province: null,
+      matchedProvinces: matchedProvinces
+    };
+  }
+
+  const provinceRegex = buildProvinceRegex(province);
+  const locationLabel = provinceRegex.test(cityText) ? cityText : `${cityText}, ${province}`;
+
+  return {
+    ...disaster,
+    city: locationLabel,
+    province,
+    matchedProvinces: matchedProvinces
+  };
 }
 
 async function getDatabase() {
@@ -97,19 +137,24 @@ async function fetchLiveDisastersData() {
       const mag = quake.properties.mag;
       const severityLevel = mag >= 6.0 ? 'High' : 'Medium';
       const dateObj = new Date(quake.properties.time);
+      const rawLocation = quake.properties.place;
+      const normalizedLocation = normalizeLocationLabel(rawLocation);
 
-      allDisasters.push({
+      const normalizedDisaster = attachProvinceHint({
         id: quake.id,
         type: 'Earthquake',
         title: `Magnitude ${mag}`,
         severity: severityLevel,
-        city: quake.properties.place,
+        city: normalizedLocation,
+        rawLocation,
         lat: quake.geometry.coordinates[1],
         lng: quake.geometry.coordinates[0],
         source: 'USGS',
         updatedAt: dateObj.toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
         status: 'Active'
       });
+
+      allDisasters.push(normalizedDisaster);
     });
   }
 
@@ -128,18 +173,21 @@ async function fetchLiveDisastersData() {
 
       const dateObj = new Date(latestGeo.date);
 
-      allDisasters.push({
+      const normalizedDisaster = attachProvinceHint({
         id: event.id,
         type: eventType,
         title: event.title,
         severity: 'High',
         city: 'Philippines Area',
+        rawLocation: event.title,
         lat: latestGeo.coordinates[1],
         lng: latestGeo.coordinates[0],
         source: 'NASA EONET',
         updatedAt: dateObj.toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
         status: 'Active'
       });
+
+      allDisasters.push(normalizedDisaster);
     });
   }
 
@@ -465,10 +513,10 @@ async function sendAutoAlertsForCurrentDisasters() {
         });
         if (alreadySent) continue;
 
-        const escapedProvince = escapeRegex(province);
+        const provinceRegex = buildProvinceRegex(province);
         const recipients = await users.find({
           accountStatus: 'Active',
-          'location.province': { $regex: `^${escapedProvince}$`, $options: 'i' }
+          'location.province': { $regex: provinceRegex }
         }).toArray();
 
         if (recipients.length === 0) {
@@ -552,9 +600,50 @@ app.post('/api/admin/auto-alerts/run', async (req, res) => {
     res.status(500).json({ message: 'Failed to run auto-alert worker.' });
   }
 });
+
+app.get('/api/admin/auto-alerts/diagnose', async (req, res) => {
+  try {
+    const disasters = await fetchLiveDisastersData();
+    const users = await getUsersCollection();
+    const sample = disasters.slice(0, 10);
+
+    const report = [];
+    for (const disaster of sample) {
+      const provinces = extractMatchedProvinces(disaster);
+      const recipientBreakdown = [];
+
+      for (const province of provinces) {
+        const provinceRegex = buildProvinceRegex(province);
+        const count = await users.countDocuments({
+          accountStatus: 'Active',
+          'location.province': { $regex: provinceRegex }
+        });
+        recipientBreakdown.push({ province, count });
+      }
+
+      report.push({
+        disasterId: disaster.id,
+        title: disaster.title,
+        city: disaster.city,
+        matchedProvinces: provinces,
+        recipientBreakdown
+      });
+    }
+
+    res.status(200).json({
+      checkedAt: new Date().toISOString(),
+      totalDisasters: disasters.length,
+      sampleSize: sample.length,
+      report
+    });
+  } catch (error) {
+    console.error('Auto-alert diagnose failed:', error);
+    res.status(500).json({ message: 'Failed to diagnose auto-alert matching.' });
+  }
+});
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`✅ SHIELD Backend Server running on port ${PORT}`);
+  console.log(`SHIELD Backend Server running on port ${PORT}`);
   startAutoAlertWorker();
 });
