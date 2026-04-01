@@ -19,6 +19,16 @@ let alertLogsCollection;
 const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS || 5 * 60 * 1000);
 const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS || 'false').toLowerCase() === 'true';
 
+let lastAutoAlertRun = {
+  ranAt: null,
+  success: false,
+  disastersChecked: 0,
+  alertsSent: 0,
+  skippedExisting: 0,
+  skippedNoRecipients: 0,
+  error: null
+};
+
 const PROVINCE_KEYWORDS = {
   'Bulacan': ['bulacan', 'malolos', 'meycauayan', 'san jose del monte', 'marilao'],
   'Albay': ['albay', 'legazpi', 'tabaco', 'ligao', 'daraga'],
@@ -490,6 +500,15 @@ app.post('/api/admin/alert', async (req, res) => {
 
 async function sendAutoAlertsForCurrentDisasters() {
   if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASS) {
+    lastAutoAlertRun = {
+      ranAt: new Date().toISOString(),
+      success: false,
+      disastersChecked: 0,
+      alertsSent: 0,
+      skippedExisting: 0,
+      skippedNoRecipients: 0,
+      error: 'Missing NODEMAILER_EMAIL or NODEMAILER_PASS'
+    };
     return;
   }
 
@@ -501,6 +520,9 @@ async function sendAutoAlertsForCurrentDisasters() {
 
     const users = await getUsersCollection();
     const alertLogs = await getAlertLogsCollection();
+    let alertsSent = 0;
+    let skippedExisting = 0;
+    let skippedNoRecipients = 0;
 
     for (const disaster of disasters) {
       const provinces = extractMatchedProvinces(disaster);
@@ -511,7 +533,10 @@ async function sendAutoAlertsForCurrentDisasters() {
           disasterId: disaster.id,
           province
         });
-        if (alreadySent) continue;
+        if (alreadySent) {
+          skippedExisting += 1;
+          continue;
+        }
 
         const provinceRegex = buildProvinceRegex(province);
         const recipients = await users.find({
@@ -520,6 +545,7 @@ async function sendAutoAlertsForCurrentDisasters() {
         }).toArray();
 
         if (recipients.length === 0) {
+          skippedNoRecipients += 1;
           await alertLogs.insertOne({
             disasterId: disaster.id,
             province,
@@ -556,6 +582,7 @@ async function sendAutoAlertsForCurrentDisasters() {
         };
 
         await transporter.sendMail(mailOptions);
+        alertsSent += 1;
 
         await alertLogs.insertOne({
           disasterId: disaster.id,
@@ -566,8 +593,27 @@ async function sendAutoAlertsForCurrentDisasters() {
         });
       }
     }
+
+    lastAutoAlertRun = {
+      ranAt: new Date().toISOString(),
+      success: true,
+      disastersChecked: disasters.length,
+      alertsSent,
+      skippedExisting,
+      skippedNoRecipients,
+      error: null
+    };
   } catch (error) {
     console.error('Auto-alert worker error:', error);
+    lastAutoAlertRun = {
+      ranAt: new Date().toISOString(),
+      success: false,
+      disastersChecked: 0,
+      alertsSent: 0,
+      skippedExisting: 0,
+      skippedNoRecipients: 0,
+      error: error?.message || 'Unknown auto-alert error'
+    };
   }
 }
 
@@ -598,6 +644,46 @@ app.post('/api/admin/auto-alerts/run', async (req, res) => {
   } catch (error) {
     console.error('Manual auto-alert run failed:', error);
     res.status(500).json({ message: 'Failed to run auto-alert worker.' });
+  }
+});
+
+app.get('/api/admin/auto-alerts/status', async (req, res) => {
+  try {
+    const configured = Boolean(process.env.NODEMAILER_EMAIL && process.env.NODEMAILER_PASS);
+    res.status(200).json({
+      autoAlertsEnabled: ENABLE_AUTO_ALERTS,
+      pollIntervalMs: ALERT_POLL_INTERVAL_MS,
+      nodemailerConfigured: configured,
+      nodemailerSender: process.env.NODEMAILER_EMAIL || null,
+      lastAutoAlertRun
+    });
+  } catch (error) {
+    console.error('Auto-alert status failed:', error);
+    res.status(500).json({ message: 'Failed to get auto-alert status.' });
+  }
+});
+
+app.post('/api/admin/email/test', async (req, res) => {
+  try {
+    const { to } = req.body || {};
+    if (!to) {
+      return res.status(400).json({ message: 'Missing test recipient email in request body.' });
+    }
+    if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASS) {
+      return res.status(400).json({ message: 'NODEMAILER credentials are not configured.' });
+    }
+
+    await transporter.sendMail({
+      from: `"SHIELD Test" <${process.env.NODEMAILER_EMAIL}>`,
+      to,
+      subject: 'SHIELD test email',
+      text: `If you received this email, SMTP is working. Sent at ${new Date().toISOString()}`
+    });
+
+    res.status(200).json({ message: `Test email sent to ${to}` });
+  } catch (error) {
+    console.error('Test email failed:', error);
+    res.status(500).json({ message: error?.message || 'Failed to send test email.' });
   }
 });
 
