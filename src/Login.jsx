@@ -21,6 +21,7 @@ export default function Login({ onClose }) {
   const [cities, setCities] = useState([]);
   const [citySourceProvinceCode, setCitySourceProvinceCode] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
+  const [messageType, setMessageType] = useState("neutral");
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState(false);
 
@@ -29,6 +30,7 @@ export default function Login({ onClose }) {
 
   const set = (k) => (e) => {
     setStatusMessage("");
+    setMessageType("neutral");
     if (k === "email") setEmailError(false);
     setForm((p) => ({ ...p, [k]: e.target.value }));
   };
@@ -44,6 +46,7 @@ export default function Login({ onClose }) {
     setTab(nextTab);
     setSubmitAttempted(false);
     setStatusMessage("");
+    setMessageType("neutral");
     setEmailError(false);
   };
 
@@ -99,17 +102,20 @@ export default function Login({ onClose }) {
     e.preventDefault();
     setSubmitAttempted(true);
     setStatusMessage("");
+    setMessageType("neutral");
     setEmailError(false);
 
     if (!validateEmail(form.email)) {
       setEmailError(true);
-      setStatusMessage("❌ Invalid Email! Use format: name@example.com");
+      setStatusMessage("Invalid Email! Use format: name@example.com");
+      setMessageType("error");
       return;
     }
 
     if (tab === "register") {
       if (!provinces.length) {
-        setStatusMessage("❌ Location list is still loading. Please try again in a moment.");
+        setStatusMessage("Location list is still loading. Please try again in a moment.");
+        setMessageType("error");
         return;
       }
 
@@ -118,7 +124,8 @@ export default function Login({ onClose }) {
       );
 
       if (!selectedProvince) {
-        setStatusMessage("❌ Please select a valid Province from the suggestions.");
+        setStatusMessage("Please select a valid Province from the suggestions.");
+        setMessageType("error");
         return;
       }
 
@@ -131,7 +138,8 @@ export default function Login({ onClose }) {
           setCities(citiesToValidate);
           setCitySourceProvinceCode(selectedProvince.code);
         } catch {
-          setStatusMessage("❌ Unable to verify City right now. Please try again.");
+          setStatusMessage("Unable to verify City right now. Please try again.");
+          setMessageType("error");
           return;
         }
       }
@@ -141,16 +149,19 @@ export default function Login({ onClose }) {
       );
 
       if (!selectedCity) {
-        setStatusMessage("❌ Please select a valid City from the suggestions.");
+        setStatusMessage("Please select a valid City from the suggestions.");
+        setMessageType("error");
         return;
       }
 
       if (!isPasswordStrong(form.password)) {
-        setStatusMessage("❌ Password must be at least 6 characters.");
+        setStatusMessage("Password must be at least 6 characters.");
+        setMessageType("error");
         return;
       }
       if (form.password !== form.confirm) {
-        setStatusMessage("❌ Passwords do not match!");
+        setStatusMessage("Passwords do not match!");
+        setMessageType("error");
         return;
       }
     }
@@ -168,7 +179,8 @@ export default function Login({ onClose }) {
       });
       const result = await response.json();
       if (response.ok) {
-        setStatusMessage(tab === "register" ? "✅ Account created!" : `✅ Welcome back!`);
+        setStatusMessage(tab === "register" ? "Account created" : "Login Successful");
+        setMessageType("success");
         if (tab === "signin") setTimeout(() => onClose(), 1500);
         else switchTab("signin");
       } else {
@@ -182,13 +194,15 @@ export default function Login({ onClose }) {
                 backendMessage.includes("duplicate"))));
 
         if (emailExists) {
-          setStatusMessage("❌ Email already exists. Please sign in instead.");
+          setStatusMessage("Email already exists. Please sign in instead.");
         } else {
-          setStatusMessage(`❌ ${result.message || "Action failed."}`);
+          setStatusMessage(`${result.message || "Action failed."}`);
         }
+        setMessageType("error");
       }
     } catch (error) {
-      setStatusMessage("❌ Server connection error.");
+      setStatusMessage("Server connection error.");
+      setMessageType("error");
     } finally {
       setIsLoading(false);
     }
@@ -238,9 +252,9 @@ export default function Login({ onClose }) {
         {statusMessage && (
           <div className="status-indicator" style={{ 
             textAlign: "center", padding: "10px", marginBottom: "15px", borderRadius: "8px", fontSize: "0.85em",
-            backgroundColor: statusMessage.includes("✅") ? "#e6fff4" : "#fff0f2",
-            color: statusMessage.includes("✅") ? "#06d6a0" : "#ff4d6d",
-            border: `1px solid ${statusMessage.includes("✅") ? "#06d6a0" : "#ff4d6d"}`
+            backgroundColor: "#1a1a1a",
+            color: messageType === "success" ? "#2e7d32" : "#c41c3b",
+            border: `1px solid ${messageType === "success" ? "#2e7d32" : "#c41c3b"}`
           }}>{statusMessage}</div>
         )}
 

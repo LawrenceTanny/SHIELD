@@ -1,10 +1,10 @@
 :root {
   --lm-bg:      #050c1a;
-  --lm-surface: #0a1628;
+  --lm-surface: #1a1a1a;
   --lm-border:  rgba(255,255,255,0.1);
-  --lm-accent:  #00d4ff;
+  --lm-accent:  #ff4400;
   --lm-ink:     #e4f3ff;
-  --lm-muted:   rgba(190,220,255,0.55);
+  --lm-muted:   rgba(228,243,255,0.6);
 }
 
 .login-overlay {
@@ -31,14 +31,14 @@
 .login-modal {
   position: relative;
   background: var(--lm-surface);
-  border: 1px solid rgba(0,212,255,0.2);
+  border: 1px solid rgba(31,31,31,0.12);
   border-radius: 18px;
   width: 100%;
   padding: 36px 32px 28px;
   max-height: min(92vh, 860px);
   overflow-y: auto;
   will-change: transform, opacity, filter;
-  box-shadow: 0 0 0 1px rgba(0,212,255,0.06), 0 32px 80px rgba(0,0,0,0.7);
+  box-shadow: 0 0 0 1px rgba(31,31,31,0.06), 0 32px 80px rgba(0,0,0,0.7);
 }
 
 @keyframes lm-in {
@@ -81,7 +81,7 @@
   font-weight: 900;
   letter-spacing: 0.12em;
   color: var(--lm-accent);
-  text-shadow: 0 0 28px rgba(0,212,255,0.6);
+  text-shadow: 0 0 28px rgba(255,68,0,0.6);
   margin-bottom: 4px;
 }
 
@@ -93,7 +93,7 @@
 
 .login-tabs {
   display: flex;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.08);
   border-radius: 10px;
   padding: 3px;
   gap: 3px;
@@ -113,7 +113,7 @@
   transition: background 130ms, color 130ms;
 }
 .ltab--on {
-  background: rgba(0,212,255,0.15);
+  background: rgba(255,68,0,0.15);
   color: var(--lm-accent);
 }
 .ltab:not(.ltab--on):hover { color: var(--lm-ink); }
@@ -201,9 +201,9 @@
   border-radius: 10px;
   background: linear-gradient(
     100deg,
-    rgba(255, 255, 255, 0.08) 20%,
-    rgba(255, 255, 255, 0.2) 40%,
-    rgba(255, 255, 255, 0.08) 60%
+    rgba(255, 255, 255, 0.06) 20%,
+    rgba(255, 255, 255, 0.15) 40%,
+    rgba(255, 255, 255, 0.06) 60%
   );
   background-size: 220% 100%;
   animation: sk-shimmer 1.3s linear infinite;
@@ -281,7 +281,7 @@
   padding: 10px 12px;
   border-radius: 9px;
   border: 1px solid var(--lm-border);
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.06);
   color: var(--lm-ink);
   font-size: 0.92rem;
   outline: none;
@@ -289,9 +289,9 @@
 }
 .lf-label input:focus {
   border-color: var(--lm-accent);
-  box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+  box-shadow: 0 0 0 3px rgba(255,68,0,0.15);
 }
-.lf-label input::placeholder { color: rgba(190,220,255,0.28); }
+.lf-label input::placeholder { color: rgba(228,243,255,0.25); }
 
 .login-submit {
   margin-top: 4px;
@@ -299,7 +299,7 @@
   border-radius: 10px;
   border: none;
   background: var(--lm-accent);
-  color: #050c1a;
+  color: #fff;
   font-weight: 800;
   font-size: 0.95rem;
   cursor: pointer;
@@ -308,7 +308,7 @@
 }
 .login-submit:hover {
   opacity: 0.88;
-  box-shadow: 0 0 18px rgba(0,212,255,0.4);
+  box-shadow: 0 0 18px rgba(255,68,0,0.4);
 }
 
 .login-hint {

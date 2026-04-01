@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { ZoomControl } from "react-leaflet";
 import { motion, AnimatePresence } from "framer-motion";
-import "./Styles/App.css";
-import Login from "./Login";
-import AccountSettings from "./AccountSettings";
+import "./Styles/Dashboard.css";
 
 const DISASTERS = [
   { id: 1, type: "Typhoon",           title: "Tropical Cyclone Wind Signal #2", severity: "High",   city: "Legazpi City",  lat: 13.1391, lng: 123.7438, source: "PAGASA",     updatedAt: "2026-03-14 08:30", status: "Active"     },
@@ -18,11 +16,6 @@ const DISASTERS = [
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
 
-function severityClass(lvl) {
-  if (lvl === "High")   return "#FD694F";
-  if (lvl === "Medium") return "#FDCE4F";
-  return "#6AB144";
-}
 function severityColor(lvl) {
   if (lvl === "High")   return "#FD694F";
   if (lvl === "Medium") return "#FDCE4F";
@@ -37,44 +30,14 @@ function MapController({ focused }) {
   return null;
 }
 
-function IconGear() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  );
-}
-function IconUser() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
-    </svg>
-  );
-}
-function IconX() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  );
-}
-
-export default function App() {
+export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [focusedId,     setFocusedId]     = useState(null);
-  const [settingsOpen,  setSettingsOpen]  = useState(false);
-  const [userMenuOpen,  setUserMenuOpen]  = useState(false);
-  const [loginOpen,       setLoginOpen]       = useState(false);
-  const [acctSettingsOpen,setAcctSettingsOpen] = useState(false);
   const [inAppNotif,    setInAppNotif]    = useState(true);
   const [emailNotif,    setEmailNotif]    = useState(false);
   const [smsNotif,      setSmsNotif]      = useState(false);
   const [inclNeighbors, setInclNeighbors] = useState(true);
   const [selType,       setSelType]       = useState("All");
   const [selSev,        setSelSev]        = useState("All");
-
-  const userRef = useRef(null);
 
   const typeOptions = useMemo(() => {
     const s = new Set(DISASTERS.map((d) => d.type));
@@ -89,55 +52,21 @@ export default function App() {
 
   const focused = useMemo(() => filtered.find((d) => d.id === focusedId), [filtered, focusedId]);
 
-  useEffect(() => {
-    if (!userMenuOpen) return;
-    const h = (e) => {
-      if (userRef.current && !userRef.current.contains(e.target)) setUserMenuOpen(false);
-    };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, [userMenuOpen]);
-
   const toggle = (id) => setFocusedId((p) => (p === id ? null : id));
 
   return (
-    <div className="app">
-      
-      {/* HEADER */}
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-name">SHIELD</span>
-          <span className="brand-sep" />
-          <span className="brand-sub">Synchronized Hazard Information &amp; Emergency Live Dashboard</span>
-        </div>
-        <nav className="topbar-nav">
-          <button
-            className={"nav-btn" + (settingsOpen ? " nav-btn--on" : "")}
-            title="Settings"
-            onClick={() => { setSettingsOpen((v) => !v); setUserMenuOpen(false); }}
-          >
-            <IconGear />
-          </button>
-          <div className="user-wrap" ref={userRef}>
-            <button
-              className={"nav-btn" + (userMenuOpen ? " nav-btn--on" : "")}
-              title="Account"
-              onClick={() => { setUserMenuOpen((v) => !v); setSettingsOpen(false); }}
-            >
-              <IconUser />
-            </button>
-            {userMenuOpen && (
-              <div className="user-dropdown">
-                <p className="user-hint">Not signed in</p>
-                <button className="user-signin-btn" onClick={() => { setUserMenuOpen(false); setLoginOpen(true); }}>Sign In</button>
-                <button className="user-acct-btn"   onClick={() => { setUserMenuOpen(false); setAcctSettingsOpen(true); }}>Account Settings</button>
-              </div>
-            )}
-          </div>
-        </nav>
-      </header>
+    <div className="dashboard-wrapper">
+      <button
+        type="button"
+        className={`dashboard-settings-btn${settingsOpen ? " is-open" : ""}`}
+        onClick={() => setSettingsOpen((v) => !v)}
+        aria-expanded={settingsOpen}
+        aria-controls="dashboard-settings-drawer"
+      >
+        {settingsOpen ? "Close Settings" : "Settings"}
+      </button>
 
-      {/* CONTENT */}
+      {/* CONTENT - Map and Danger Panel */}
       <div className="content">
 
         {/* DANGERS PANEL */}
@@ -245,28 +174,22 @@ export default function App() {
         </main>
       </div>
 
-      {/* FOOTER */}
-      <footer className="footer">
-        <p>&#169; 2026 SHIELD &mdash; Placeholder footer</p>
-      </footer>
-
       {/* SETTINGS DRAWER */}
-      <aside className={"settings-drawer" + (settingsOpen ? " settings-drawer--open" : "")}>
+      <aside id="dashboard-settings-drawer" className={"settings-drawer" + (settingsOpen ? " settings-drawer--open" : "")}>
         <div className="settings-head">
           <h3>Settings</h3>
-          <button className="icon-btn" onClick={() => setSettingsOpen(false)}><IconX /></button>
         </div>
         <hr className="hr-settings"></hr>
         <section className="settings-section">
           <p className="settings-label">Notifications</p>
           <label className="settings-toggle">
-            <input type="checkbox" checked={inAppNotif}    onChange={(e) => setInAppNotif(e.target.checked)}    /> In-app alerts
+            <input type="checkbox" checked={inAppNotif} onChange={(e) => setInAppNotif(e.target.checked)} /> In-app alerts
           </label>
           <label className="settings-toggle">
-            <input type="checkbox" checked={emailNotif}    onChange={(e) => setEmailNotif(e.target.checked)}    /> Email alerts
+            <input type="checkbox" checked={emailNotif} onChange={(e) => setEmailNotif(e.target.checked)} /> Email alerts
           </label>
           <label className="settings-toggle">
-            <input type="checkbox" checked={smsNotif}      onChange={(e) => setSmsNotif(e.target.checked)}      /> SMS alerts
+            <input type="checkbox" checked={smsNotif} onChange={(e) => setSmsNotif(e.target.checked)} /> SMS alerts
           </label>
           <label className="settings-toggle">
             <input type="checkbox" checked={inclNeighbors} onChange={(e) => setInclNeighbors(e.target.checked)} /> Include neighboring cities
@@ -275,48 +198,46 @@ export default function App() {
         <hr className="hr-settings"></hr>
         <section className="settings-section">
           <div className="filter-group">
-          <span className="settings-label">Disaster Type</span>
-          <div className="filter-list">
-            {typeOptions.map((t) => (
-              <button 
-                key={t} 
-                className={`filter-item ${selType === t ? 'active' : ''} type-${t.toLowerCase()}`}
-                onClick={() => setSelType(t)}
-              >
-                {t !== "All" && (
-                  <span className={`filter-indicator type-${t.toLowerCase().replace(/\s+/g, '-')}`} />
-                )}
-                {t}
-              </button>
-            ))}
+            <span className="settings-label">Disaster Type</span>
+            <div className="filter-list">
+              {typeOptions.map((t) => (
+                <button
+                  key={t}
+                  className={`filter-item ${selType === t ? "active" : ""} type-${t.toLowerCase()}`}
+                  onClick={() => setSelType(t)}
+                >
+                  {t !== "All" && (
+                    <span className={`filter-indicator type-${t.toLowerCase().replace(/\s+/g, "-")}`} />
+                  )}
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
           <div className="filter-group">
-    <span className="settings-label">Severity</span>
-    <div className="filter-list">
-      {["All", "High", "Medium", "Low"].map((s) => (
-        <button 
-          key={s} 
-          className={`filter-item ${selSev === s ? 'active' : ''}`}
-          onClick={() => setSelSev(s)}
-        >{s !== "All" && (
-              <span className={`severity-dot dot-${s.toLowerCase()}`} />
-            )}  
-          {s}
-        </button>
-      ))}
-    </div>
-  </div>
+            <span className="settings-label">Severity</span>
+            <div className="filter-list">
+              {["All", "High", "Medium", "Low"].map((s) => (
+                <button
+                  key={s}
+                  className={`filter-item ${selSev === s ? "active" : ""}`}
+                  onClick={() => setSelSev(s)}
+                >
+                  {s !== "All" && <span className={`severity-dot dot-${s.toLowerCase()}`} />}
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         </section>
       </aside>
-      {settingsOpen && <div 
-  className={`settings-backdrop ${settingsOpen ? "active" : ""}`} 
-  onClick={() => setSettingsOpen(false)} 
-/>}
 
-      {loginOpen        && <Login            onClose={() => setLoginOpen(false)}        />}
-      {acctSettingsOpen && <AccountSettings  onClose={() => setAcctSettingsOpen(false)} />}
-
+      {settingsOpen && (
+        <div
+          className={`settings-backdrop ${settingsOpen ? "active" : ""}`}
+          onClick={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 }
