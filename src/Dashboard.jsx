@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
-import { AttributionControl, ZoomControl } from "react-leaflet";
+import { AttributionControl } from "react-leaflet";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Dashboard.css";
 
@@ -141,6 +141,7 @@ function weatherCodeToCondition(code) {
 }
 
 export default function Dashboard({ settingsOpen, setSettingsOpen }) {
+  const skeletonRows = [1, 2, 3, 4];
   const [disasters,     setDisasters]     = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [dataError,     setDataError]     = useState("");
@@ -159,46 +160,74 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
     const controller = new AbortController();
 
     const fetchDisasters = async () => {
+      const maxAttempts = 3;
+      const retryDelayMs = 900;
+
       try {
         setIsLoadingData(true);
         setDataError("");
 
-        const response = await fetch(`${API_BASE_URL}/api/disasters`, {
-          signal: controller.signal,
-        });
+        let lastError = null;
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch disasters: ${response.status}`);
+        for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+          if (controller.signal.aborted) return;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/disasters`, {
+              signal: controller.signal,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch disasters: ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const normalized = Array.isArray(payload)
+              ? payload
+                  .map((item, index) => {
+                    const lat = Number(item.lat);
+                    const lng = Number(item.lng);
+
+                    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                      return null;
+                    }
+
+                    return {
+                      id: item.id || `${item.type || "disaster"}-${index}`,
+                      type: item.type || "General Disaster",
+                      title: item.title || "Disaster Update",
+                      severity: item.severity || "Low",
+                      city: item.city || "Unknown location",
+                      lat,
+                      lng,
+                      source: item.source || "Unknown source",
+                      updatedAt: item.updatedAt || "N/A",
+                      status: item.status || "Active",
+                    };
+                  })
+                  .filter(Boolean)
+              : [];
+
+            if (normalized.length === 0) {
+              throw new Error("Disaster API returned empty data.");
+            }
+
+            setDisasters(normalized);
+            setDataError("");
+            return;
+          } catch (error) {
+            if (error.name === "AbortError") return;
+            lastError = error;
+          }
+
+          if (attempt < maxAttempts) {
+            await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+          }
         }
 
-        const payload = await response.json();
-        const normalized = Array.isArray(payload)
-          ? payload
-              .map((item, index) => {
-                const lat = Number(item.lat);
-                const lng = Number(item.lng);
-
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-                  return null;
-                }
-
-                return {
-                  id: item.id || `${item.type || "disaster"}-${index}`,
-                  type: item.type || "General Disaster",
-                  title: item.title || "Disaster Update",
-                  severity: item.severity || "Low",
-                  city: item.city || "Unknown location",
-                  lat,
-                  lng,
-                  source: item.source || "Unknown source",
-                  updatedAt: item.updatedAt || "N/A",
-                  status: item.status || "Active",
-                };
-              })
-              .filter(Boolean)
-          : [];
-
-        setDisasters(normalized);
+        console.error("Error loading disasters after retries:", lastError);
+        setDataError("Could not load live disasters. Showing fallback data.");
+        setDisasters(FALLBACK_DISASTERS);
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error loading disasters:", error);
@@ -206,7 +235,9 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           setDisasters(FALLBACK_DISASTERS);
         }
       } finally {
-        setIsLoadingData(false);
+        if (!controller.signal.aborted) {
+          setIsLoadingData(false);
+        }
       }
     };
 
@@ -275,7 +306,9 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           }
         }
       } finally {
-        setIsLoadingWeather(false);
+        if (!controller.signal.aborted) {
+          setIsLoadingWeather(false);
+        }
       }
     };
 
@@ -348,11 +381,15 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           <hr className="hr"></hr>
           <ul className="danger-list">
             {isLoadingData && (
-              <li className="danger-item" style={{ minHeight: "auto" }}>
-                Loading live disasters...
-              </li>
+              skeletonRows.map((row) => (
+                <li key={row} className="danger-item danger-item-skeleton" aria-hidden="true">
+                  <div className="skeleton-line skeleton-line-title" />
+                  <div className="skeleton-line skeleton-line-meta" />
+                  <div className="skeleton-line skeleton-line-time" />
+                </li>
+              ))
             )}
-            {!isLoadingData && dataError && (
+            {!isLoadingData && dataError && disasters.length === 0 && (
               <li className="danger-item" style={{ minHeight: "auto" }}>
                 {dataError}
               </li>
@@ -425,7 +462,6 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
             className="map-canvas"
           >
             <AttributionControl position="bottomleft" prefix={false} />
-            <ZoomControl position="bottomright" />
             <MapController focused={focused} />
             <TileLayer
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'

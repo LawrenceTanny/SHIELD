@@ -319,6 +319,50 @@ body {
 .danger-item.type-thunderstorm::after {bottom: -8px; -webkit-mask-image: url("/thunderstorm_icon.svg"); mask-image: url("/thunderstorm_icon.svg");}
 .danger-item.type-wildfire::after {bottom: -20px; -webkit-mask-image: url("/fire_icon.svg"); mask-image: url("/fire_icon.svg");}
 
+.danger-item-skeleton {
+  position: relative;
+  min-height: 112px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.danger-item-skeleton::before,
+.danger-item-skeleton::after {
+  display: none;
+}
+
+.skeleton-line {
+  height: 11px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(90, 90, 90, 0.22) 25%, rgba(130, 130, 130, 0.42) 50%, rgba(90, 90, 90, 0.22) 75%);
+  background-size: 220% 100%;
+  animation: loading-shimmer 1.2s infinite linear;
+  margin-bottom: 12px;
+}
+
+.skeleton-line-title {
+  width: 74%;
+  margin-top: 6px;
+}
+
+.skeleton-line-meta {
+  width: 50%;
+}
+
+.skeleton-line-time {
+  width: 36%;
+  margin-bottom: 0;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .di-content-wrapper {
   position: relative;
   z-index: 2;
