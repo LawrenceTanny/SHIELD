@@ -536,7 +536,6 @@ function startAutoAlertWorker() {
 
   console.log(`Auto-alert worker started. Interval: ${ALERT_POLL_INTERVAL_MS}ms`);
 
-  // Run once at startup.
   sendAutoAlertsForCurrentDisasters();
 
   setInterval(() => {
