@@ -27,8 +27,19 @@ const reverseGeocodeMinDelayMs = Number(process.env.REVERSE_GEOCODE_MIN_DELAY_MS
 let reverseGeocodeQueue = Promise.resolve();
 let lastReverseGeocodeAt = 0;
 
+const DISASTER_REFRESH_INTERVAL_MS = Number(process.env.DISASTER_REFRESH_INTERVAL_MS || 60 * 1000);
 const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS || 5 * 60 * 1000);
 const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS || 'false').toLowerCase() === 'true';
+
+let disasterRefreshInFlight = null;
+let lastDisasterRefreshRun = {
+  ranAt: null,
+  success: false,
+  fetchedCount: 0,
+  updatedCache: false,
+  source: null,
+  error: null
+};
 
 let lastAutoAlertRun = {
   ranAt: null,
@@ -54,6 +65,48 @@ const PROVINCE_KEYWORDS = {
   'South Cotabato': ['general santos', 'gensan', 'south cotabato'],
   'Negros Occidental': ['negros occidental', 'bacolod', 'canlaon']
 };
+
+const DISASTER_FALLBACK_DATA = [
+  {
+    id: 'fallback-quake-1',
+    type: 'Earthquake',
+    title: 'Magnitude 5.1',
+    severity: 'Medium',
+    city: 'General Santos City',
+    province: 'South Cotabato',
+    lat: 6.1164,
+    lng: 125.1716,
+    source: 'Fallback Data',
+    updatedAt: 'N/A',
+    status: 'Active'
+  },
+  {
+    id: 'fallback-storm-1',
+    type: 'Typhoon',
+    title: 'Tropical Cyclone Watch',
+    severity: 'High',
+    city: 'Legazpi City',
+    province: 'Albay',
+    lat: 13.1391,
+    lng: 123.7438,
+    source: 'Fallback Data',
+    updatedAt: 'N/A',
+    status: 'Monitoring'
+  },
+  {
+    id: 'fallback-flood-1',
+    type: 'Flood',
+    title: 'Heavy Rainfall Advisory',
+    severity: 'Medium',
+    city: 'Cebu City',
+    province: 'Cebu',
+    lat: 10.3157,
+    lng: 123.8854,
+    source: 'Fallback Data',
+    updatedAt: 'N/A',
+    status: 'Monitoring'
+  }
+];
 
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -253,6 +306,31 @@ async function setCachedDisastersPayload(data) {
   );
 }
 
+function getDisasterCacheSignature(disaster) {
+  return JSON.stringify({
+    id: disaster?.id || null,
+    type: disaster?.type || null,
+    title: disaster?.title || null,
+    severity: disaster?.severity || null,
+    city: disaster?.city || null,
+    province: disaster?.province || null,
+    lat: Number(disaster?.lat) || null,
+    lng: Number(disaster?.lng) || null,
+    source: disaster?.source || null,
+    status: disaster?.status || null
+  });
+}
+
+function areDisasterSnapshotsEqual(currentDisasters, nextDisasters) {
+  if (!Array.isArray(currentDisasters) || !Array.isArray(nextDisasters)) return false;
+  if (currentDisasters.length !== nextDisasters.length) return false;
+
+  const currentSignatures = currentDisasters.map(getDisasterCacheSignature).sort();
+  const nextSignatures = nextDisasters.map(getDisasterCacheSignature).sort();
+
+  return currentSignatures.every((signature, index) => signature === nextSignatures[index]);
+}
+
 async function reverseGeocodeCoordinates(lat, lng) {
   const cacheKey = getCoordinateCacheKey(lat, lng);
 
@@ -330,12 +408,7 @@ async function reverseGeocodeCoordinates(lat, lng) {
   return reverseGeocodeQueue;
 }
 
-async function fetchLiveDisastersData() {
-  const cachedDisasters = await getCachedDisastersPayload();
-  if (cachedDisasters) {
-    return cachedDisasters;
-  }
-
+async function fetchDisastersFromProviders({ allowFallback = true } = {}) {
   const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=10';
   const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
   const requestTimeoutMs = 15000;
@@ -431,9 +504,87 @@ async function fetchLiveDisastersData() {
     console.warn('NASA disaster fetch failed:', nasaResult.reason?.message || nasaResult.reason);
   }
 
-  await setCachedDisastersPayload(allDisasters);
+  if (allDisasters.length === 0) {
+    if (allowFallback) {
+      console.warn('Live disaster feeds unavailable, serving backend fallback disasters.');
+      return DISASTER_FALLBACK_DATA;
+    }
+
+    return [];
+  }
 
   return allDisasters;
+}
+
+async function fetchLiveDisastersData() {
+  const cachedDisasters = await getCachedDisastersPayload();
+  if (cachedDisasters) {
+    return cachedDisasters;
+  }
+
+  const liveDisasters = await fetchDisastersFromProviders({ allowFallback: true });
+  if (Array.isArray(liveDisasters) && liveDisasters.length > 0) {
+    await setCachedDisastersPayload(liveDisasters);
+  }
+
+  return liveDisasters;
+}
+
+async function refreshDisasterCacheFromProviders() {
+  if (disasterRefreshInFlight) {
+    return disasterRefreshInFlight;
+  }
+
+  disasterRefreshInFlight = (async () => {
+    try {
+      const liveDisasters = await fetchDisastersFromProviders({ allowFallback: false });
+
+      if (!Array.isArray(liveDisasters) || liveDisasters.length === 0) {
+        lastDisasterRefreshRun = {
+          ranAt: new Date().toISOString(),
+          success: false,
+          fetchedCount: 0,
+          updatedCache: false,
+          source: 'live',
+          error: 'No live disasters returned from providers.'
+        };
+        return lastDisasterRefreshRun;
+      }
+
+      const cachedDisasters = await getCachedDisastersPayload();
+      const cacheChanged = !cachedDisasters || !areDisasterSnapshotsEqual(cachedDisasters, liveDisasters);
+
+      if (cacheChanged) {
+        await setCachedDisastersPayload(liveDisasters);
+      }
+
+      lastDisasterRefreshRun = {
+        ranAt: new Date().toISOString(),
+        success: true,
+        fetchedCount: liveDisasters.length,
+        updatedCache: cacheChanged,
+        source: 'live',
+        error: null
+      };
+
+      return lastDisasterRefreshRun;
+    } catch (error) {
+      console.error('Disaster refresh worker error:', error);
+      lastDisasterRefreshRun = {
+        ranAt: new Date().toISOString(),
+        success: false,
+        fetchedCount: 0,
+        updatedCache: false,
+        source: 'live',
+        error: error?.message || 'Unknown disaster refresh error'
+      };
+      return lastDisasterRefreshRun;
+    } finally {
+      disasterRefreshInFlight = null;
+    }
+  })();
+
+  return disasterRefreshInFlight;
 }
 
 // POST METHOD, INSERTS DATA TO DATABAS, SIR NEIL TINANGGAL KO NA MGA EMOJI BAKA SABIHIN MO AI NANAMAN HAYSSS:<
@@ -873,6 +1024,15 @@ function startAutoAlertWorker() {
   }, ALERT_POLL_INTERVAL_MS);
 }
 
+function startDisasterRefreshWorker() {
+  console.log(`Disaster refresh worker started. Interval: ${DISASTER_REFRESH_INTERVAL_MS}ms`);
+  refreshDisasterCacheFromProviders();
+
+  setInterval(() => {
+    refreshDisasterCacheFromProviders();
+  }, DISASTER_REFRESH_INTERVAL_MS);
+}
+
 app.post('/api/admin/auto-alerts/run', async (req, res) => {
   try {
     await sendAutoAlertsForCurrentDisasters();
@@ -896,6 +1056,20 @@ app.get('/api/admin/auto-alerts/status', async (req, res) => {
   } catch (error) {
     console.error('Auto-alert status failed:', error);
     res.status(500).json({ message: 'Failed to get auto-alert status.' });
+  }
+});
+
+app.get('/api/admin/disasters/refresh-status', async (req, res) => {
+  try {
+    res.status(200).json({
+      refreshIntervalMs: DISASTER_REFRESH_INTERVAL_MS,
+      cacheTtlMs: disasterCacheTtlMs,
+      lastDisasterRefreshRun,
+      cachedDisastersCount: Array.isArray(cachedDisastersPayload) ? cachedDisastersPayload.length : 0
+    });
+  } catch (error) {
+    console.error('Disaster refresh status failed:', error);
+    res.status(500).json({ message: 'Failed to get disaster refresh status.' });
   }
 });
 
@@ -967,5 +1141,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`SHIELD Backend Server running on port ${PORT}`);
+  startDisasterRefreshWorker();
   startAutoAlertWorker();
 });
