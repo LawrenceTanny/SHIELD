@@ -198,6 +198,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                       title: item.title || "Disaster Update",
                       severity: item.severity || "Low",
                       city: item.city || "Unknown location",
+                      province: item.province || "",
                       lat,
                       lng,
                       source: item.source || "Unknown source",
@@ -429,7 +430,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                     {/* The status dot */}
                     <span className={`status-dot ${d.status.toLowerCase()}`}></span>
                     {/* The city text */}
-                    <p className="di-meta">{d.city}</p>
+                    <p className="di-meta">{d.province ? `${d.city}, ${d.province}` : d.city}</p>
                   </div>
 
                   <div className="di-time-row">
@@ -491,7 +492,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                       {item.title}
                     </p>
                     <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                      {item.city} • {item.source}
+                      {item.province ? `${item.city}, ${item.province}` : item.city} • {item.source}
                     </div>
                   </div>
                 </Popup>

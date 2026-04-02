@@ -15,6 +15,17 @@ const client = new MongoClient(process.env.MONGO_URI);
 let usersCollection;
 let dbInstance;
 let alertLogsCollection;
+let disasterCacheCollection;
+let reverseGeocodeCollection;
+
+let cachedDisastersPayload = null;
+let cachedDisastersFetchedAt = 0;
+const disasterCacheTtlMs = Number(process.env.DISASTER_CACHE_TTL_MS || 10 * 60 * 1000);
+
+const reverseGeocodeMemoryCache = new Map();
+const reverseGeocodeMinDelayMs = Number(process.env.REVERSE_GEOCODE_MIN_DELAY_MS || 5000);
+let reverseGeocodeQueue = Promise.resolve();
+let lastReverseGeocodeAt = 0;
 
 const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS || 5 * 60 * 1000);
 const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS || 'false').toLowerCase() === 'true';
@@ -77,6 +88,26 @@ function normalizeLocationLabel(place) {
   return stripped || String(place).trim();
 }
 
+function shouldReverseGeocodeDisaster(disaster) {
+  const label = `${disaster?.city || ''} ${disaster?.rawLocation || ''}`.toLowerCase();
+  return !disaster?.province || /philippines area|unknown location/.test(label);
+}
+
+function formatReverseGeocodedLabel(reverseGeocodeResult, fallbackLabel) {
+  if (!reverseGeocodeResult) return fallbackLabel;
+
+  const province = reverseGeocodeResult.province || null;
+  const city = reverseGeocodeResult.city || null;
+
+  if (city && province) {
+    return city.toLowerCase().includes(province.toLowerCase()) ? city : `${city}, ${province}`;
+  }
+
+  if (city) return city;
+  if (province) return province;
+  return fallbackLabel;
+}
+
 function attachProvinceHint(disaster) {
   const matchedProvinces = extractMatchedProvinces(disaster);
   const province = matchedProvinces[0] || null;
@@ -98,6 +129,30 @@ function attachProvinceHint(disaster) {
     city: locationLabel,
     province,
     matchedProvinces: matchedProvinces
+  };
+}
+
+async function enrichDisasterLocation(disaster) {
+  const reverseGeocodeResult = shouldReverseGeocodeDisaster(disaster)
+    ? await reverseGeocodeCoordinates(disaster.lat, disaster.lng)
+    : null;
+
+  const matchedProvinces = extractMatchedProvinces(disaster);
+  const reverseProvince = reverseGeocodeResult?.province || null;
+  const reverseCity = reverseGeocodeResult?.city || null;
+  const province = reverseProvince || matchedProvinces[0] || disaster.province || null;
+  const city = formatReverseGeocodedLabel(reverseGeocodeResult, disaster.city || 'Unknown location');
+  const locationLabel = province && !city.toLowerCase().includes(province.toLowerCase())
+    ? `${city}, ${province}`
+    : city;
+
+  return {
+    ...disaster,
+    city: locationLabel,
+    province,
+    cityName: reverseCity || disaster.city || null,
+    reverseGeocode: reverseGeocodeResult,
+    matchedProvinces: matchedProvinces.length > 0 ? matchedProvinces : (province ? [province] : [])
   };
 }
 
@@ -125,7 +180,148 @@ async function getAlertLogsCollection() {
   return alertLogsCollection;
 }
 
+async function getDisasterCacheCollection() {
+  if (disasterCacheCollection) return disasterCacheCollection;
+  const db = await getDatabase();
+  disasterCacheCollection = db.collection('disaster_cache');
+  await disasterCacheCollection.createIndex({ fetchedAt: -1 });
+  return disasterCacheCollection;
+}
+
+async function getReverseGeocodeCollection() {
+  if (reverseGeocodeCollection) return reverseGeocodeCollection;
+  const db = await getDatabase();
+  reverseGeocodeCollection = db.collection('reverse_geocode_cache');
+  await reverseGeocodeCollection.createIndex({ cacheKey: 1 }, { unique: true });
+  await reverseGeocodeCollection.createIndex({ updatedAt: -1 });
+  return reverseGeocodeCollection;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getCoordinateCacheKey(lat, lng) {
+  return `${Number(lat).toFixed(3)},${Number(lng).toFixed(3)}`;
+}
+
+async function getCachedDisastersPayload() {
+  if (cachedDisastersPayload && cachedDisastersFetchedAt && Date.now() - cachedDisastersFetchedAt < disasterCacheTtlMs) {
+    return cachedDisastersPayload;
+  }
+
+  const collection = await getDisasterCacheCollection();
+  const cached = await collection.findOne({ _id: 'latest' });
+
+  if (cached?.data && cached?.fetchedAt && Date.now() - new Date(cached.fetchedAt).getTime() < disasterCacheTtlMs) {
+    cachedDisastersPayload = cached.data;
+    cachedDisastersFetchedAt = new Date(cached.fetchedAt).getTime();
+    return cachedDisastersPayload;
+  }
+
+  return null;
+}
+
+async function setCachedDisastersPayload(data) {
+  cachedDisastersPayload = data;
+  cachedDisastersFetchedAt = Date.now();
+
+  const collection = await getDisasterCacheCollection();
+  await collection.updateOne(
+    { _id: 'latest' },
+    {
+      $set: {
+        data,
+        fetchedAt: new Date(cachedDisastersFetchedAt)
+      }
+    },
+    { upsert: true }
+  );
+}
+
+async function reverseGeocodeCoordinates(lat, lng) {
+  const cacheKey = getCoordinateCacheKey(lat, lng);
+
+  if (reverseGeocodeMemoryCache.has(cacheKey)) {
+    return reverseGeocodeMemoryCache.get(cacheKey);
+  }
+
+  const collection = await getReverseGeocodeCollection();
+  const cached = await collection.findOne({ cacheKey });
+  if (cached?.result) {
+    reverseGeocodeMemoryCache.set(cacheKey, cached.result);
+    return cached.result;
+  }
+
+  reverseGeocodeQueue = reverseGeocodeQueue.catch(() => null).then(async () => {
+    if (reverseGeocodeMemoryCache.has(cacheKey)) {
+      return reverseGeocodeMemoryCache.get(cacheKey);
+    }
+
+    const queuedCached = await collection.findOne({ cacheKey });
+    if (queuedCached?.result) {
+      reverseGeocodeMemoryCache.set(cacheKey, queuedCached.result);
+      return queuedCached.result;
+    }
+
+    const elapsed = Date.now() - lastReverseGeocodeAt;
+    if (elapsed < reverseGeocodeMinDelayMs) {
+      await sleep(reverseGeocodeMinDelayMs - elapsed);
+    }
+
+    lastReverseGeocodeAt = Date.now();
+
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=10`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': `SHIELD/1.0 (${process.env.NODEMAILER_EMAIL || 'shield-app'})`,
+        'Accept': 'application/json',
+        'Accept-Language': 'en'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Nominatim reverse geocode failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const address = data.address || {};
+
+    const result = {
+      province: address.state || address.state_district || address.region || address.county || null,
+      city: address.city || address.town || address.village || address.municipality || address.hamlet || address.suburb || address.locality || null,
+      displayName: data.display_name || null,
+      source: 'nominatim'
+    };
+
+    reverseGeocodeMemoryCache.set(cacheKey, result);
+    await collection.updateOne(
+      { cacheKey },
+      {
+        $set: {
+          cacheKey,
+          result,
+          updatedAt: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    return result;
+  }).catch((error) => {
+    console.warn('Reverse geocode failed:', error?.message || error);
+    return null;
+  });
+
+  return reverseGeocodeQueue;
+}
+
 async function fetchLiveDisastersData() {
+  const cachedDisasters = await getCachedDisastersPayload();
+  if (cachedDisasters) {
+    return cachedDisasters;
+  }
+
   const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=10';
   const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
   const requestTimeoutMs = 15000;
@@ -155,14 +351,14 @@ async function fetchLiveDisastersData() {
 
   const allDisasters = [];
   if (usgsData.features) {
-    usgsData.features.forEach(quake => {
+    for (const quake of usgsData.features) {
       const mag = quake.properties.mag;
       const severityLevel = mag >= 6.0 ? 'High' : 'Medium';
       const dateObj = new Date(quake.properties.time);
       const rawLocation = quake.properties.place;
       const normalizedLocation = normalizeLocationLabel(rawLocation);
 
-      const normalizedDisaster = attachProvinceHint({
+      const normalizedDisaster = await enrichDisasterLocation(attachProvinceHint({
         id: quake.id,
         type: 'Earthquake',
         title: `Magnitude ${mag}`,
@@ -174,10 +370,10 @@ async function fetchLiveDisastersData() {
         source: 'USGS',
         updatedAt: dateObj.toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
         status: 'Active'
-      });
+      }));
 
       allDisasters.push(normalizedDisaster);
-    });
+    }
   }
 
   if (usgsResult.status === 'rejected') {
@@ -185,7 +381,7 @@ async function fetchLiveDisastersData() {
   }
 
   if (nasaData.events) {
-    nasaData.events.forEach(event => {
+    for (const event of nasaData.events) {
       const latestGeo = event.geometry[event.geometry.length - 1];
 
       let eventType = 'General Disaster';
@@ -199,7 +395,7 @@ async function fetchLiveDisastersData() {
 
       const dateObj = new Date(latestGeo.date);
 
-      const normalizedDisaster = attachProvinceHint({
+      const normalizedDisaster = await enrichDisasterLocation(attachProvinceHint({
         id: event.id,
         type: eventType,
         title: event.title,
@@ -211,15 +407,17 @@ async function fetchLiveDisastersData() {
         source: 'NASA EONET',
         updatedAt: dateObj.toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
         status: 'Active'
-      });
+      }));
 
       allDisasters.push(normalizedDisaster);
-    });
+    }
   }
 
   if (nasaResult.status === 'rejected') {
     console.warn('NASA disaster fetch failed:', nasaResult.reason?.message || nasaResult.reason);
   }
+
+  await setCachedDisastersPayload(allDisasters);
 
   return allDisasters;
 }
