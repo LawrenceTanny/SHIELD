@@ -140,6 +140,15 @@ function weatherCodeToCondition(code) {
   return "Weather";
 }
 
+function formatDisasterLocation(city, province) {
+  const cityText = String(city || "Unknown location").trim();
+  const provinceText = String(province || "").trim();
+
+  if (!provinceText) return cityText;
+  if (cityText.toLowerCase().includes(provinceText.toLowerCase())) return cityText;
+  return `${cityText}, ${provinceText}`;
+}
+
 export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const skeletonRows = [1, 2, 3, 4];
   const [disasters,     setDisasters]     = useState([]);
@@ -430,7 +439,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                     {/* The status dot */}
                     <span className={`status-dot ${d.status.toLowerCase()}`}></span>
                     {/* The city text */}
-                    <p className="di-meta">{d.province ? `${d.city}, ${d.province}` : d.city}</p>
+                    <p className="di-meta">{formatDisasterLocation(d.city, d.province)}</p>
                   </div>
 
                   <div className="di-time-row">
@@ -492,7 +501,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                       {item.title}
                     </p>
                     <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                      {item.province ? `${item.city}, ${item.province}` : item.city} • {item.source}
+                      {formatDisasterLocation(item.city, item.province)} • {item.source}
                     </div>
                   </div>
                 </Popup>

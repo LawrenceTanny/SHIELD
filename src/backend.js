@@ -749,7 +749,8 @@ async function sendAutoAlertsForCurrentDisasters() {
       for (const province of provinces) {
         const alreadySent = await alertLogs.findOne({
           disasterId: disaster.id,
-          province
+          province,
+          source: 'auto-alert'
         });
         if (alreadySent) {
           skippedExisting += 1;
@@ -764,18 +765,18 @@ async function sendAutoAlertsForCurrentDisasters() {
 
         if (recipients.length === 0) {
           skippedNoRecipients += 1;
-          await alertLogs.insertOne({
-            disasterId: disaster.id,
-            province,
-            recipientsCount: 0,
-            createdAt: new Date(),
-            source: 'auto-no-recipients'
-          });
           continue;
         }
 
         const emailList = recipients.map((user) => user.email).filter(Boolean);
         if (emailList.length === 0) continue;
+
+        // If a prior run had no recipients for this disaster/province, clear it so this run can store an auto-alert log.
+        await alertLogs.deleteMany({
+          disasterId: disaster.id,
+          province,
+          source: 'auto-no-recipients'
+        });
 
         const mailOptions = {
           from: `"SHIELD Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
