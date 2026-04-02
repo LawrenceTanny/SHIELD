@@ -1,0 +1,75 @@
+.app-footer {
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  border: 1px solid rgba(217, 217, 217, 0.5);
+  backdrop-filter: blur(8px);
+  background: hsl(from #D9D9D9 h s l / 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  color: #D9D9D9;
+  font-size: 0.75rem;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.app-footer p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* LAPTOP - 1024px to 1439px */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  .app-footer {
+    left: 18px;
+    right: 18px;
+    bottom: 6px;
+    min-height: 38px;
+    font-size: 0.7rem;
+  }
+}
+
+/* TABLET - 768px to 1023px */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .app-footer {
+    left: 14px;
+    right: 14px;
+    bottom: 5px;
+    min-height: 36px;
+    font-size: 0.65rem;
+    border-radius: 40px;
+  }
+}
+
+/* MOBILE LANDSCAPE - 640px to 767px */
+@media (max-width: 767px) and (min-width: 640px) {
+  .app-footer {
+    left: 10px;
+    right: 10px;
+    bottom: 4px;
+    min-height: 34px;
+    font-size: 0.6rem;
+    border-radius: 30px;
+  }
+}
+
+/* MOBILE PORTRAIT - < 640px */
+@media (max-width: 639px) {
+  .app-footer {
+    left: 8px;
+    right: 8px;
+    bottom: 4px;
+    min-height: 32px;
+    font-size: 0.55rem;
+    border-radius: 25px;
+  }
+
+  .app-footer p {
+    opacity: 0.85;
+  }
+}

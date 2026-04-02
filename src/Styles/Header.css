@@ -1,0 +1,488 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+
+:root {
+  --header-h: 70px;
+  --header-bg: #1a1a1a;
+  --bg:       #050c1a;
+  --surface:  #D9D9D9;
+  --border:   #D9D9D9;
+  --accent:   #FF4400;
+  --accent-d: rgba(255,68,0,0.18);
+  --accent-g: rgba(255,68,0,0.55);
+  --ink:      #D9D9D9;
+  --ink2:     #1F1F1F;
+  --muted:    rgba(228,243,255,0.6);
+  --surface2: #1a1a1a;
+}
+
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  font-family: "Geist", sans-serif;
+  color: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+}
+
+#root { height: 100vh; }
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── HEADER ── */
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  padding: 0 20px;
+  height: var(--header-h);
+  border-bottom: 2px solid rgba(255,255,255,0.08);
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  z-index: 3000;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+/* HEADER LEFT - BRAND */
+.header-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.brand-name {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-shadow: 0 0 22px var(--accent-g);
+  flex-shrink: 0;
+}
+
+.brand-sep {
+  display: inline-block;
+  width: 2px;
+  height: 24px;
+  background: var(--accent);
+  margin: 0 8px;
+  flex-shrink: 0;
+}
+
+.brand-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* ── TAB NAVIGATION ── */
+.tab-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  padding: 0 20px;
+  min-width: 0;
+}
+
+.tab-btn {
+  padding: 8px 20px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  position: relative;
+  flex-shrink: 1;
+}
+
+.tab-btn:hover {
+  color: var(--ink);
+  border-color: rgba(255,68,0,0.3);
+  background: rgba(255,68,0,0.08);
+}
+
+.tab-btn.tab-active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-d);
+  box-shadow: 0 0 15px var(--accent-g);
+}
+
+/* ── RIGHT NAV ── */
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.main-header .nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--header-bg);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.main-header .nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-d);
+  box-shadow: 0 0 10px var(--accent-g);
+}
+
+.main-header .nav-btn--on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--header-bg);
+  box-shadow: 0 0 10px var(--accent-g);
+}
+
+.main-header .user-wrap {
+  position: relative;
+}
+
+.main-header .user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 210px;
+  background: var(--header-bg);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 12px;
+  padding: 12px;
+  z-index: 2200;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.55);
+}
+
+.user-hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.main-header .user-dropdown .user-signin-btn,
+.main-header .user-dropdown .user-acct-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,68,0,0.4);
+  background: var(--accent-d);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 130ms;
+}
+
+.main-header .user-dropdown .user-signin-btn:hover,
+.main-header .user-dropdown .user-acct-btn:hover {
+  background: rgba(255,68,0,0.3);
+}
+
+.main-header .user-dropdown .user-acct-btn {
+  margin-top: 6px;
+}
+
+/* ── CONTENT AREA ── */
+.layout-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── SKELETON LOADING ── */
+.loading-skeleton {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--bg);
+}
+
+.skeleton-item {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-header {
+  height: 60px;
+  width: 300px;
+}
+
+.skeleton-large {
+  height: 200px;
+  width: 100%;
+}
+
+.skeleton-medium {
+  height: 120px;
+  width: 100%;
+}
+
+/* ── RESPONSIVE ── */
+
+/* LAPTOP - 1024px to 1439px */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  .main-header {
+    padding: 0 16px;
+    gap: 16px;
+    flex-wrap: nowrap;
+  }
+
+  .brand-name {
+    font-size: 1.3rem;
+  }
+
+  .tab-btn {
+    padding: 7px 16px;
+    font-size: 0.9rem;
+  }
+
+  .main-header .nav-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .topbar-nav {
+    margin-left: auto;
+  }
+}
+
+/* TABLET - 768px to 1023px */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .main-header {
+    padding: 0 14px;
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  .brand-name {
+    font-size: 1.15rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .tab-nav {
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tab-btn {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .main-header .nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .topbar-nav {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+/* MOBILE LANDSCAPE - 640px to 767px */
+@media (max-width: 767px) and (min-width: 640px) {
+  .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 4000;
+    padding: 0 12px;
+    height: var(--header-h);
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .header-left {
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .brand-sep {
+    display: none;
+  }
+
+  .tab-nav {
+    flex: 1;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 10px;
+    min-width: 0;
+  }
+
+  .tab-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 1;
+  }
+
+  .topbar-nav {
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .main-header .nav-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+
+  .main-header .user-dropdown {
+    width: 170px;
+    right: 0;
+  }
+
+  .main-header .user-dropdown .user-signin-btn,
+  .main-header .user-dropdown .user-acct-btn {
+    font-size: 0.78rem;
+    padding: 6px;
+  }
+}
+
+/* MOBILE PORTRAIT - < 640px */
+@media (max-width: 639px) {
+  :root {
+    --header-h: 65px;
+  }
+
+  .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 4000;
+    padding: 0 10px;
+    height: var(--header-h);
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .header-left {
+    flex-shrink: 0;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand-name {
+    font-size: 0.95rem;
+  }
+
+  .brand-sep {
+    display: none;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .tab-nav {
+    flex: 1;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 8px;
+    min-width: 0;
+  }
+
+  .tab-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 1;
+  }
+
+  .topbar-nav {
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .main-header .nav-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.65rem;
+  }
+
+  .main-header .user-dropdown {
+    width: 160px;
+    right: 0;
+  }
+
+  .main-header .user-dropdown .user-signin-btn,
+  .main-header .user-dropdown .user-acct-btn {
+    font-size: 0.72rem;
+    padding: 5px;
+  }
+}

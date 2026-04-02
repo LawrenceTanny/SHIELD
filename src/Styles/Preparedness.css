@@ -1,0 +1,231 @@
+.preparedness container{
+    font-family: 'PP Neue Montreal', sans-serif;
+    padding: 40px 50px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0f1924;
+    border-radius: 15px;
+    color: #ffffff;
+}
+
+body {
+  background-color: #050C1A;
+}
+
+.toolkit-header{
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 40px;
+}
+
+.toolkit-header h1{
+    font-family: 'PP Neue Montreal', sans-serif;
+    font-size: 30 px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    margin: 0;
+    color:  #ffffff;
+}
+
+.toolkit-card h2{
+    font-family: 'PP Neue Montreal', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin: 0 0 25px 0;
+    color: #ffffff;
+}
+
+.toolkit-content{
+    display: grid;
+    min-height: 500px;
+    grid-template-columns: repeat(3, 1fr);
+    gap:25px;
+}
+
+.toolkit-card{
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    background: rgba(75,85,100,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 15px;
+}
+
+.toolkit-card:hover{
+    background: rgba(75,85,100,0.7);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translate(-5px);
+}
+
+.emergency-contacts{
+    min-height: 500px;
+}
+
+.contact-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-list{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.contact-name{
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+    color: #b0bcc4;
+}
+
+.contact-number{
+    font-size: 16px;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+    color: #ffffff;
+}
+
+.actions{
+    min-height: 500px;
+}
+
+.grid-guide{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.item-guide{
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(200,200,200,0.15);
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.item-guide:hover{
+    background: rgba(200,200,200,0.25);
+}
+
+.icon-guide{
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.label-guide{
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+    color: #ffffff;
+}
+
+.description{
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+}
+
+.description p{
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+    color: #a8b8c4;
+}
+
+.gobag{
+    min-height: 500px;
+    justify-content: space-between;
+}
+
+.checklist-items{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.checklist-item{
+    display: flex;
+    font-size: 15px;
+    gap: 10px;
+    align-items: center;
+    color: #b0bcc4;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.checklist-item:hover{
+    color: #ffffff
+}
+
+.checklist-item input[type = "checkbox"]{
+    height: 15px;
+    width: 15px;
+    accent-color: #5ba3d0;
+    cursor: pointer;
+}
+
+.checklist-item span{
+    flex: 1;
+}
+
+.pdf-btn{
+    padding: 10px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: #ffffff;
+    color: #1a2a3a;
+    border: none;
+    border-radius: 25px;
+    align-self: center;
+    margin-top: auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pdf-btn:hover{
+    background: #e8e8e8;
+    transform: scale(1.05);
+}
+
+.pdf-btn:active{
+    transform: scale(1);
+}
+
+@media (max-width: 1024px){
+    .toolkit-content{
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-guide{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+  .toolkit-content {
+    grid-template-columns: 1fr;
+  }
+
+  .toolkit-header h1 {
+    font-size: 24px;
+  }
+
+  .preparedness-container {
+    padding: 24px;
+  }
+}
