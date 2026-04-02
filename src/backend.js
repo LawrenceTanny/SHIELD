@@ -175,7 +175,15 @@ async function getAlertLogsCollection() {
   if (alertLogsCollection) return alertLogsCollection;
   const db = await getDatabase();
   alertLogsCollection = db.collection('alert_logs');
-  await alertLogsCollection.createIndex({ disasterId: 1, province: 1 }, { unique: true });
+  // Migrate old province-level dedupe index to user-level dedupe index.
+  try {
+    await alertLogsCollection.dropIndex('disasterId_1_province_1');
+  } catch (error) {
+    if (error?.codeName !== 'IndexNotFound') {
+      throw error;
+    }
+  }
+  await alertLogsCollection.createIndex({ disasterId: 1, userId: 1, source: 1 }, { unique: true });
   await alertLogsCollection.createIndex({ createdAt: -1 });
   return alertLogsCollection;
 }
@@ -747,16 +755,6 @@ async function sendAutoAlertsForCurrentDisasters() {
       if (provinces.length === 0) continue;
 
       for (const province of provinces) {
-        const alreadySent = await alertLogs.findOne({
-          disasterId: disaster.id,
-          province,
-          source: 'auto-alert'
-        });
-        if (alreadySent) {
-          skippedExisting += 1;
-          continue;
-        }
-
         const provinceRegex = buildProvinceRegex(province);
         const recipients = await users.find({
           accountStatus: 'Active',
@@ -768,15 +766,25 @@ async function sendAutoAlertsForCurrentDisasters() {
           continue;
         }
 
-        const emailList = recipients.map((user) => user.email).filter(Boolean);
+        const unsentRecipients = [];
+        for (const recipient of recipients) {
+          const alreadySentToUser = await alertLogs.findOne({
+            disasterId: disaster.id,
+            userId: recipient._id,
+            source: 'auto-alert'
+          });
+
+          if (alreadySentToUser) {
+            skippedExisting += 1;
+            continue;
+          }
+
+          unsentRecipients.push(recipient);
+        }
+
+        const emailList = unsentRecipients.map((user) => user.email).filter(Boolean);
         if (emailList.length === 0) continue;
 
-        // If a prior run had no recipients for this disaster/province, clear it so this run can store an auto-alert log.
-        await alertLogs.deleteMany({
-          disasterId: disaster.id,
-          province,
-          source: 'auto-no-recipients'
-        });
 
         const mailOptions = {
           from: `"SHIELD Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
@@ -803,13 +811,16 @@ async function sendAutoAlertsForCurrentDisasters() {
         await transporter.sendMail(mailOptions);
         alertsSent += 1;
 
-        await alertLogs.insertOne({
-          disasterId: disaster.id,
-          province,
-          recipientsCount: emailList.length,
-          createdAt: new Date(),
-          source: 'auto-alert'
-        });
+        await alertLogs.insertMany(
+          unsentRecipients.map((recipient) => ({
+            disasterId: disaster.id,
+            province,
+            userId: recipient._id,
+            email: recipient.email,
+            createdAt: new Date(),
+            source: 'auto-alert'
+          }))
+        );
       }
     }
 
