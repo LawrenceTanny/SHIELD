@@ -350,7 +350,7 @@ async function fetchLiveDisastersData() {
   const nasaData = nasaResult.status === 'fulfilled' ? nasaResult.value : null;
 
   const allDisasters = [];
-  if (usgsData.features) {
+  if (usgsData?.features) {
     for (const quake of usgsData.features) {
       const mag = quake.properties.mag;
       const severityLevel = mag >= 6.0 ? 'High' : 'Medium';
@@ -380,7 +380,7 @@ async function fetchLiveDisastersData() {
     console.warn('USGS disaster fetch failed:', usgsResult.reason?.message || usgsResult.reason);
   }
 
-  if (nasaData.events) {
+  if (nasaData?.events) {
     for (const event of nasaData.events) {
       const latestGeo = event.geometry[event.geometry.length - 1];
 
