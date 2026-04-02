@@ -59,12 +59,18 @@ function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function keywordMatchesText(sourceText, keyword) {
+  const normalizedKeyword = String(keyword).trim().replace(/\s+/g, '\\s+');
+  const pattern = new RegExp(`(^|[^a-z0-9])${normalizedKeyword}([^a-z0-9]|$)`, 'i');
+  return pattern.test(sourceText);
+}
+
 function extractMatchedProvinces(disaster) {
   const sourceText = `${disaster?.city || ''} ${disaster?.title || ''}`.toLowerCase();
   const matched = [];
 
   for (const [province, keywords] of Object.entries(PROVINCE_KEYWORDS)) {
-    if (keywords.some((kw) => sourceText.includes(kw))) {
+    if (keywords.some((kw) => keywordMatchesText(sourceText, kw))) {
       matched.push(province);
     }
   }
