@@ -14,7 +14,7 @@ export default function AboutUs() {
         { id: 2, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg" },
         { id: 3, name: "DOST-PAGASA", logo: "API/PAGASA.png" },
         { id: 4, name: "Mediastack", logo: "https://mediastack.com/site_images/mediastack_logo.svg" },
-        { id: 5, name: "API Partner Name", logo: "" },
+        { id: 5, name: "OpenStreetMap Nominatim", logo: "https://nominatim.openstreetmap.org/ui/theme/logo.png" },
     ];
 
     return(
