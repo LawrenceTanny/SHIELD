@@ -17,6 +17,7 @@ let dbInstance;
 let alertLogsCollection;
 let disasterCacheCollection;
 let reverseGeocodeCollection;
+let newsCacheCollection;
 
 let cachedDisastersPayload = null;
 let cachedDisastersFetchedAt = 0;
@@ -220,6 +221,15 @@ async function getReverseGeocodeCollection() {
   await reverseGeocodeCollection.createIndex({ cacheKey: 1 }, { unique: true });
   await reverseGeocodeCollection.createIndex({ updatedAt: -1 });
   return reverseGeocodeCollection;
+}
+
+async function getNewsCacheCollection() {
+  if (newsCacheCollection) return newsCacheCollection;
+  const db = await getDatabase();
+  newsCacheCollection = db.collection('news_cache');
+  await newsCacheCollection.createIndex({ cacheDate: -1 });
+  await newsCacheCollection.createIndex({ lastAttemptDate: -1 });
+  return newsCacheCollection;
 }
 
 function sleep(ms) {
@@ -675,80 +685,177 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 // API PARA SA LATEST NEWS HEHE EWAN KO SA KAGROUP KO BAT SINAMA PERO SIGE NALANG DAGDAG GAWAIN
 let cachedNews = null;
 let lastNewsFetchTime = 0;
+let newsRefreshInFlight = null;
+const NEWS_PAGE_SIZE = Number(process.env.MEDIASTACK_PAGE_SIZE || 100);
+const NEWS_MAX_PAGES = Number(process.env.MEDIASTACK_MAX_PAGES || 20);
+
+function getManilaDateKey(date = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(date);
+}
 
 app.get('/api/news', async (req, res) => {
   try {
-    const apiKey = process.env.MEDIASTACK_API_KEY; 
-    const currentTime = Date.now();
-    const twelveHours = 12 * 60 * 60 * 1000; 
+    const apiKey = process.env.MEDIASTACK_API_KEY;
+    const todayDateKey = getManilaDateKey();
+    const collection = await getNewsCacheCollection();
+    const cachedRecord = await collection.findOne({ _id: 'latest' });
 
-    if (cachedNews && (currentTime - lastNewsFetchTime < twelveHours)) {
-      console.log("Serving news from Backend Cache!");
-      return res.status(200).json(cachedNews);
+    if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+      cachedNews = cachedRecord.data;
+      lastNewsFetchTime = cachedRecord?.fetchedAt ? new Date(cachedRecord.fetchedAt).getTime() : 0;
     }
 
-    console.log("Cache empty. Fetching fresh news...");
-
-    // Working API pero 100 per month lang kaya hardcode muna pang testing.
-    /*
-    if (!apiKey) return res.status(500).json({ message: "News API key missing." });
-    const url = `http://api.mediastack.com/v1/news?access_key=${apiKey}&countries=ph&keywords=typhoon,earthquake,flood,volcano,disaster&limit=5`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    let cleanNews = [];
-    if (data.data) {
-      cleanNews = data.data.map(article => ({
-        title: article.title,
-        description: article.description,
-        url: article.url,
-        source: article.source,
-        image: article.image || "https://via.placeholder.com/150", 
-        publishedAt: new Date(article.published_at).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })
-      }));
-    } else {
-      return res.status(404).json({ message: "No news found." });
+    if (cachedRecord?.cacheDate === todayDateKey && Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+      return res.status(200).json(cachedRecord.data);
     }
-      */
-    const cleanNews = [
-      {
-        title: "Magnitude 6.2 Earthquake Strikes Off the Coast of Mindanao",
-        description: "PHIVOLCS reports a strong tectonic earthquake. No tsunami warning has been issued, but aftershocks are expected in the coming days.",
-        url: "https://www.phivolcs.dost.gov.ph/",
-        source: "Mock News Network",
-        image: "https://via.placeholder.com/150/ff4d6d/ffffff?text=Quake+Alert",
-        publishedAt: new Date().toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })
-      },
-      {
-        title: "Typhoon Basyang Enters PAR, Signal No. 2 Raised in Visayas",
-        description: "PAGASA warns residents of coastal areas to prepare for potential storm surges and heavy rainfall starting tomorrow evening.",
-        url: "https://bagong.pagasa.dost.gov.ph/",
-        source: "Mock Weather Bureau",
-        image: "https://via.placeholder.com/150/0077b6/ffffff?text=Typhoon+Update",
-        publishedAt: new Date(Date.now() - 86400000).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }) // Yesterday
-      },
-      {
-        title: "Mayon Volcano Status Alert Level Raised to 3",
-        description: "Increased seismic activity and crater glow observed. Evacuation of the 6km permanent danger zone is strictly enforced.",
-        url: "https://www.phivolcs.dost.gov.ph/",
-        source: "Mock News Network",
-        image: "https://via.placeholder.com/150/ff9f1c/ffffff?text=Volcano+Alert",
-        publishedAt: new Date(Date.now() - 172800000).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }) // 2 days ago
+
+    if (cachedRecord?.lastAttemptDate === todayDateKey) {
+      if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+        console.log('News API already checked today. Serving existing MongoDB cache.');
+        return res.status(200).json(cachedRecord.data);
       }
-    ];
 
-    cachedNews = cleanNews;
-    lastNewsFetchTime = currentTime;
-
-    res.status(200).json(cachedNews);
-
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    if (cachedNews) {
-      res.status(200).json(cachedNews);
-    } else {
-      res.status(500).json({ message: "Failed to fetch news data." });
+      return res.status(503).json({
+        message: 'News API already checked today and no cache was available. Try again tomorrow.',
+        nextRefreshDate: todayDateKey
+      });
     }
+
+    if (!apiKey) {
+      if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+        console.warn('MEDIASTACK_API_KEY missing. Serving stale cached news.');
+        return res.status(200).json(cachedRecord.data);
+      }
+      return res.status(500).json({ message: 'News API key missing.' });
+    }
+
+    if (!newsRefreshInFlight) {
+      newsRefreshInFlight = (async () => {
+        console.log('News cache date mismatch. Fetching fresh news from Mediastack...');
+
+        const allArticles = [];
+        for (let page = 0; page < NEWS_MAX_PAGES; page += 1) {
+          const offset = page * NEWS_PAGE_SIZE;
+          const url = `http://api.mediastack.com/v1/news?access_key=${apiKey}&countries=ph&keywords=typhoon,earthquake,flood,volcano,disaster&sort=published_desc&limit=${NEWS_PAGE_SIZE}&offset=${offset}`;
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(`Mediastack request failed with status ${response.status}`);
+          }
+
+          const data = await response.json();
+          if (data?.error) {
+            throw new Error(data.error?.message || 'Mediastack returned an error payload');
+          }
+
+          const pageArticles = Array.isArray(data?.data) ? data.data : [];
+          if (pageArticles.length === 0) {
+            break;
+          }
+
+          allArticles.push(...pageArticles);
+          if (pageArticles.length < NEWS_PAGE_SIZE) {
+            break;
+          }
+        }
+
+        const seenKeys = new Set();
+        const mappedNews = allArticles
+          .map((article, index) => {
+            const published = article?.published_at ? new Date(article.published_at) : null;
+            const publishedAtIso = published && !Number.isNaN(published.getTime()) ? published.toISOString() : null;
+            const publishedAtLabel = publishedAtIso
+              ? new Date(publishedAtIso).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })
+              : 'N/A';
+
+            return {
+              id: article?.url || `${article?.title || 'news'}-${index}`,
+              title: article?.title || 'News Update',
+              description: article?.description || article?.snippet || 'No details available.',
+              url: article?.url || '#',
+              source: article?.source || 'Mediastack',
+              image: article?.image || null,
+              publishedAt: publishedAtIso || publishedAtLabel,
+              date: publishedAtLabel
+            };
+          })
+          .filter((item) => item.title)
+          .filter((item) => {
+            const dedupeKey = item.url && item.url !== '#' ? item.url : `${item.title}|${item.publishedAt}`;
+            if (seenKeys.has(dedupeKey)) {
+              return false;
+            }
+            seenKeys.add(dedupeKey);
+            return true;
+          });
+
+        if (mappedNews.length > 0) {
+          cachedNews = mappedNews;
+          lastNewsFetchTime = Date.now();
+
+          await collection.updateOne(
+            { _id: 'latest' },
+            {
+              $set: {
+                data: mappedNews,
+                cacheDate: todayDateKey,
+                lastAttemptDate: todayDateKey,
+                fetchedAt: new Date(),
+                updatedAt: new Date(),
+                source: 'mediastack',
+                itemsCount: mappedNews.length,
+                lastError: null
+              }
+            },
+            { upsert: true }
+          );
+          return;
+        }
+
+        await collection.updateOne(
+          { _id: 'latest' },
+          {
+            $set: {
+              lastAttemptDate: todayDateKey,
+              updatedAt: new Date(),
+              lastError: 'No news found from provider.'
+            }
+          },
+          { upsert: true }
+        );
+
+        throw new Error('No news found from provider.');
+      })().finally(() => {
+        newsRefreshInFlight = null;
+      });
+    }
+
+    await newsRefreshInFlight;
+
+    const latestRecord = await collection.findOne({ _id: 'latest' });
+    if (Array.isArray(latestRecord?.data) && latestRecord.data.length > 0) {
+      return res.status(200).json(latestRecord.data);
+    }
+
+    return res.status(404).json({ message: 'No news found from provider.' });
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    try {
+      const collection = await getNewsCacheCollection();
+      const cachedRecord = await collection.findOne({ _id: 'latest' });
+      if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+        return res.status(200).json(cachedRecord.data);
+      }
+    } catch (cacheReadError) {
+      console.error('News cache fallback read failed:', cacheReadError);
+    }
+
+    return res.status(500).json({ message: 'Failed to fetch news data.' });
   }
 });
 
