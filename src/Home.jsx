@@ -2,12 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import './Styles/Home.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
-const MAX_OLDER_NEWS_CARDS = 10;
+const LATEST_NEWS_LIMIT = 7;
 
 export default function NewsReport() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const carouselRef = useRef(null);
         const [newsItems, setNewsItems] = useState([]);
+    const [disasterAlerts, setDisasterAlerts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
         const [loadError, setLoadError] = useState('');
 
@@ -35,6 +36,7 @@ export default function NewsReport() {
                             publishedAt: item.publishedAt || item.date || null,
                             source: item.source || 'SHIELD',
                             url: item.url || '#',
+                            image: item.image || null,
                         }))
                         .filter((item) => item.title)
                     : [];
@@ -60,17 +62,47 @@ export default function NewsReport() {
         };
     }, []);
 
-    const getManilaDateKey = (value) => {
-        if (!value) return null;
-        const parsed = new Date(value);
-        if (Number.isNaN(parsed.getTime())) return null;
-        return new Intl.DateTimeFormat('en-CA', {
-            timeZone: 'Asia/Manila',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-        }).format(parsed);
-    };
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const fetchDisasters = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/disasters`, {
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch disasters: ${response.status}`);
+                }
+
+                const payload = await response.json();
+                const alerts = Array.isArray(payload)
+                    ? payload
+                        .slice(0, 2)
+                        .map((item, index) => ({
+                            id: item.id || index + 1,
+                            type: item.type || 'Alert',
+                            title: item.title || 'Alert Update',
+                            location: item.city || item.province || 'Philippines',
+                            severity: item.severity || 'Medium',
+                            timestamp: item.updatedAt || new Date().toLocaleDateString('en-PH'),
+                        }))
+                    : [];
+
+                setDisasterAlerts(alerts);
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.warn('Failed to fetch disaster alerts:', error);
+                }
+            }
+        };
+
+        fetchDisasters();
+
+        return () => {
+            controller.abort();
+        };
+    }, []);
 
     const sortedNews = [...newsItems].sort((a, b) => {
         const aTime = new Date(a.publishedAt || a.date || 0).getTime();
@@ -78,26 +110,8 @@ export default function NewsReport() {
         return bTime - aTime;
     });
 
-    const todayManilaKey = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Asia/Manila',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(new Date());
-
-    const todaysNews = sortedNews.filter((item) => getManilaDateKey(item.publishedAt || item.date) === todayManilaKey);
-    const olderNews = sortedNews.filter((item) => getManilaDateKey(item.publishedAt || item.date) !== todayManilaKey);
-
-    const latestNews = todaysNews.length > 0 ? todaysNews : [];
-    const bottomNewsCards = olderNews.slice(0, MAX_OLDER_NEWS_CARDS);
-
-    const socialFeedSource = latestNews.length > 0 ? latestNews : sortedNews;
-    const socialMediaFeed = socialFeedSource.slice(0, 2).map((item, index) => ({
-        id: item.id || index + 1,
-        source: item.source || 'SHIELD',
-        content: item.description,
-        timestamp: item.date,
-    }));
+    const latestNews = sortedNews.slice(0, LATEST_NEWS_LIMIT);
+    const bottomNewsCards = sortedNews.slice(LATEST_NEWS_LIMIT);
 
     useEffect(() => {
         if (currentSlide >= latestNews.length) {
@@ -179,11 +193,18 @@ export default function NewsReport() {
                         href={latestNews[currentSlide]?.url || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
+                        style={{
+                            backgroundImage: latestNews[currentSlide]?.image
+                                ? `url('${latestNews[currentSlide].image}')`
+                                : 'none',
+                        }}
                     >
-                        <h3>{latestNews[currentSlide]?.title}</h3>
-                        <p>{latestNews[currentSlide]?.description}</p>
-                        <span className="news-date">{latestNews[currentSlide]?.date}</span>
-                        <span className="news-read-more">Read full article</span>
+                        <div className="news-card-overlay">
+                            <h3>{latestNews[currentSlide]?.title}</h3>
+                            <p>{latestNews[currentSlide]?.description}</p>
+                            <span className="news-date">{latestNews[currentSlide]?.date}</span>
+                            <span className="news-read-more">Read full article</span>
+                        </div>
                     </a>
                 )}
             </div>
@@ -208,7 +229,7 @@ export default function NewsReport() {
 
         <div className="social-section">
             <div className="section-header">
-                <h2>Social Media Feed</h2>
+                <h2>Active Alerts</h2>
             </div>
 
             <div className="social-feed-container">
@@ -220,14 +241,27 @@ export default function NewsReport() {
                             <div className="skeleton-line skeleton-date" />
                         </div>
                     ))
+                ) : disasterAlerts.length === 0 ? (
+                    <div className="social-feed-item">
+                        <h4>No Active Alerts</h4>
+                        <p>Currently no active disaster alerts. Continue monitoring for updates.</p>
+                    </div>
                 ) : (
-                    socialMediaFeed.map((item) => (
-                        <div key={item.id} className="social-feed-item">
-                            <h4>{item.source}</h4>
-                                <p>{item.content}</p>
-                                    <span className="feed-timestamp">{item.timestamp}</span>
+                    disasterAlerts.map((alert) => (
+                        <div key={alert.id} className="social-feed-item alert-item">
+                            <div className="alert-header">
+                                <h4>{alert.type}</h4>
+                                <span className={`severity-badge severity-${alert.severity.toLowerCase()}`}>
+                                    {alert.severity}
+                                </span>
+                            </div>
+                            <p className="alert-title">{alert.title}</p>
+                            <div className="alert-meta">
+                                <span className="alert-location">📍 {alert.location}</span>
+                                <span className="alert-timestamp">{alert.timestamp}</span>
+                            </div>
                         </div>
-                        ))
+                    ))
                 )}
             </div>
         </div>
@@ -236,7 +270,7 @@ export default function NewsReport() {
         <div className="bottom-news-section">
             <div className="news-grid">
                 {isLoading ? (
-                    Array.from({ length: MAX_OLDER_NEWS_CARDS }).map((_, index) => (
+                    Array.from({ length: LATEST_NEWS_LIMIT }).map((_, index) => (
                         <div key={index} className="news-item-card news-skeleton-card">
                             <div className="skeleton-line skeleton-title" />
                             <div className="skeleton-line skeleton-text" />
@@ -256,9 +290,18 @@ export default function NewsReport() {
                             href={item.url || '#'}
                             target="_blank"
                             rel="noopener noreferrer"
+                            style={{
+                                backgroundImage: item.image
+                                    ? `linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%), url('${item.image}')`
+                                    : 'linear-gradient(135deg, rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%)',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                            }}
                         >
-                            <h3>{item.title}</h3>
-                            <p>{item.description}</p>
+                            <div className="news-item-overlay">
+                                <h3>{item.title}</h3>
+                                <p>{item.description}</p>
+                            </div>
                         </a>
                     ))
                 )}
