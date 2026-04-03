@@ -11,13 +11,33 @@ dotenv.config();
 const app = express();
 
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const CLIENT_ORIGINS = process.env.CLIENT_ORIGINS || '';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SESSION_COOKIE_SAMESITE = process.env.SESSION_COOKIE_SAMESITE || (IS_PRODUCTION ? 'none' : 'lax');
 const SESSION_COOKIE_SECURE = String(process.env.SESSION_COOKIE_SECURE || (IS_PRODUCTION ? 'true' : 'false')) === 'true';
 
+const allowedOrigins = new Set(
+  [
+    CLIENT_ORIGIN,
+    ...CLIENT_ORIGINS.split(',').map((item) => item.trim()).filter(Boolean),
+    'http://localhost:5173',
+    'https://shield.lawrencetan1104.workers.dev'
+  ].filter(Boolean)
+);
+
 app.set('trust proxy', 1);
 app.use(cors({
-  origin: CLIENT_ORIGIN,
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true
 })); 
 app.use(express.json()); 
