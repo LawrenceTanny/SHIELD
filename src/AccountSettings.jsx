@@ -41,6 +41,8 @@ export default function AccountSettings({ onClose }) {
           <button className="as-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
+        <hr className="hr"></hr>
+
         <div className="as-body">
 
           {/* Profile Photo */}
@@ -70,6 +72,8 @@ export default function AccountSettings({ onClose }) {
             </div>
           </section>
 
+          <hr className="hr"></hr>
+
           {/* Profile Info */}
           <section className="as-section">
             <h3 className="as-section-title">Profile</h3>
@@ -87,6 +91,8 @@ export default function AccountSettings({ onClose }) {
               <input type="email" value={email} readOnly className="as-input-readonly" />
             </label>
           </section>
+
+          <hr className="hr"></hr>
 
           {/* Email Preferences */}
           <section className="as-section">
@@ -108,6 +114,8 @@ export default function AccountSettings({ onClose }) {
               <span>Subscribe to SHIELD newsletter</span>
             </label>
           </section>
+
+          <hr className="hr"></hr>
 
           {/* Change Password */}
           <section className="as-section">
@@ -145,6 +153,8 @@ export default function AccountSettings({ onClose }) {
           </section>
 
         </div>
+
+        <hr className="hr"></hr>
 
         {/* Footer */}
         <div className="as-footer">

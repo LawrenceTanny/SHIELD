@@ -193,9 +193,9 @@ body {
   bottom: calc(var(--footer-h) + 15px);
   width: var(--panel-w);
   border-radius: 28px;
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  background: hsl(from var(--surface) h s l /0.2);
+  border: 2px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(166deg, #20202000 0%, #5252522d 100%);
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   overflow: hidden;
   z-index: 900;
@@ -276,8 +276,6 @@ body {
   transition: background 0.3s ease, box-shadow 0.3s ease;
   will-change: transform, opacity;
 }
-
-
 
 .danger-item:hover {
   transform: translateY(-2px);
@@ -543,9 +541,9 @@ body {
   
   width: 320px;
   border-radius: 28px;
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  background: hsl(from var(--surface) h s l /0.2);
+  border: 2px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(166deg, #20202000 0%, #5252522d 100%);
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 
   transform: translateX(calc(100% + 40px)); 
@@ -674,12 +672,12 @@ body {
 
 .filter-list {
   background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 4px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .filter-item {
