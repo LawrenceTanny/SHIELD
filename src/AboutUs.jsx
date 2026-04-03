@@ -13,7 +13,7 @@ export default function AboutUs() {
         { id: 1, name: "NASA (EONET API)", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" },
         { id: 2, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg" },
         { id: 3, name: "OpenWeather", logo: "https://openweathermap.org/_next/image?url=%2Fpayload%2Fapi%2Fmedia%2Ffile%2Flogo_white.png&w=128&q=75" },
-        { id: 4, name: "Mediastack", logo: "https://mediastack.com/site_images/mediastack_logo.svg" },
+        { id: 4, name: "GNews", logo: "https://gnews.io/build/assets/logo-black-CGTmaMaU.svg" },
         { id: 5, name: "OpenStreetMap Nominatim", logo: "https://nominatim.openstreetmap.org/ui/theme/logo.png" },
         { id: 6, name: "PAGASA", logo: "/API/PAGASA.png" },
     ];
