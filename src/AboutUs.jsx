@@ -26,8 +26,15 @@ export default function AboutUs() {
 
                 <section className="card-grid">
                     <div className="info-card large-card vision-card">
-                        <h2>Our Vision</h2>
-                        <p>Empowering communities through real-time hazard information and emergency response coordination.</p>
+                        <h2>VISION</h2>
+                        <p>
+                            To empower communities and emergency responders with a high-precision, real-time intelligence hub that transforms complex environmental data into actionable insights, ensuring rapid response and minimizing the impact of natural disasters through seamless monitoring and instant alert systems.
+                        </p>
+
+                        <h2>MISSION</h2>
+                        <p>
+                            To provide reliable, high-speed data integration and advanced visualization tools that bridge the gap between complex environmental monitoring and effective emergency management, saving lives through technological excellence.                       
+                        </p>
                     </div>
 
                     <div className="info-card large-card partners-card">
