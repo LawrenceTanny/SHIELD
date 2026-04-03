@@ -1,14 +1,45 @@
 import express from 'express';
 import cors from 'cors';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 dotenv.config();
 const app = express();
-app.use(cors()); 
+
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const SESSION_COOKIE_SAMESITE = process.env.SESSION_COOKIE_SAMESITE || (IS_PRODUCTION ? 'none' : 'lax');
+const SESSION_COOKIE_SECURE = String(process.env.SESSION_COOKIE_SECURE || (IS_PRODUCTION ? 'true' : 'false')) === 'true';
+
+app.set('trust proxy', 1);
+app.use(cors({
+  origin: CLIENT_ORIGIN,
+  credentials: true
+})); 
 app.use(express.json()); 
+
+app.use(session({
+  name: 'shield.sid',
+  secret: process.env.SESSION_SECRET || 'dev-insecure-session-secret-change-me',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    dbName: 'shield_db',
+    collectionName: 'sessions',
+    ttl: 60 * 60 * 24 * 7
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: SESSION_COOKIE_SECURE,
+    sameSite: SESSION_COOKIE_SAMESITE,
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
+}));
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -640,7 +671,45 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-//GET method, GETS DATAS FROM DATABASE
+function toPublicUser(userDoc) {
+  return {
+    id: userDoc?._id ? String(userDoc._id) : null,
+    name: userDoc?.name || '',
+    email: userDoc?.email || '',
+    province: userDoc?.location?.province || '',
+    city: userDoc?.location?.city || '',
+    accountStatus: userDoc?.accountStatus || 'Active',
+    preferences: {
+      receiveDisasterAlerts: userDoc?.preferences?.receiveDisasterAlerts !== false,
+      subscribeNewsletter: userDoc?.preferences?.subscribeNewsletter === true
+    }
+  };
+}
+
+async function getAuthenticatedUser(req) {
+  const userId = req?.session?.userId;
+  if (!userId) return null;
+
+  if (!ObjectId.isValid(userId)) return null;
+
+  const usersCollection = await getUsersCollection();
+  return usersCollection.findOne({ _id: new ObjectId(userId) });
+}
+
+async function requireAuth(req, res, next) {
+  try {
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      return res.status(401).json({ message: 'Authentication required.' });
+    }
+    req.authUser = user;
+    return next();
+  } catch (error) {
+    console.error('Auth middleware failed:', error);
+    return res.status(500).json({ message: 'Authentication check failed.' });
+  }
+}
+
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -659,18 +728,12 @@ app.post('/api/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Incorrect password. Please try again." });
     }
+
+    req.session.userId = String(user._id);
+
     res.status(200).json({ 
       message: "Login successful!", 
-      user: {
-        name: user.name,
-        email: user.email,
-        province: user.location.province,
-        city: user.location.city,
-        preferences: {
-          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
-          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
-        }
-      }
+      user: toPublicUser(user)
     });
 
   } catch (error) {
@@ -679,44 +742,25 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.get('/api/account', async (req, res) => {
+app.post('/api/logout', (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.error('Logout failed:', error);
+      return res.status(500).json({ message: 'Failed to log out.' });
+    }
+    res.clearCookie('shield.sid');
+    return res.status(200).json({ message: 'Logged out successfully.' });
+  });
+});
+
+app.get('/api/auth/me', requireAuth, async (req, res) => {
+  return res.status(200).json({ user: toPublicUser(req.authUser) });
+});
+
+app.get('/api/account', requireAuth, async (req, res) => {
   try {
-    const normalizedEmail = String(req.query.email || '').trim().toLowerCase();
-    if (!normalizedEmail) {
-      return res.status(400).json({ message: 'Email is required.' });
-    }
-
-    const usersCollection = await getUsersCollection();
-    const user = await usersCollection.findOne(
-      { email: normalizedEmail },
-      {
-        projection: {
-          _id: 0,
-          name: 1,
-          email: 1,
-          location: 1,
-          preferences: 1,
-          accountStatus: 1
-        }
-      }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
     return res.status(200).json({
-      user: {
-        name: user.name,
-        email: user.email,
-        province: user?.location?.province || '',
-        city: user?.location?.city || '',
-        accountStatus: user.accountStatus || 'Active',
-        preferences: {
-          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
-          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
-        }
-      }
+      user: toPublicUser(req.authUser)
     });
   } catch (error) {
     console.error('Error fetching account profile:', error);
@@ -724,14 +768,9 @@ app.get('/api/account', async (req, res) => {
   }
 });
 
-app.patch('/api/account', async (req, res) => {
+app.patch('/api/account', requireAuth, async (req, res) => {
   try {
-    const { email, name, preferences } = req.body || {};
-    const normalizedEmail = String(email || '').trim().toLowerCase();
-
-    if (!normalizedEmail) {
-      return res.status(400).json({ message: 'Email is required.' });
-    }
+    const { name, preferences } = req.body || {};
 
     const updates = {};
     if (typeof name === 'string' && name.trim()) {
@@ -755,7 +794,7 @@ app.patch('/api/account', async (req, res) => {
 
     const usersCollection = await getUsersCollection();
     const updateResult = await usersCollection.updateOne(
-      { email: normalizedEmail },
+      { _id: req.authUser._id },
       { $set: updates }
     );
 
@@ -764,7 +803,7 @@ app.patch('/api/account', async (req, res) => {
     }
 
     const user = await usersCollection.findOne(
-      { email: normalizedEmail },
+      { _id: req.authUser._id },
       {
         projection: {
           _id: 0,
@@ -779,17 +818,7 @@ app.patch('/api/account', async (req, res) => {
 
     return res.status(200).json({
       message: 'Account updated successfully.',
-      user: {
-        name: user?.name || '',
-        email: user?.email || normalizedEmail,
-        province: user?.location?.province || '',
-        city: user?.location?.city || '',
-        accountStatus: user?.accountStatus || 'Active',
-        preferences: {
-          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
-          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
-        }
-      }
+      user: toPublicUser(user)
     });
   } catch (error) {
     console.error('Error updating account profile:', error);
