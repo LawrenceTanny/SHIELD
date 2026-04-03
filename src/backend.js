@@ -699,26 +699,31 @@ function getManilaDateKey(date = new Date()) {
 
 app.get('/api/news', async (req, res) => {
   try {
+    const forceRefresh = req.query.force === 'true';
     const apiKey = process.env.GNEWS_API_KEY;
     const todayDateKey = getManilaDateKey();
     const collection = await getNewsCacheCollection();
     const cachedRecord = await collection.findOne({ _id: 'latest' });
+
+    console.log('[NEWS API] Request received. forceRefresh:', forceRefresh, 'apiKey exists:', !!apiKey);
 
     if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
       cachedNews = cachedRecord.data;
       lastNewsFetchTime = cachedRecord?.fetchedAt ? new Date(cachedRecord.fetchedAt).getTime() : 0;
     }
 
-    if (cachedRecord?.cacheDate === todayDateKey && Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+    if (!forceRefresh && cachedRecord?.cacheDate === todayDateKey && Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+      console.log('[NEWS API] Returning cached data (today).');
       return res.status(200).json(cachedRecord.data);
     }
 
-    if (cachedRecord?.lastAttemptDate === todayDateKey) {
+    if (!forceRefresh && cachedRecord?.lastAttemptDate === todayDateKey) {
       if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
-        console.log('News API already checked today. Serving existing MongoDB cache.');
+        console.log('[NEWS API] Returning cached data (already checked today).');
         return res.status(200).json(cachedRecord.data);
       }
 
+      console.log('[NEWS API] Already attempted today with no results.');
       return res.status(503).json({
         message: 'News API already checked today and no cache was available. Try again tomorrow.',
         nextRefreshDate: todayDateKey
@@ -726,45 +731,48 @@ app.get('/api/news', async (req, res) => {
     }
 
     if (!apiKey) {
+      console.warn('[NEWS API] GNEWS_API_KEY missing from environment!');
       if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
-        console.warn('GNEWS_API_KEY missing. Serving stale cached news.');
+        console.warn('[NEWS API] Serving stale cached news (no API key).');
         return res.status(200).json(cachedRecord.data);
       }
-      return res.status(500).json({ message: 'News API key missing.' });
+      return res.status(500).json({ message: 'News API key missing. Set GNEWS_API_KEY environment variable.' });
     }
 
     if (!newsRefreshInFlight) {
       newsRefreshInFlight = (async () => {
-        console.log('News cache date mismatch. Fetching fresh news from GNews...');
+        console.log('[NEWS API] Starting fresh fetch from GNews...');
 
         // A strict, Google-style search query targeting ONLY PH disasters
         const query = encodeURIComponent("Philippines AND (typhoon OR earthquake OR flood OR volcano OR PAGASA OR Phivolcs)");
+        const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=100&sortby=publishedAt&apikey=${apiKey}`;
+
+        console.log('[NEWS API] GNews URL:', url.replace(apiKey, '***API_KEY***'));
 
         const allArticles = [];
-        for (let page = 0; page < NEWS_MAX_PAGES; page += 1) {
-          const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=100&sortby=publishedAt&apikey=${apiKey}`;
-          const response = await fetch(url);
+        const response = await fetch(url);
 
-          if (!response.ok) {
-            throw new Error(`GNews request failed with status ${response.status}`);
-          }
+        console.log('[NEWS API] GNews response status:', response.status);
 
-          const data = await response.json();
-          if (data?.error) {
-            throw new Error(data.error?.message || 'GNews returned an error payload');
-          }
-
-          const pageArticles = Array.isArray(data?.articles) ? data.articles : [];
-          if (pageArticles.length === 0) {
-            break;
-          }
-
-          allArticles.push(...pageArticles);
-
-          // GNews doesn't support pagination via offset/page params in the same way
-          // so we just make one request and take what we get
-          break;
+        if (!response.ok) {
+          throw new Error(`GNews request failed with status ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log('[NEWS API] GNews response data keys:', Object.keys(data || {}));
+
+        if (data?.error) {
+          throw new Error(data.error?.message || 'GNews returned an error payload');
+        }
+
+        const pageArticles = Array.isArray(data?.articles) ? data.articles : [];
+        console.log('[NEWS API] Articles fetched:', pageArticles.length);
+        
+        if (pageArticles.length === 0) {
+          console.warn('[NEWS API] GNews returned 0 articles.');
+        }
+
+        allArticles.push(...pageArticles);
 
         const seenKeys = new Set();
         const mappedNews = allArticles
@@ -796,6 +804,8 @@ app.get('/api/news', async (req, res) => {
             return true;
           });
 
+        console.log('[NEWS API] Mapped and deduplicated articles:', mappedNews.length);
+
         if (mappedNews.length > 0) {
           cachedNews = mappedNews;
           lastNewsFetchTime = Date.now();
@@ -816,9 +826,11 @@ app.get('/api/news', async (req, res) => {
             },
             { upsert: true }
           );
+          console.log('[NEWS API] Cache updated successfully with', mappedNews.length, 'articles.');
           return;
         }
 
+        console.warn('[NEWS API] No articles after mapping/deduplication.');
         await collection.updateOne(
           { _id: 'latest' },
           {
@@ -841,23 +853,72 @@ app.get('/api/news', async (req, res) => {
 
     const latestRecord = await collection.findOne({ _id: 'latest' });
     if (Array.isArray(latestRecord?.data) && latestRecord.data.length > 0) {
+      console.log('[NEWS API] Returning', latestRecord.data.length, 'articles after fetch.');
       return res.status(200).json(latestRecord.data);
     }
 
+    console.warn('[NEWS API] No data available after fetch attempt.');
     return res.status(404).json({ message: 'No news found from provider.' });
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error('[NEWS API] Error fetching news:', error?.message || error);
     try {
       const collection = await getNewsCacheCollection();
       const cachedRecord = await collection.findOne({ _id: 'latest' });
       if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
+        console.log('[NEWS API] Returning fallback cached data after error.');
         return res.status(200).json(cachedRecord.data);
       }
     } catch (cacheReadError) {
-      console.error('News cache fallback read failed:', cacheReadError);
+      console.error('[NEWS API] News cache fallback read failed:', cacheReadError?.message || cacheReadError);
     }
 
     return res.status(500).json({ message: 'Failed to fetch news data.' });
+  }
+});
+
+// Admin endpoint to view cache status
+app.get('/api/admin/news/status', async (req, res) => {
+  try {
+    const collection = await getNewsCacheCollection();
+    const cachedRecord = await collection.findOne({ _id: 'latest' });
+    const todayDateKey = getManilaDateKey();
+
+    res.status(200).json({
+      apiKeyConfigured: !!process.env.GNEWS_API_KEY,
+      todayDateKey,
+      cacheExists: !!cachedRecord,
+      cache: cachedRecord ? {
+        cacheDate: cachedRecord.cacheDate,
+        isTodayCache: cachedRecord.cacheDate === todayDateKey,
+        lastAttemptDate: cachedRecord.lastAttemptDate,
+        alreadyAttemptedToday: cachedRecord.lastAttemptDate === todayDateKey,
+        fetchedAt: cachedRecord.fetchedAt,
+        itemsCount: cachedRecord.itemsCount,
+        source: cachedRecord.source,
+        lastError: cachedRecord.lastError,
+        dataLength: Array.isArray(cachedRecord.data) ? cachedRecord.data.length : 0
+      } : null,
+      newsRefreshInFlightActive: !!newsRefreshInFlight
+    });
+  } catch (error) {
+    console.error('[NEWS ADMIN] Status check failed:', error);
+    res.status(500).json({ message: 'Failed to get news cache status.' });
+  }
+});
+
+// Admin endpoint to reset/clear cache and force fresh fetch
+app.post('/api/admin/news/reset', async (req, res) => {
+  try {
+    const collection = await getNewsCacheCollection();
+    await collection.deleteOne({ _id: 'latest' });
+    cachedNews = null;
+    lastNewsFetchTime = 0;
+    
+    console.log('[NEWS ADMIN] Cache cleared. Next fetch will be fresh.');
+    res.status(200).json({ message: 'News cache cleared. Next /api/news call will fetch fresh data.' });
+  } catch (error) {
+    console.error('[NEWS ADMIN] Reset failed:', error);
+    res.status(500).json({ message: 'Failed to reset news cache.' });
   }
 });
 
