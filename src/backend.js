@@ -621,6 +621,10 @@ app.post('/api/signup', async (req, res) => {
         province: province,
         city: city
       },
+      preferences: {
+        receiveDisasterAlerts: true,
+        subscribeNewsletter: false
+      },
       accountStatus: 'Active',
       signupDate: new Date()
     });
@@ -661,13 +665,135 @@ app.post('/api/login', async (req, res) => {
         name: user.name,
         email: user.email,
         province: user.location.province,
-        city: user.location.city
+        city: user.location.city,
+        preferences: {
+          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
+          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
+        }
       }
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error during login." });
+  }
+});
+
+app.get('/api/account', async (req, res) => {
+  try {
+    const normalizedEmail = String(req.query.email || '').trim().toLowerCase();
+    if (!normalizedEmail) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    const usersCollection = await getUsersCollection();
+    const user = await usersCollection.findOne(
+      { email: normalizedEmail },
+      {
+        projection: {
+          _id: 0,
+          name: 1,
+          email: 1,
+          location: 1,
+          preferences: 1,
+          accountStatus: 1
+        }
+      }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    return res.status(200).json({
+      user: {
+        name: user.name,
+        email: user.email,
+        province: user?.location?.province || '',
+        city: user?.location?.city || '',
+        accountStatus: user.accountStatus || 'Active',
+        preferences: {
+          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
+          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching account profile:', error);
+    return res.status(500).json({ message: 'Failed to fetch account profile.' });
+  }
+});
+
+app.patch('/api/account', async (req, res) => {
+  try {
+    const { email, name, preferences } = req.body || {};
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    const updates = {};
+    if (typeof name === 'string' && name.trim()) {
+      updates.name = name.trim();
+    }
+
+    if (preferences && typeof preferences === 'object') {
+      if (typeof preferences.receiveDisasterAlerts === 'boolean') {
+        updates['preferences.receiveDisasterAlerts'] = preferences.receiveDisasterAlerts;
+      }
+      if (typeof preferences.subscribeNewsletter === 'boolean') {
+        updates['preferences.subscribeNewsletter'] = preferences.subscribeNewsletter;
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No valid fields to update.' });
+    }
+
+    updates.updatedAt = new Date();
+
+    const usersCollection = await getUsersCollection();
+    const updateResult = await usersCollection.updateOne(
+      { email: normalizedEmail },
+      { $set: updates }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const user = await usersCollection.findOne(
+      { email: normalizedEmail },
+      {
+        projection: {
+          _id: 0,
+          name: 1,
+          email: 1,
+          location: 1,
+          preferences: 1,
+          accountStatus: 1
+        }
+      }
+    );
+
+    return res.status(200).json({
+      message: 'Account updated successfully.',
+      user: {
+        name: user?.name || '',
+        email: user?.email || normalizedEmail,
+        province: user?.location?.province || '',
+        city: user?.location?.city || '',
+        accountStatus: user?.accountStatus || 'Active',
+        preferences: {
+          receiveDisasterAlerts: user?.preferences?.receiveDisasterAlerts !== false,
+          subscribeNewsletter: user?.preferences?.subscribeNewsletter === true
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating account profile:', error);
+    return res.status(500).json({ message: 'Failed to update account profile.' });
   }
 });
 
@@ -1049,7 +1175,9 @@ app.post('/api/admin/alert', async (req, res) => {
     }
     const usersCollection = await getUsersCollection();
     const affectedUsers = await usersCollection.find({ 
-      "location.province": targetProvince 
+      "location.province": targetProvince,
+      accountStatus: 'Active',
+      "preferences.receiveDisasterAlerts": { $ne: false }
     }).toArray();
     if (affectedUsers.length === 0) {
       return res.status(404).json({ message: `No users registered in ${targetProvince}.` });
@@ -1124,6 +1252,7 @@ async function sendAutoAlertsForCurrentDisasters() {
         const provinceRegex = buildProvinceRegex(province);
         const recipients = await users.find({
           accountStatus: 'Active',
+          'preferences.receiveDisasterAlerts': { $ne: false },
           'location.province': { $regex: provinceRegex }
         }).toArray();
 
