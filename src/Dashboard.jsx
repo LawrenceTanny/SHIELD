@@ -14,10 +14,7 @@ const FALLBACK_DISASTERS = [
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
-const OWM_MAPS_API_KEY = String(import.meta.env.VITE_OPENWEATHERMAP_API_KEY || "").trim();
-const OWM_CLOUDS_TILE_URL = OWM_MAPS_API_KEY
-  ? `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_MAPS_API_KEY}`
-  : "";
+const OWM_CLOUDS_TILE_URL = `${API_BASE_URL}/api/weather/clouds-tile/{z}/{x}/{y}.png`;
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
@@ -228,6 +225,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [weatherError, setWeatherError] = useState("");
   const [focusedId,     setFocusedId]     = useState(null);
   const [showCloudLayer, setShowCloudLayer] = useState(false);
+  const [cloudLayerAvailable, setCloudLayerAvailable] = useState(false);
   const [selType,       setSelType]       = useState("All");
   const [selSev,        setSelSev]        = useState("All");
 
@@ -343,6 +341,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         const payload = await response.json();
         const stations = normalizeWeatherStations(payload);
         setWeatherStations(stations);
+        setCloudLayerAvailable(Boolean(payload?.cloudsLayerAvailable));
 
         if (stations.length === 0) {
           setWeatherError("No weather data available.");
@@ -378,6 +377,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           } catch (backupError) {
             if (backupError.name !== "AbortError") {
               setWeatherError("Weather unavailable");
+              setCloudLayerAvailable(false);
             }
           }
         }
@@ -521,10 +521,10 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           <div className="weather-stack">
             <button
               type="button"
-              className={`map-layer-toggle${showCloudLayer && OWM_MAPS_API_KEY ? " layer-on" : ""}`}
+              className={`map-layer-toggle${showCloudLayer && cloudLayerAvailable ? " layer-on" : ""}`}
               onClick={() => setShowCloudLayer((prev) => !prev)}
-              disabled={!OWM_MAPS_API_KEY}
-              title={OWM_MAPS_API_KEY ? "Toggle cloud map overlay" : "Set VITE_OPENWEATHERMAP_API_KEY to enable cloud overlay"}
+              disabled={!cloudLayerAvailable}
+              title={cloudLayerAvailable ? "Toggle cloud map overlay" : "Cloud overlay unavailable (check backend OPENWEATHERMAP_API_KEY)"}
             >
               {showCloudLayer ? "Clouds: ON" : "Clouds: OFF"}
             </button>
@@ -562,7 +562,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
-            {showCloudLayer && OWM_MAPS_API_KEY && (
+            {showCloudLayer && cloudLayerAvailable && (
               <TileLayer
                 attribution='&copy; OpenWeather'
                 url={OWM_CLOUDS_TILE_URL}

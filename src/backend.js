@@ -1197,12 +1197,41 @@ app.get('/api/weather', async (req, res) => {
       source: 'openweathermap-ph',
       fetchedAt: new Date().toISOString(),
       stations,
-      coverage: 'philippines'
+      coverage: 'philippines',
+      cloudsLayerAvailable: Boolean(apiKey)
     });
 
   } catch (error) {
     console.error("Error fetching weather:", error);
     res.status(500).json({ message: "Failed to fetch local weather." });
+  }
+});
+
+// Para sa map layer, dun sa clouds thingy haha
+app.get('/api/weather/clouds-tile/:z/:x/:y.png', async (req, res) => {
+  try {
+    const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+    if (!apiKey) {
+      return res.status(503).json({ message: 'Cloud layer unavailable. Missing OPENWEATHERMAP_API_KEY.' });
+    }
+
+    const { z, x, y } = req.params;
+    const tileUrl = `https://tile.openweathermap.org/map/clouds_new/${z}/${x}/${y}.png?appid=${apiKey}`;
+    const response = await fetch(tileUrl);
+
+    if (!response.ok) {
+      return res.status(response.status).json({ message: 'Failed to fetch cloud tile from provider.' });
+    }
+
+    const contentType = response.headers.get('content-type') || 'image/png';
+    const tileBuffer = Buffer.from(await response.arrayBuffer());
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.status(200).send(tileBuffer);
+  } catch (error) {
+    console.error('Error fetching cloud tile:', error);
+    return res.status(500).json({ message: 'Failed to fetch cloud tile.' });
   }
 });
 
