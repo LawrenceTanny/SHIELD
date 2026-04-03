@@ -12,7 +12,7 @@ export default function AboutUs() {
     const apiPartners = [
         { id: 1, name: "NASA (EONET API)", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" },
         { id: 2, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg" },
-        { id: 3, name: "DOST-PAGASA", logo: "API/PAGASA.png" },
+        { id: 3, name: "OpenWeather", logo: "https://openweathermap.org/_next/image?url=%2Fpayload%2Fapi%2Fmedia%2Ffile%2Flogo_white.png&w=128&q=75" },
         { id: 4, name: "Mediastack", logo: "https://mediastack.com/site_images/mediastack_logo.svg" },
         { id: 5, name: "OpenStreetMap Nominatim", logo: "https://nominatim.openstreetmap.org/ui/theme/logo.png" },
     ];
@@ -24,16 +24,16 @@ export default function AboutUs() {
                 <div className="divider"></div>
 
                 <section className="card-grid">
-                    <div className="info-card large-card">
+                    <div className="info-card large-card vision-card">
                         <h2>Our Vision</h2>
                         <p>Empowering communities through real-time hazard information and emergency response coordination.</p>
                     </div>
 
-                    <div className="info-card large-card">
+                    <div className="info-card large-card partners-card">
                         <h2>DATA PARTNERS</h2>
                         <div className="partners-grid">
                             {apiPartners.map((partner) => (
-                                <div key={partner.id} className="partner-card">
+                                <div key={partner.id} className="partner-card partner-card-large">
                                     <div className="partner-logo">
                                         {partner.logo ? (
                                             <img src={partner.logo} alt={partner.name} className="partner-image" />

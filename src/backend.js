@@ -66,48 +66,6 @@ const PROVINCE_KEYWORDS = {
   'Negros Occidental': ['negros occidental', 'bacolod', 'canlaon']
 };
 
-const DISASTER_FALLBACK_DATA = [
-  {
-    id: 'fallback-quake-1',
-    type: 'Earthquake',
-    title: 'Magnitude 5.1',
-    severity: 'Medium',
-    city: 'General Santos City',
-    province: 'South Cotabato',
-    lat: 6.1164,
-    lng: 125.1716,
-    source: 'Fallback Data',
-    updatedAt: 'N/A',
-    status: 'Active'
-  },
-  {
-    id: 'fallback-storm-1',
-    type: 'Typhoon',
-    title: 'Tropical Cyclone Watch',
-    severity: 'High',
-    city: 'Legazpi City',
-    province: 'Albay',
-    lat: 13.1391,
-    lng: 123.7438,
-    source: 'Fallback Data',
-    updatedAt: 'N/A',
-    status: 'Monitoring'
-  },
-  {
-    id: 'fallback-flood-1',
-    type: 'Flood',
-    title: 'Heavy Rainfall Advisory',
-    severity: 'Medium',
-    city: 'Cebu City',
-    province: 'Cebu',
-    lat: 10.3157,
-    lng: 123.8854,
-    source: 'Fallback Data',
-    updatedAt: 'N/A',
-    status: 'Monitoring'
-  }
-];
-
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -408,7 +366,7 @@ async function reverseGeocodeCoordinates(lat, lng) {
   return reverseGeocodeQueue;
 }
 
-async function fetchDisastersFromProviders({ allowFallback = true } = {}) {
+async function fetchDisastersFromProviders() {
   const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=10';
   const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
   const requestTimeoutMs = 15000;
@@ -504,14 +462,7 @@ async function fetchDisastersFromProviders({ allowFallback = true } = {}) {
     console.warn('NASA disaster fetch failed:', nasaResult.reason?.message || nasaResult.reason);
   }
 
-  if (allDisasters.length === 0) {
-    if (allowFallback) {
-      console.warn('Live disaster feeds unavailable, serving backend fallback disasters.');
-      return DISASTER_FALLBACK_DATA;
-    }
-
-    return [];
-  }
+  if (allDisasters.length === 0) return [];
 
   return allDisasters;
 }
@@ -522,7 +473,7 @@ async function fetchLiveDisastersData() {
     return cachedDisasters;
   }
 
-  const liveDisasters = await fetchDisastersFromProviders({ allowFallback: true });
+  const liveDisasters = await fetchDisastersFromProviders();
   if (Array.isArray(liveDisasters) && liveDisasters.length > 0) {
     await setCachedDisastersPayload(liveDisasters);
   }
@@ -537,7 +488,7 @@ async function refreshDisasterCacheFromProviders() {
 
   disasterRefreshInFlight = (async () => {
     try {
-      const liveDisasters = await fetchDisastersFromProviders({ allowFallback: false });
+      const liveDisasters = await fetchDisastersFromProviders();
 
       if (!Array.isArray(liveDisasters) || liveDisasters.length === 0) {
         lastDisasterRefreshRun = {

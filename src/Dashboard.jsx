@@ -63,6 +63,16 @@ function pickValue(object, keys, fallback = null) {
   return fallback;
 }
 
+function normalizeWeatherIcon(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^[0-9]{2}[dn]$/i.test(raw)) {
+    return `https://openweathermap.org/img/wn/${raw.toLowerCase()}@2x.png`;
+  }
+  return null;
+}
+
 function normalizeWeatherStations(payload) {
   const candidates = [];
 
@@ -88,6 +98,8 @@ function normalizeWeatherStations(payload) {
       const tempC = toNumber(pickValue(entry, ["temp_c", "temperature", "temperature_c", "air_temp", "air_temperature", "t2m", "temp"]));
       const rainfall = toNumber(pickValue(entry, ["rain", "rainfall", "rain_1h", "rainfall_1h", "precipitation"]));
       const conditionRaw = pickValue(entry, ["weather", "condition", "weather_condition", "summary", "description"], "");
+      const iconValue = pickValue(entry, ["icon", "icon_url", "weather_icon", "weatherIcon"], null);
+      const iconUrl = normalizeWeatherIcon(iconValue);
 
       let condition = String(conditionRaw || "").trim();
       if (!condition) {
@@ -105,6 +117,7 @@ function normalizeWeatherStations(payload) {
         lng,
         tempC,
         condition,
+        iconUrl,
       };
     })
     .filter((station) => station.tempC !== null || station.condition);
@@ -141,6 +154,44 @@ function selectWeatherStation(stations, focused) {
   }
 
   return stations[0];
+}
+
+function summarizePhilippinesWeather(stations) {
+  if (!Array.isArray(stations) || stations.length === 0) return null;
+
+  const validTemps = stations
+    .map((station) => toNumber(station.tempC))
+    .filter((value) => value !== null);
+
+  const tempC = validTemps.length > 0
+    ? validTemps.reduce((sum, value) => sum + value, 0) / validTemps.length
+    : null;
+
+  const conditionCounts = new Map();
+  for (const station of stations) {
+    const condition = String(station.condition || "").trim();
+    if (!condition) continue;
+    conditionCounts.set(condition, (conditionCounts.get(condition) || 0) + 1);
+  }
+
+  let topCondition = "Weather";
+  let topCount = -1;
+  for (const [condition, count] of conditionCounts.entries()) {
+    if (count > topCount) {
+      topCondition = condition;
+      topCount = count;
+    }
+  }
+
+  const iconStation = stations.find((station) =>
+    station.iconUrl && String(station.condition || "").trim() === topCondition
+  ) || stations.find((station) => station.iconUrl) || null;
+
+  return {
+    tempC,
+    condition: topCondition,
+    iconUrl: iconStation?.iconUrl || null,
+  };
 }
 
 function weatherCodeToCondition(code) {
@@ -358,20 +409,20 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
   const weatherDisplay = useMemo(() => {
     if (isLoadingWeather) {
-      return { tempText: "--", condition: "Loading...", location: "PAGASA" };
+      return { tempText: "--", condition: "Loading...", iconUrl: null };
     }
 
-    const station = selectWeatherStation(weatherStations, focused);
-    if (!station) {
-      return { tempText: "--", condition: weatherError || "Unavailable", location: "PAGASA" };
+    const summary = summarizePhilippinesWeather(weatherStations);
+    if (!summary) {
+      return { tempText: "--", condition: weatherError || "Unavailable", iconUrl: null };
     }
 
     return {
-      tempText: station.tempC !== null ? `${Math.round(station.tempC)}°C` : "--",
-      condition: station.condition || "Weather",
-      location: station.city || station.name || "PAGASA",
+      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}C` : "--",
+      condition: summary.condition || "Weather",
+      iconUrl: summary.iconUrl,
     };
-  }, [focused, isLoadingWeather, weatherError, weatherStations]);
+  }, [isLoadingWeather, weatherError, weatherStations]);
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -471,9 +522,20 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         {/* MAP */}
         <main className="map-wrap">
           <div className="weather-badge" aria-live="polite">
+            {weatherDisplay.iconUrl && (
+              <img
+                className="weather-icon"
+                src={weatherDisplay.iconUrl}
+                alt={weatherDisplay.condition}
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                }}
+              />
+            )}
             <div className="weather-temp">{weatherDisplay.tempText}</div>
             <div className="weather-condition">{weatherDisplay.condition}</div>
-            <div className="weather-location">{weatherDisplay.location}</div>
           </div>
           <MapContainer
             attributionControl={false}
