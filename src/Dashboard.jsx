@@ -228,10 +228,6 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [weatherError, setWeatherError] = useState("");
   const [focusedId,     setFocusedId]     = useState(null);
   const [showCloudLayer, setShowCloudLayer] = useState(false);
-  const [inAppNotif,    setInAppNotif]    = useState(true);
-  const [emailNotif,    setEmailNotif]    = useState(false);
-  const [smsNotif,      setSmsNotif]      = useState(false);
-  const [inclNeighbors, setInclNeighbors] = useState(true);
   const [selType,       setSelType]       = useState("All");
   const [selSev,        setSelSev]        = useState("All");
 
@@ -611,24 +607,8 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
       {/* SETTINGS DRAWER */}
       <aside id="dashboard-settings-drawer" className={"settings-drawer" + (settingsOpen ? " settings-drawer--open" : "")}>
         <div className="settings-head">
-          <h3>Settings</h3>
+          <h3>Disaster Settings</h3>
         </div>
-        <hr className="hr-settings"></hr>
-        <section className="settings-section">
-          <p className="settings-label">Notifications</p>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={inAppNotif} onChange={(e) => setInAppNotif(e.target.checked)} /> In-app alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={emailNotif} onChange={(e) => setEmailNotif(e.target.checked)} /> Email alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={smsNotif} onChange={(e) => setSmsNotif(e.target.checked)} /> SMS alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={inclNeighbors} onChange={(e) => setInclNeighbors(e.target.checked)} /> Include neighboring cities
-          </label>
-        </section>
         <hr className="hr-settings"></hr>
         <section className="settings-section">
           <div className="filter-group">
