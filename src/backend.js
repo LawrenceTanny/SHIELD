@@ -289,6 +289,26 @@ function areDisasterSnapshotsEqual(currentDisasters, nextDisasters) {
   return currentSignatures.every((signature, index) => signature === nextSignatures[index]);
 }
 
+function mergeDisastersById(primaryDisasters, fallbackDisasters) {
+  const merged = new Map();
+
+  for (const disaster of fallbackDisasters || []) {
+    if (!disaster?.id) continue;
+    merged.set(disaster.id, disaster);
+  }
+
+  for (const disaster of primaryDisasters || []) {
+    if (!disaster?.id) continue;
+    merged.set(disaster.id, disaster);
+  }
+
+  return Array.from(merged.values());
+}
+
+function isSourceMatch(disaster, source) {
+  return String(disaster?.source || '').toLowerCase() === String(source || '').toLowerCase();
+}
+
 async function reverseGeocodeCoordinates(lat, lng) {
   const cacheKey = getCoordinateCacheKey(lat, lng);
 
@@ -391,6 +411,9 @@ async function fetchDisastersFromProviders() {
     fetchJsonWithTimeout(nasaUrl)
   ]);
 
+  const usgsSucceeded = usgsResult.status === 'fulfilled';
+  const nasaSucceeded = nasaResult.status === 'fulfilled';
+
   const usgsData = usgsResult.status === 'fulfilled' ? usgsResult.value : null;
   const nasaData = nasaResult.status === 'fulfilled' ? nasaResult.value : null;
 
@@ -462,9 +485,11 @@ async function fetchDisastersFromProviders() {
     console.warn('NASA disaster fetch failed:', nasaResult.reason?.message || nasaResult.reason);
   }
 
-  if (allDisasters.length === 0) return [];
-
-  return allDisasters;
+  return {
+    disasters: allDisasters,
+    usgsSucceeded,
+    nasaSucceeded
+  };
 }
 
 async function fetchLiveDisastersData() {
@@ -473,7 +498,7 @@ async function fetchLiveDisastersData() {
     return cachedDisasters;
   }
 
-  const liveDisasters = await fetchDisastersFromProviders();
+  const { disasters: liveDisasters } = await fetchDisastersFromProviders();
   if (Array.isArray(liveDisasters) && liveDisasters.length > 0) {
     await setCachedDisastersPayload(liveDisasters);
   }
@@ -488,9 +513,25 @@ async function refreshDisasterCacheFromProviders() {
 
   disasterRefreshInFlight = (async () => {
     try {
-      const liveDisasters = await fetchDisastersFromProviders();
+      const {
+        disasters: liveDisasters,
+        usgsSucceeded,
+        nasaSucceeded
+      } = await fetchDisastersFromProviders();
 
-      if (!Array.isArray(liveDisasters) || liveDisasters.length === 0) {
+      const cachedDisasters = await getCachedDisastersPayload();
+
+      const preserveSources = [];
+      if (!usgsSucceeded) preserveSources.push('USGS');
+      if (!nasaSucceeded) preserveSources.push('NASA EONET');
+
+      const preservedDisasters = (cachedDisasters || []).filter((disaster) =>
+        preserveSources.some((source) => isSourceMatch(disaster, source))
+      );
+
+      const mergedDisasters = mergeDisastersById(liveDisasters, preservedDisasters);
+
+      if (!Array.isArray(mergedDisasters) || mergedDisasters.length === 0) {
         lastDisasterRefreshRun = {
           ranAt: new Date().toISOString(),
           success: false,
@@ -502,19 +543,24 @@ async function refreshDisasterCacheFromProviders() {
         return lastDisasterRefreshRun;
       }
 
-      const cachedDisasters = await getCachedDisastersPayload();
-      const cacheChanged = !cachedDisasters || !areDisasterSnapshotsEqual(cachedDisasters, liveDisasters);
+      const cacheChanged = !cachedDisasters || !areDisasterSnapshotsEqual(cachedDisasters, mergedDisasters);
 
       if (cacheChanged) {
-        await setCachedDisastersPayload(liveDisasters);
+        await setCachedDisastersPayload(mergedDisasters);
       }
 
       lastDisasterRefreshRun = {
         ranAt: new Date().toISOString(),
         success: true,
-        fetchedCount: liveDisasters.length,
+        fetchedCount: mergedDisasters.length,
         updatedCache: cacheChanged,
-        source: 'live',
+        source: usgsSucceeded && nasaSucceeded
+          ? 'live-all'
+          : usgsSucceeded
+            ? 'live-usgs+cached-nasa'
+            : nasaSucceeded
+              ? 'live-nasa+cached-usgs'
+              : 'cached-only',
         error: null
       };
 
