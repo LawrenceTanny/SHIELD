@@ -14,6 +14,10 @@ const FALLBACK_DISASTERS = [
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
+const OWM_MAPS_API_KEY = String(import.meta.env.VITE_OPENWEATHERMAP_API_KEY || "").trim();
+const OWM_CLOUDS_TILE_URL = OWM_MAPS_API_KEY
+  ? `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_MAPS_API_KEY}`
+  : "";
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
@@ -223,6 +227,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [isLoadingWeather, setIsLoadingWeather] = useState(true);
   const [weatherError, setWeatherError] = useState("");
   const [focusedId,     setFocusedId]     = useState(null);
+  const [showCloudLayer, setShowCloudLayer] = useState(false);
   const [inAppNotif,    setInAppNotif]    = useState(true);
   const [emailNotif,    setEmailNotif]    = useState(false);
   const [smsNotif,      setSmsNotif]      = useState(false);
@@ -444,11 +449,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         {settingsOpen ? <IconClose /> : <IconSettings />}
   
       </button>
-
-      {/* CONTENT - Map and Danger Panel */}
       <div className="content">
-
-        {/* DANGERS PANEL */}
         <aside className="danger-panel">
           <div className="danger-head">
             <h2>Active Dangers</h2>
@@ -521,21 +522,32 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
         {/* MAP */}
         <main className="map-wrap">
-          <div className="weather-badge" aria-live="polite">
-            {weatherDisplay.iconUrl && (
-              <img
-                className="weather-icon"
-                src={weatherDisplay.iconUrl}
-                alt={weatherDisplay.condition}
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                onError={(event) => {
-                  event.currentTarget.style.display = "none";
-                }}
-              />
-            )}
-            <div className="weather-temp">{weatherDisplay.tempText}</div>
-            <div className="weather-condition">{weatherDisplay.condition}</div>
+          <div className="weather-stack">
+            <button
+              type="button"
+              className={`map-layer-toggle${showCloudLayer && OWM_MAPS_API_KEY ? " layer-on" : ""}`}
+              onClick={() => setShowCloudLayer((prev) => !prev)}
+              disabled={!OWM_MAPS_API_KEY}
+              title={OWM_MAPS_API_KEY ? "Toggle cloud map overlay" : "Set VITE_OPENWEATHERMAP_API_KEY to enable cloud overlay"}
+            >
+              {showCloudLayer ? "Clouds: ON" : "Clouds: OFF"}
+            </button>
+            <div className="weather-badge" aria-live="polite">
+              {weatherDisplay.iconUrl && (
+                <img
+                  className="weather-icon"
+                  src={weatherDisplay.iconUrl}
+                  alt={weatherDisplay.condition}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                  }}
+                />
+              )}
+              <div className="weather-temp">{weatherDisplay.tempText}</div>
+              <div className="weather-condition">{weatherDisplay.condition}</div>
+            </div>
           </div>
           <MapContainer
             attributionControl={false}
@@ -554,6 +566,13 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
+            {showCloudLayer && OWM_MAPS_API_KEY && (
+              <TileLayer
+                attribution='&copy; OpenWeather'
+                url={OWM_CLOUDS_TILE_URL}
+                opacity={0.65}
+              />
+            )}
             {filtered.map((item) => {
               const isFoc = item.id === focusedId;
               return (

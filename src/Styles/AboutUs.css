@@ -38,6 +38,12 @@ body {
   color: var(--ink);
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.about-us-page::-webkit-scrollbar {
+  display: none;
 }
 
 .about-us-container {

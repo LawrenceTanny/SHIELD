@@ -444,13 +444,53 @@ body {
   z-index: 0;        
 }
 
-.weather-badge {
+.weather-stack {
   position: absolute;
   bottom: calc(var(--footer-h) + 14px);
   right: 18px;
   z-index: 1250;
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-layer-toggle {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border: 2px solid rgba(255,255,255,0.08);
+  background: none;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: "Geist Mono", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.map-layer-toggle:hover:not(:disabled) {
+  background: rgba(255, 68, 0, 0.18);
+  border-color: #ff4400;
+  color: #ffd7c8;
+}
+
+.map-layer-toggle:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.map-layer-toggle.layer-on{
+  border-color: #ff4400;
+}
+
+.weather-badge {
+  position: relative;
+  z-index: 1;
   min-width: 0;
-  width: auto;
+  width: 100%;
   height: auto;
   border-radius: 14px;
   border: 2px solid rgba(255,255,255,0.08);

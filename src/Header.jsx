@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Header.css";
 import Dashboard from "./Dashboard";
 import AboutUs from "./AboutUs";
-import News from "./News";
+import News from "./Home.jsx";
 import Login from "./Login";
 import AccountSettings from "./AccountSettings";
 import Footer from "./Footer";
@@ -24,7 +24,7 @@ function IconUser() {
 }
 
 export default function MainLayout() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("home");
   const [isLoading, setIsLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -67,7 +67,13 @@ export default function MainLayout() {
       <header className="main-header">
         <div className="header-left">
           <div className="brand">
-            <span className="brand-name">SHIELD</span>
+            <button
+              type="button"
+              className="brand-home-btn brand-name"
+              onClick={() => handleTabChange("home")}
+            >
+              SHIELD
+            </button>
             <span className="brand-sep" />
             <span className="brand-sub">Synchronized Hazard Information &amp; Emergency Live Dashboard</span>
           </div>
@@ -93,13 +99,6 @@ export default function MainLayout() {
             onClick={() => handleTabChange("about")}
           >
             About Us
-          </button>
-
-          <button
-            className={`tab-btn ${activeTab === "news" ? "tab-active" : ""}`}
-            onClick={() => handleTabChange("news")}
-          >
-            News
           </button>
 
         </nav>
@@ -159,7 +158,7 @@ export default function MainLayout() {
               )}
               {activeTab === "about" && <AboutUs />}
               {activeTab === "preparedness" && <Preparedness />}
-              {activeTab === "news" && <News />}
+              {activeTab === "home" && <News />}
             </motion.div>
           )}
         </AnimatePresence>
