@@ -686,8 +686,7 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const NEWS_PAGE_SIZE = Number(process.env.MEDIASTACK_PAGE_SIZE || 100);
-const NEWS_MAX_PAGES = Number(process.env.MEDIASTACK_MAX_PAGES || 20);
+const NEWS_MAX_PAGES = Number(process.env.GNEWS_MAX_PAGES || 3);
 
 function getManilaDateKey(date = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
@@ -700,7 +699,7 @@ function getManilaDateKey(date = new Date()) {
 
 app.get('/api/news', async (req, res) => {
   try {
-    const apiKey = process.env.MEDIASTACK_API_KEY;
+    const apiKey = process.env.GNEWS_API_KEY;
     const todayDateKey = getManilaDateKey();
     const collection = await getNewsCacheCollection();
     const cachedRecord = await collection.findOne({ _id: 'latest' });
@@ -728,7 +727,7 @@ app.get('/api/news', async (req, res) => {
 
     if (!apiKey) {
       if (Array.isArray(cachedRecord?.data) && cachedRecord.data.length > 0) {
-        console.warn('MEDIASTACK_API_KEY missing. Serving stale cached news.');
+        console.warn('GNEWS_API_KEY missing. Serving stale cached news.');
         return res.status(200).json(cachedRecord.data);
       }
       return res.status(500).json({ message: 'News API key missing.' });
@@ -736,38 +735,41 @@ app.get('/api/news', async (req, res) => {
 
     if (!newsRefreshInFlight) {
       newsRefreshInFlight = (async () => {
-        console.log('News cache date mismatch. Fetching fresh news from Mediastack...');
+        console.log('News cache date mismatch. Fetching fresh news from GNews...');
+
+        // A strict, Google-style search query targeting ONLY PH disasters
+        const query = encodeURIComponent("Philippines AND (typhoon OR earthquake OR flood OR volcano OR PAGASA OR Phivolcs)");
 
         const allArticles = [];
         for (let page = 0; page < NEWS_MAX_PAGES; page += 1) {
-          const offset = page * NEWS_PAGE_SIZE;
-          const url = `http://api.mediastack.com/v1/news?access_key=${apiKey}&countries=ph&keywords=typhoon,earthquake,flood,volcano,disaster&sort=published_desc&limit=${NEWS_PAGE_SIZE}&offset=${offset}`;
+          const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=100&sortby=publishedAt&apikey=${apiKey}`;
           const response = await fetch(url);
 
           if (!response.ok) {
-            throw new Error(`Mediastack request failed with status ${response.status}`);
+            throw new Error(`GNews request failed with status ${response.status}`);
           }
 
           const data = await response.json();
           if (data?.error) {
-            throw new Error(data.error?.message || 'Mediastack returned an error payload');
+            throw new Error(data.error?.message || 'GNews returned an error payload');
           }
 
-          const pageArticles = Array.isArray(data?.data) ? data.data : [];
+          const pageArticles = Array.isArray(data?.articles) ? data.articles : [];
           if (pageArticles.length === 0) {
             break;
           }
 
           allArticles.push(...pageArticles);
-          if (pageArticles.length < NEWS_PAGE_SIZE) {
-            break;
-          }
+
+          // GNews doesn't support pagination via offset/page params in the same way
+          // so we just make one request and take what we get
+          break;
         }
 
         const seenKeys = new Set();
         const mappedNews = allArticles
           .map((article, index) => {
-            const published = article?.published_at ? new Date(article.published_at) : null;
+            const published = article?.publishedAt ? new Date(article.publishedAt) : null;
             const publishedAtIso = published && !Number.isNaN(published.getTime()) ? published.toISOString() : null;
             const publishedAtLabel = publishedAtIso
               ? new Date(publishedAtIso).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })
@@ -776,9 +778,9 @@ app.get('/api/news', async (req, res) => {
             return {
               id: article?.url || `${article?.title || 'news'}-${index}`,
               title: article?.title || 'News Update',
-              description: article?.description || article?.snippet || 'No details available.',
+              description: article?.description || 'No details available.',
               url: article?.url || '#',
-              source: article?.source || 'Mediastack',
+              source: article?.source?.name || 'GNews',
               image: article?.image || null,
               publishedAt: publishedAtIso || publishedAtLabel,
               date: publishedAtLabel
@@ -807,7 +809,7 @@ app.get('/api/news', async (req, res) => {
                 lastAttemptDate: todayDateKey,
                 fetchedAt: new Date(),
                 updatedAt: new Date(),
-                source: 'mediastack',
+                source: 'gnews',
                 itemsCount: mappedNews.length,
                 lastError: null
               }

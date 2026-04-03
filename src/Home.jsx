@@ -4,62 +4,12 @@ import './Styles/Home.css';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
 const MAX_OLDER_NEWS_CARDS = 10;
 
-const FALLBACK_NEWS = [
-  {
-    id: 1,
-    title: 'Breaking News Update',
-    description: 'Latest emergency updates and alerts',
-    date: '2024-04-03',
-    source: 'Disaster Alert',
-    url: '#',
-  },
-  {
-    id: 2,
-    title: 'Weather Alert',
-    description: 'Severe weather conditions reported',
-    date: '2024-04-02',
-    source: 'Emergency Services',
-    url: '#',
-  },
-  {
-    id: 3,
-    title: 'Safety Information',
-    description: 'Important safety guidelines and updates',
-    date: '2024-04-01',
-    source: 'Community Advisory',
-    url: '#',
-  },
-    {
-        id: 4,
-        title: 'Flooding Advisory in Low-Lying Areas',
-        description: 'Residents near rivers and coastal zones are advised to monitor water levels and prepare go-bags.',
-        date: '2024-03-31',
-        source: 'Regional Disaster Bulletin',
-        url: '#',
-    },
-    {
-        id: 5,
-        title: 'Landslide Risk Warning Issued',
-        description: 'Continuous rainfall increases landslide susceptibility in steep and mountainous communities.',
-        date: '2024-03-30',
-        source: 'Emergency Monitoring Desk',
-        url: '#',
-    },
-    {
-        id: 6,
-        title: 'Evacuation Centers on Standby',
-        description: 'Local authorities confirm evacuation centers are equipped and ready for potential response activation.',
-        date: '2024-03-29',
-        source: 'Local Government Unit',
-        url: '#',
-    },
-];
-
 export default function NewsReport() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const carouselRef = useRef(null);
-    const [newsItems, setNewsItems] = useState(FALLBACK_NEWS);
+        const [newsItems, setNewsItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+        const [loadError, setLoadError] = useState('');
 
     useEffect(() => {
         const controller = new AbortController();
@@ -89,12 +39,12 @@ export default function NewsReport() {
                         .filter((item) => item.title)
                     : [];
 
-                if (normalized.length > 0) {
-                    setNewsItems(normalized);
-                }
+                setNewsItems(normalized);
+                setLoadError('');
             } catch (error) {
                 if (error.name !== 'AbortError') {
-                    setNewsItems(FALLBACK_NEWS);
+                    setNewsItems([]);
+                    setLoadError('Unable to load news right now. Please try again later.');
                 }
             } finally {
                 if (!controller.signal.aborted) {
@@ -196,6 +146,7 @@ export default function NewsReport() {
         
         <div className="news-header">
             <h1>News Report</h1>
+            {loadError && <p className="news-load-error">{loadError}</p>}
     </div>
     <div className="news-main">
         <div className="latest-news">
