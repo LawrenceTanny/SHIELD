@@ -177,6 +177,7 @@ export default function Login({ onClose, onLogin }) {
       const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(tab === "register" ? signupPayload : { email: form.email, password: form.password }),
       });
       const result = await response.json();
