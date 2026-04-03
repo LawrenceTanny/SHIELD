@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Header.css";
 import Dashboard from "./Dashboard";
 import AboutUs from "./AboutUs";
+import News from "./News";
 import Login from "./Login";
 import AccountSettings from "./AccountSettings";
 import Footer from "./Footer";
@@ -94,6 +95,13 @@ export default function MainLayout() {
             About Us
           </button>
 
+          <button
+            className={`tab-btn ${activeTab === "news" ? "tab-active" : ""}`}
+            onClick={() => handleTabChange("news")}
+          >
+            News
+          </button>
+
         </nav>
 
         {/* RIGHT NAV (User) */}
@@ -151,6 +159,7 @@ export default function MainLayout() {
               )}
               {activeTab === "about" && <AboutUs />}
               {activeTab === "preparedness" && <Preparedness />}
+              {activeTab === "news" && <News />}
             </motion.div>
           )}
         </AnimatePresence>
