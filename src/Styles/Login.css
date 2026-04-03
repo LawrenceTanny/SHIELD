@@ -8,6 +8,7 @@
 }
 
 .login-overlay {
+  font-family: "Geist", sans-serif;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
@@ -30,15 +31,16 @@
 
 .login-modal {
   position: relative;
-  background: var(--lm-surface);
-  border: 1px solid rgba(31,31,31,0.12);
+  border: 2px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(166deg, #2020203d 0%, #5252522d 100%);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   border-radius: 18px;
   width: 100%;
   padding: 36px 32px 28px;
   max-height: min(92vh, 860px);
   overflow-y: auto;
   will-change: transform, opacity, filter;
-  box-shadow: 0 0 0 1px rgba(31,31,31,0.06), 0 32px 80px rgba(0,0,0,0.7);
 }
 
 @keyframes lm-in {
@@ -76,6 +78,7 @@
 .login-brand { text-align: center; margin-bottom: 22px; }
 
 .login-logo {
+  font-family: "aldrich", sans-serif;
   display: block;
   font-size: 2rem;
   font-weight: 900;
@@ -86,14 +89,16 @@
 }
 
 .login-tagline {
-  font-size: 0.68rem;
-  color: var(--lm-muted);
+  font-size: 0.8rem;
+  color: var(--ink);
   line-height: 1.4;
 }
 
 .login-tabs {
   display: flex;
-  background: rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--ink);
   border-radius: 10px;
   padding: 3px;
   gap: 3px;
@@ -101,22 +106,30 @@
 }
 
 .ltab {
+  font-family: "Geist Mono", monospace;
+  text-transform: uppercase;
   flex: 1;
   padding: 9px;
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: var(--lm-muted);
-  font-size: 0.88rem;
-  font-weight: 600;
+  color: var(--lm-ink);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  font-weight: 500;
   cursor: pointer;
   transition: background 130ms, color 130ms;
 }
 .ltab--on {
-  background: rgba(255,68,0,0.15);
-  color: var(--lm-accent);
+  color: var(--ink2);
+  border: #D9D9D9 solid 1px;
+  backdrop-filter: blur(8px);
+  background: var(--surface);
 }
-.ltab:not(.ltab--on):hover { color: var(--lm-ink); }
+.ltab:not(.ltab--on):hover { 
+  color: var(--ink);
+  border-color: rgba(255,68,0,0.3);
+  background: rgba(255,68,0,0.08); }
 
 /* Form */
 .login-form {
@@ -269,10 +282,10 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-size: 0.78rem;
-  color: var(--lm-muted);
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 300;
+  letter-spacing: 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -294,13 +307,15 @@
 .lf-label input::placeholder { color: rgba(228,243,255,0.25); }
 
 .login-submit {
+  font-family: "Geist Mono", monospace;
   margin-top: 4px;
+  text-transform: uppercase;
   padding: 12px;
   border-radius: 10px;
   border: none;
   background: var(--lm-accent);
   color: #fff;
-  font-weight: 800;
+  font-weight: 500;
   font-size: 0.95rem;
   cursor: pointer;
   letter-spacing: 0.04em;

@@ -3,7 +3,7 @@
   --as-surface: #0a1628;
   --as-surface2:#0f1e36;
   --as-border:  rgba(255,255,255,0.09);
-  --as-accent:  #00d4ff;
+  --as-accent:  #FF4400;
   --as-ink:     #e4f3ff;
   --as-muted:   rgba(190,220,255,0.55);
 }
@@ -22,15 +22,17 @@
 }
 
 .as-modal {
-  background: var(--as-surface);
-  border: 1px solid rgba(0,212,255,0.18);
+  font-family: "Geist", sans-serif;
+  border: 2px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(166deg, #2020203d 0%, #5252522d 100%);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   border-radius: 18px;
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 0 1px rgba(0,212,255,0.06), 0 32px 80px rgba(0,0,0,0.7);
   animation: as-in 220ms cubic-bezier(0.34,1.56,0.64,1);
   overflow: hidden;
 }
@@ -46,15 +48,20 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  border-bottom: 1px solid var(--as-border);
   flex-shrink: 0;
 }
 
+.hr {
+  border: none; 
+  border-top: 1px solid #d1d1d1;
+  margin: -6px 20px 2px 20px;
+}
+
 .as-head h2 {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--as-ink);
-  letter-spacing: 0.02em;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--ink);
 }
 
 .as-close {
@@ -85,18 +92,16 @@
 
 .as-section {
   padding: 18px 24px;
-  border-bottom: 1px solid var(--as-border);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 .as-section-title {
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--as-muted);
+  font-size: 1.5rem;
+  font-weight: 200;
+  letter-spacing: 0;
+  color: var(--ink);
 }
 
 /* Photo */
@@ -110,8 +115,8 @@
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  border: 2px solid rgba(0,212,255,0.4);
-  background: var(--as-surface2);
+  background: rgba(255, 68, 0, 0.295);
+  border: 1px solid #FF4400;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,20 +152,25 @@
 .as-photo-info { display: flex; flex-direction: column; gap: 5px; }
 
 .as-btn-outline {
+  font-family: "Geist Mono", monospace;
+  text-transform: uppercase;
   padding: 8px 16px;
   border-radius: 9px;
-  border: 1px solid rgba(0,212,255,0.4);
-  background: rgba(0,212,255,0.08);
-  color: var(--as-accent);
+  border: none;
+  background: var(--surface) ;
+  color: var(--ink2);
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
   transition: background 130ms;
   white-space: nowrap;
 }
-.as-btn-outline:hover { background: rgba(0,212,255,0.18); }
+.as-btn-outline:hover { opacity: 0.88;
+  color: #d1d1d1;
+  background: var(--accent); 
+  box-shadow: 0 0 15px var(--accent-g);}
 
-.as-hint { font-size: 0.72rem; color: var(--as-muted); }
+.as-hint { font-size: 0.72rem; color: var(--ink); }
 
 /* Fields */
 .as-field {
@@ -169,9 +179,10 @@
   gap: 5px;
 }
 .as-field span {
-  font-size: 0.76rem;
-  color: var(--as-muted);
-  font-weight: 600;
+  font-family: "Geist", sans-serif;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 100;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -181,7 +192,7 @@
   border-radius: 9px;
   border: 1px solid var(--as-border);
   background: rgba(255,255,255,0.04);
-  color: var(--as-ink);
+  color: var(--ink);
   font-size: 0.9rem;
   outline: none;
   transition: border-color 130ms, box-shadow 130ms;
@@ -213,6 +224,8 @@
   user-select: none;
 }
 .as-toggle span {
+  font-weight: 100;
+  letter-spacing: 0.4px;
   font-size: 0.87rem;
   color: var(--as-ink);
 }
@@ -231,34 +244,40 @@
   align-items: center;
   gap: 10px;
   padding: 14px 24px;
-  border-top: 1px solid var(--as-border);
   flex-shrink: 0;
 }
 
 .as-btn-cancel {
+  font-family: "Geist Mono", monospace;
+  text-transform: uppercase;
   padding: 9px 20px;
   border-radius: 9px;
-  border: 1px solid var(--as-border);
+  border: 2px solid transparent;
   background: transparent;
-  color: var(--as-muted);
-  font-size: 0.88rem;
+  color: var(--ink);
+  font-size: 0.95rem;
   cursor: pointer;
   transition: border-color 130ms, color 130ms;
 }
-.as-btn-cancel:hover { border-color: rgba(255,255,255,0.3); color: var(--as-ink); }
+.as-btn-cancel:hover {  color: var(--ink);
+  border-color: rgba(255,68,0,0.3);
+  background: rgba(255,68,0,0.08);
+}
 
 .as-btn-save {
+  font-family: "Geist Mono", monospace;
+  text-transform: uppercase;
   padding: 9px 22px;
   border-radius: 9px;
   border: none;
-  background: var(--as-accent);
-  color: #050c1a;
-  font-weight: 800;
-  font-size: 0.88rem;
+  background: var(--lm-accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: opacity 130ms, box-shadow 130ms;
 }
 .as-btn-save:hover {
-  opacity: 0.88;
-  box-shadow: 0 0 16px rgba(0,212,255,0.4);
+   opacity: 0.88;
+  box-shadow: 0 0 18px rgba(255,68,0,0.4);
 }
