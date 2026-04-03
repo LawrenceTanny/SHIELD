@@ -30,6 +30,7 @@ export default function MainLayout() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [acctSettingsOpen, setAcctSettingsOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const userRef = useRef(null);
 
@@ -61,6 +62,60 @@ export default function MainLayout() {
     const t = setTimeout(() => setIsLoading(false), 650);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadSessionUser = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/auth/me`, {
+          credentials: "include",
+          signal: controller.signal
+        });
+
+        if (!response.ok) {
+          setCurrentUser(null);
+          return;
+        }
+
+        const payload = await response.json();
+        if (payload?.user) {
+          setCurrentUser(payload.user);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setCurrentUser(null);
+        }
+      }
+
+    };
+
+    loadSessionUser();
+    return () => controller.abort();
+  }, []);
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+  };
+
+  const handleUserUpdated = (user) => {
+    setCurrentUser(user);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/logout`, {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (error) {
+      console.warn("Failed to log out cleanly:", error);
+    }
+
+    setCurrentUser(null);
+    setAcctSettingsOpen(false);
+    setUserMenuOpen(false);
+  };
 
   return (
     <div className="main-layout">
@@ -115,9 +170,24 @@ export default function MainLayout() {
             </button>
             {userMenuOpen && (
               <div className="user-dropdown">
-                <p className="user-hint">Not signed in</p>
-                <button className="user-signin-btn" onClick={() => { setUserMenuOpen(false); setLoginOpen(true); }}>Sign In</button>
-                <button className="user-acct-btn" onClick={() => { setUserMenuOpen(false); setAcctSettingsOpen(true); }}>
+                <p className="user-hint">
+                  {currentUser ? `Signed in as ${currentUser.name || currentUser.email}` : "Not signed in"}
+                </p>
+                {!currentUser && (
+                  <button className="user-signin-btn" onClick={() => { setUserMenuOpen(false); setLoginOpen(true); }}>
+                    Sign In
+                  </button>
+                )}
+                {currentUser && (
+                  <button className="user-signin-btn" onClick={handleSignOut}>
+                    Sign Out
+                  </button>
+                )}
+                <button
+                  className="user-acct-btn"
+                  onClick={() => { setUserMenuOpen(false); setAcctSettingsOpen(true); }}
+                  disabled={!currentUser}
+                >
                   Account Settings
                 </button>
               </div>
@@ -167,8 +237,14 @@ export default function MainLayout() {
       <Footer />
 
 
-      {loginOpen && <Login onClose={() => setLoginOpen(false)} />}
-      {acctSettingsOpen && <AccountSettings onClose={() => setAcctSettingsOpen(false)} />}
+      {loginOpen && <Login onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />}
+      {acctSettingsOpen && (
+        <AccountSettings
+          onClose={() => setAcctSettingsOpen(false)}
+          currentUser={currentUser}
+          onUserUpdated={handleUserUpdated}
+        />
+      )}
     </div>
   );
 }
