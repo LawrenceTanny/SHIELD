@@ -686,7 +686,9 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const GNEWS_MAX_RESULTS = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_RESULTS || 5)));
+const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 10)));
+const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 25));
+const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 5));
 
 function getManilaDateKey(date = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
@@ -746,54 +748,73 @@ app.get('/api/news', async (req, res) => {
         // A strict, Google-style search query targeting ONLY PH disasters
         const query = encodeURIComponent("Philippines AND (typhoon OR earthquake OR flood OR volcano OR PAGASA OR Phivolcs)");
         const allArticles = [];
-        const maxCandidates = [GNEWS_MAX_RESULTS, 10, 5].filter((value, index, arr) => arr.indexOf(value) === index);
-        let data = null;
+        const maxCandidates = [GNEWS_MAX_PER_REQUEST, 10, 5].filter((value, index, arr) => arr.indexOf(value) === index);
+        let firstSuccessPayload = null;
         let lastProviderError = null;
 
         for (const maxResults of maxCandidates) {
-          const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=${maxResults}&sortby=publishedAt&apikey=${apiKey}`;
-          console.log('[NEWS API] GNews URL:', url.replace(apiKey, '***API_KEY***'));
+          allArticles.length = 0;
+          let candidateSucceeded = true;
 
-          const response = await fetch(url);
-          console.log('[NEWS API] GNews response status:', response.status, 'max=', maxResults);
+          for (let page = 1; page <= GNEWS_MAX_PAGES && allArticles.length < GNEWS_TARGET_RESULTS; page += 1) {
+            const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=${maxResults}&page=${page}&sortby=publishedAt&apikey=${apiKey}`;
+            console.log('[NEWS API] GNews URL:', url.replace(apiKey, '***API_KEY***'));
 
-          const rawBody = await response.text();
-          let parsedBody = null;
-          try {
-            parsedBody = rawBody ? JSON.parse(rawBody) : null;
-          } catch (_error) {
-            parsedBody = null;
+            const response = await fetch(url);
+            console.log('[NEWS API] GNews response status:', response.status, 'max=', maxResults, 'page=', page);
+
+            const rawBody = await response.text();
+            let parsedBody = null;
+            try {
+              parsedBody = rawBody ? JSON.parse(rawBody) : null;
+            } catch (_error) {
+              parsedBody = null;
+            }
+
+            if (!response.ok) {
+              const providerMessage = parsedBody?.errors?.[0] || parsedBody?.message || parsedBody?.error || rawBody || `HTTP ${response.status}`;
+              lastProviderError = `GNews request failed (${response.status}) max=${maxResults} page=${page}: ${providerMessage}`;
+              console.warn('[NEWS API] GNews non-OK response:', lastProviderError);
+              candidateSucceeded = false;
+              break;
+            }
+
+            if (!firstSuccessPayload) {
+              firstSuccessPayload = parsedBody;
+            }
+
+            const pageArticles = Array.isArray(parsedBody?.articles) ? parsedBody.articles : [];
+            console.log('[NEWS API] Articles fetched:', pageArticles.length, 'on page', page);
+
+            if (pageArticles.length === 0) {
+              break;
+            }
+
+            allArticles.push(...pageArticles);
+
+            if (pageArticles.length < maxResults) {
+              break;
+            }
           }
 
-          if (!response.ok) {
-            const providerMessage = parsedBody?.errors?.[0] || parsedBody?.message || parsedBody?.error || rawBody || `HTTP ${response.status}`;
-            lastProviderError = `GNews request failed (${response.status}) max=${maxResults}: ${providerMessage}`;
-            console.warn('[NEWS API] GNews non-OK response:', lastProviderError);
-            continue;
+          if (candidateSucceeded && allArticles.length > 0) {
+            break;
           }
-
-          data = parsedBody;
-          break;
         }
 
-        if (!data) {
+        if (!firstSuccessPayload && allArticles.length === 0) {
           throw new Error(lastProviderError || 'GNews request failed with unknown error.');
         }
 
-        console.log('[NEWS API] GNews response data keys:', Object.keys(data || {}));
+        console.log('[NEWS API] GNews response data keys:', Object.keys(firstSuccessPayload || {}));
 
-        if (data?.error) {
-          throw new Error(data.error?.message || 'GNews returned an error payload');
+        if (firstSuccessPayload?.error) {
+          throw new Error(firstSuccessPayload.error?.message || 'GNews returned an error payload');
         }
 
-        const pageArticles = Array.isArray(data?.articles) ? data.articles : [];
-        console.log('[NEWS API] Articles fetched:', pageArticles.length);
-        
-        if (pageArticles.length === 0) {
-          console.warn('[NEWS API] GNews returned 0 articles.');
+        if (allArticles.length === 0) {
+          console.warn('[NEWS API] GNews returned 0 articles across all pages.');
         }
-
-        allArticles.push(...pageArticles);
 
         const seenKeys = new Set();
         const mappedNews = allArticles
