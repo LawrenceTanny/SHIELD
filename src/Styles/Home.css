@@ -40,8 +40,8 @@
     margin-bottom: 34px;
     padding: 26px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: linear-gradient(135deg, rgba(70, 130, 180, 0.22) 0%, rgba(100, 150, 180, 0.12) 100%);
+    border: 1px solid rgba(255, 68, 0, 0.2);
+    background: linear-gradient(135deg, rgba(255, 68, 0, 0.12) 0%, rgba(26, 26, 26, 0.15) 100%);
 }
 
 .hero-content {
@@ -108,9 +108,10 @@
     flex-direction: column;
     padding: 30px;
     min-height: 350px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 68, 0, 0.08);
+    border: 1px solid rgba(255, 68, 0, 0.2);
     border-radius: 15px;
+    backdrop-filter: blur(10px);
 }
 
 .section-header{
@@ -133,11 +134,22 @@
     height: 100%;
     padding: 30px;
     justify-content: space-between;
-    background: linear-gradient(135deg, rgba(70, 130, 180, 0.3) 0%, 
-    rgba(100, 150, 180, 0.2) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(255, 68, 0, 0.2) 0%, 
+    rgba(26, 26, 26, 0.3) 100%);
+    border: 1px solid rgba(255, 68, 0, 0.2);
     border-radius: 10px;
     animation: slideIn 0.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
+
+.news-card-overlay {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes slideIn{
@@ -183,18 +195,29 @@
     justify-content: space-between;
     min-height: 180px;
     padding: 30px;
-    background: linear-gradient(135deg, rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(255, 68, 0, 0.12) 0%, rgba(26, 26, 26, 0.2) 100%);
+    border: 1px solid rgba(255, 68, 0, 0.15);
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
+    background-size: cover;
+    background-position: center;
+}
+
+.news-item-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .news-item-card:hover {
-    background: linear-gradient(135deg, rgba(70, 130, 180, 0.25) 0%, rgba(100, 150, 180, 0.2) 100%);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateY(-4px);
+    filter: brightness(1.1);
 }
 
 .news-item-card h3 {
@@ -360,16 +383,16 @@
 .social-feed-item{
     padding: 20px;
     background: linear-gradient(135deg, 
-    rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    rgba(255, 68, 0, 0.1) 0%, rgba(26, 26, 26, 0.15) 100%);
+    border: 1px solid rgba(255, 68, 0, 0.15);
     border-radius: 10px;
     transition: all 0.3s ease;
 }
 
 .social-feed-item:hover{
-    background: linear-gradient(135deg, rgba(70, 130, 180, 0.25) 0%, 
-    rgba(100, 150, 180, 0.2) 100%);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: linear-gradient(135deg, rgba(255, 68, 0, 0.15) 0%, 
+    rgba(26, 26, 26, 0.25) 100%);
+    border-color: rgba(255, 68, 0, 0.3);
 }
 
 .social-feed-item h4{
@@ -386,10 +409,85 @@
     color: #b0c4de;   
 }
 
+.social-feed-item p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 12px 0;
+    color: #b0c4de;   
+}
+
 .feed-timestamp {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     color: #7a8fa3; 
+}
+
+.alert-item {
+    border-left: 4px solid #ff6b6b;
+}
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.alert-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+}
+
+.severity-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.severity-high {
+    background: #ff6b6b;
+    color: #ffffff;
+}
+
+.severity-medium {
+    background: #ffa500;
+    color: #ffffff;
+}
+
+.severity-low {
+    background: #4ecdc4;
+    color: #ffffff;
+}
+
+.alert-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin: 8px 0;
+    color: #e8f4f8;
+}
+
+.alert-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.alert-location {
+    color: #d6e9ff;
+}
+
+.alert-timestamp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #7a8fa3;
 }
 
 @media (max-width: 1200px) {
