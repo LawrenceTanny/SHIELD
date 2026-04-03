@@ -51,9 +51,9 @@ body {
   max-width: none;
   margin: 0;
   padding: 28px 32px 40px;
-  background: rgba(99, 99, 99, 0.25);
-  border: 1px solid rgba(255, 68, 0, 0.5);
-  border-radius: 0;
+  background: rgba(255, 255, 255, 0);
+  border-radius: 30px;
+  border: 2px solid rgba(255, 68, 0, 0.5);
   min-height: 100%;
 }
 
