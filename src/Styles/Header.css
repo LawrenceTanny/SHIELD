@@ -46,16 +46,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  position: relative;
+  position: sticky;
   padding: 0 40px;
   top: 0;
   height: var(--header-h);
   border-bottom: 2px solid rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   background: none;
   z-index: 3000;
   gap: 20px;
   flex-wrap: nowrap;
+  transition: all 0.3s ease;
 }
 
 /* HEADER LEFT - BRAND */
