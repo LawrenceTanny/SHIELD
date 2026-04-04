@@ -1,3 +1,4 @@
+import React from 'react';
 import "./Styles/AboutUs.css";
 
 export default function AboutUs() {
@@ -18,12 +19,16 @@ export default function AboutUs() {
         { id: 6, name: "PAGASA", logo: "/API/PAGASA.png" },
     ];
 
-    return(
+    return (
         <div className="about-us-page">
-            <main className="about-us-container">
-                <h1 className="about-us-title">About Us</h1>
+            
+            <div className="about-us-header">
+                <h1 className="about-us-title">ABOUT US</h1>
                 <div className="divider"></div>
+            </div>
 
+            <main className="about-us-container">
+                
                 <section className="card-grid">
                     <div className="info-card large-card vision-card">
                         <h2>VISION</h2>
@@ -31,7 +36,7 @@ export default function AboutUs() {
                             To empower communities and emergency responders with a high-precision, real-time intelligence hub that transforms complex environmental data into actionable insights, ensuring rapid response and minimizing the impact of natural disasters through seamless monitoring and instant alert systems.
                         </p>
 
-                        <h2>MISSION</h2>
+                        <h2 style={{ marginTop: '20px' }}>MISSION</h2>
                         <p>
                             To provide reliable, high-speed data integration and advanced visualization tools that bridge the gap between complex environmental monitoring and effective emergency management, saving lives through technological excellence.                       
                         </p>
@@ -41,7 +46,7 @@ export default function AboutUs() {
                         <h2>DATA PARTNERS</h2>
                         <div className="partners-grid">
                             {apiPartners.map((partner) => (
-                                <div key={partner.id} className="partner-card partner-card-large">
+                                <div key={partner.id} className="partner-card">
                                     <div className="partner-logo">
                                         {partner.logo ? (
                                             <img src={partner.logo} alt={partner.name} className="partner-image" />
