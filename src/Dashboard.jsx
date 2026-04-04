@@ -14,6 +14,7 @@ const FALLBACK_DISASTERS = [
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
+const OWM_CLOUDS_TILE_URL = `${API_BASE_URL}/api/weather/clouds-tile/{z}/{x}/{y}.png`;
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
@@ -63,6 +64,16 @@ function pickValue(object, keys, fallback = null) {
   return fallback;
 }
 
+function normalizeWeatherIcon(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^[0-9]{2}[dn]$/i.test(raw)) {
+    return `https://openweathermap.org/img/wn/${raw.toLowerCase()}@2x.png`;
+  }
+  return null;
+}
+
 function normalizeWeatherStations(payload) {
   const candidates = [];
 
@@ -88,6 +99,8 @@ function normalizeWeatherStations(payload) {
       const tempC = toNumber(pickValue(entry, ["temp_c", "temperature", "temperature_c", "air_temp", "air_temperature", "t2m", "temp"]));
       const rainfall = toNumber(pickValue(entry, ["rain", "rainfall", "rain_1h", "rainfall_1h", "precipitation"]));
       const conditionRaw = pickValue(entry, ["weather", "condition", "weather_condition", "summary", "description"], "");
+      const iconValue = pickValue(entry, ["icon", "icon_url", "weather_icon", "weatherIcon"], null);
+      const iconUrl = normalizeWeatherIcon(iconValue);
 
       let condition = String(conditionRaw || "").trim();
       if (!condition) {
@@ -105,6 +118,7 @@ function normalizeWeatherStations(payload) {
         lng,
         tempC,
         condition,
+        iconUrl,
       };
     })
     .filter((station) => station.tempC !== null || station.condition);
@@ -143,6 +157,44 @@ function selectWeatherStation(stations, focused) {
   return stations[0];
 }
 
+function summarizePhilippinesWeather(stations) {
+  if (!Array.isArray(stations) || stations.length === 0) return null;
+
+  const validTemps = stations
+    .map((station) => toNumber(station.tempC))
+    .filter((value) => value !== null);
+
+  const tempC = validTemps.length > 0
+    ? validTemps.reduce((sum, value) => sum + value, 0) / validTemps.length
+    : null;
+
+  const conditionCounts = new Map();
+  for (const station of stations) {
+    const condition = String(station.condition || "").trim();
+    if (!condition) continue;
+    conditionCounts.set(condition, (conditionCounts.get(condition) || 0) + 1);
+  }
+
+  let topCondition = "Weather";
+  let topCount = -1;
+  for (const [condition, count] of conditionCounts.entries()) {
+    if (count > topCount) {
+      topCondition = condition;
+      topCount = count;
+    }
+  }
+
+  const iconStation = stations.find((station) =>
+    station.iconUrl && String(station.condition || "").trim() === topCondition
+  ) || stations.find((station) => station.iconUrl) || null;
+
+  return {
+    tempC,
+    condition: topCondition,
+    iconUrl: iconStation?.iconUrl || null,
+  };
+}
+
 function weatherCodeToCondition(code) {
   if (code === 0) return "Sunny";
   if ([1, 2, 3].includes(code)) return "Cloudy";
@@ -172,10 +224,8 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [isLoadingWeather, setIsLoadingWeather] = useState(true);
   const [weatherError, setWeatherError] = useState("");
   const [focusedId,     setFocusedId]     = useState(null);
-  const [inAppNotif,    setInAppNotif]    = useState(true);
-  const [emailNotif,    setEmailNotif]    = useState(false);
-  const [smsNotif,      setSmsNotif]      = useState(false);
-  const [inclNeighbors, setInclNeighbors] = useState(true);
+  const [showCloudLayer, setShowCloudLayer] = useState(false);
+  const [cloudLayerAvailable, setCloudLayerAvailable] = useState(false);
   const [selType,       setSelType]       = useState("All");
   const [selSev,        setSelSev]        = useState("All");
 
@@ -291,6 +341,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         const payload = await response.json();
         const stations = normalizeWeatherStations(payload);
         setWeatherStations(stations);
+        setCloudLayerAvailable(Boolean(payload?.cloudsLayerAvailable));
 
         if (stations.length === 0) {
           setWeatherError("No weather data available.");
@@ -326,6 +377,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
           } catch (backupError) {
             if (backupError.name !== "AbortError") {
               setWeatherError("Weather unavailable");
+              setCloudLayerAvailable(false);
             }
           }
         }
@@ -358,20 +410,20 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
   const weatherDisplay = useMemo(() => {
     if (isLoadingWeather) {
-      return { tempText: "--", condition: "Loading...", location: "PAGASA" };
+      return { tempText: "--", condition: "Loading...", iconUrl: null };
     }
 
-    const station = selectWeatherStation(weatherStations, focused);
-    if (!station) {
-      return { tempText: "--", condition: weatherError || "Unavailable", location: "PAGASA" };
+    const summary = summarizePhilippinesWeather(weatherStations);
+    if (!summary) {
+      return { tempText: "--", condition: weatherError || "Unavailable", iconUrl: null };
     }
 
     return {
-      tempText: station.tempC !== null ? `${Math.round(station.tempC)}°C` : "--",
-      condition: station.condition || "Weather",
-      location: station.city || station.name || "PAGASA",
+      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}C` : "--",
+      condition: summary.condition || "Weather",
+      iconUrl: summary.iconUrl,
     };
-  }, [focused, isLoadingWeather, weatherError, weatherStations]);
+  }, [isLoadingWeather, weatherError, weatherStations]);
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -393,11 +445,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         {settingsOpen ? <IconClose /> : <IconSettings />}
   
       </button>
-
-      {/* CONTENT - Map and Danger Panel */}
       <div className="content">
-
-        {/* DANGERS PANEL */}
         <aside className="danger-panel">
           <div className="danger-head">
             <h2>Active Dangers</h2>
@@ -470,10 +518,32 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
         {/* MAP */}
         <main className="map-wrap">
-          <div className="weather-badge" aria-live="polite">
-            <div className="weather-temp">{weatherDisplay.tempText}</div>
-            <div className="weather-condition">{weatherDisplay.condition}</div>
-            <div className="weather-location">{weatherDisplay.location}</div>
+          <div className="weather-stack">
+            <button
+              type="button"
+              className={`map-layer-toggle${showCloudLayer && cloudLayerAvailable ? " layer-on" : ""}`}
+              onClick={() => setShowCloudLayer((prev) => !prev)}
+              disabled={!cloudLayerAvailable}
+              title={cloudLayerAvailable ? "Toggle cloud map overlay" : "Cloud overlay unavailable (check backend OPENWEATHERMAP_API_KEY)"}
+            >
+              {showCloudLayer ? "Clouds: ON" : "Clouds: OFF"}
+            </button>
+            <div className="weather-badge" aria-live="polite">
+              {weatherDisplay.iconUrl && (
+                <img
+                  className="weather-icon"
+                  src={weatherDisplay.iconUrl}
+                  alt={weatherDisplay.condition}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                  }}
+                />
+              )}
+              <div className="weather-temp">{weatherDisplay.tempText}</div>
+              <div className="weather-condition">{weatherDisplay.condition}</div>
+            </div>
           </div>
           <MapContainer
             attributionControl={false}
@@ -492,6 +562,13 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
+            {showCloudLayer && cloudLayerAvailable && (
+              <TileLayer
+                attribution='&copy; OpenWeather'
+                url={OWM_CLOUDS_TILE_URL}
+                opacity={0.65}
+              />
+            )}
             {filtered.map((item) => {
               const isFoc = item.id === focusedId;
               return (
@@ -530,24 +607,8 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
       {/* SETTINGS DRAWER */}
       <aside id="dashboard-settings-drawer" className={"settings-drawer" + (settingsOpen ? " settings-drawer--open" : "")}>
         <div className="settings-head">
-          <h3>Settings</h3>
+          <h3>Disaster Settings</h3>
         </div>
-        <hr className="hr-settings"></hr>
-        <section className="settings-section">
-          <p className="settings-label">Notifications</p>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={inAppNotif} onChange={(e) => setInAppNotif(e.target.checked)} /> In-app alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={emailNotif} onChange={(e) => setEmailNotif(e.target.checked)} /> Email alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={smsNotif} onChange={(e) => setSmsNotif(e.target.checked)} /> SMS alerts
-          </label>
-          <label className="settings-toggle">
-            <input type="checkbox" checked={inclNeighbors} onChange={(e) => setInclNeighbors(e.target.checked)} /> Include neighboring cities
-          </label>
-        </section>
         <hr className="hr-settings"></hr>
         <section className="settings-section">
           <div className="filter-group">

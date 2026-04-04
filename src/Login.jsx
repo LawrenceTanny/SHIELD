@@ -3,7 +3,9 @@ import validator from "validator";
 import { Eye, EyeOff } from "lucide-react"; 
 import "./Styles/Login.css";
 
-export default function Login({ onClose }) {
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
+
+export default function Login({ onClose, onLogin }) {
   const morphTimerRef = useRef(null);
   const [tab, setTab] = useState("signin");
   const [modalFlipClass, setModalFlipClass] = useState("");
@@ -172,16 +174,22 @@ export default function Login({ onClose }) {
     const signupPayload = { ...registerData, name: username };
     
     try {
-      const response = await fetch(`https://shield-app-wmz37.ondigitalocean.app/api/${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(tab === "register" ? signupPayload : { email: form.email, password: form.password }),
       });
       const result = await response.json();
       if (response.ok) {
         setStatusMessage(tab === "register" ? "Account created" : "Login Successful");
         setMessageType("success");
-        if (tab === "signin") setTimeout(() => onClose(), 1500);
+        if (tab === "signin") {
+          if (typeof onLogin === "function" && result?.user) {
+            onLogin(result.user);
+          }
+          setTimeout(() => onClose(), 600);
+        }
         else switchTab("signin");
       } else {
         const backendMessage = (result.message || "").toLowerCase();

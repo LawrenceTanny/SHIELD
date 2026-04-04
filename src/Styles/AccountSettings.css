@@ -171,6 +171,8 @@
   box-shadow: 0 0 15px var(--accent-g);}
 
 .as-hint { font-size: 0.72rem; color: var(--ink); }
+.as-error { color: #ff9b9b; }
+.as-success { color: #9ff0b6; }
 
 /* Fields */
 .as-field {
