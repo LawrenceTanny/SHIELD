@@ -21,6 +21,8 @@ const allowedOrigins = new Set(
     CLIENT_ORIGIN,
     ...CLIENT_ORIGINS.split(',').map((item) => item.trim()).filter(Boolean),
     'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
     'https://shield.lawrencetan1104.workers.dev'
   ].filter(Boolean)
 );
