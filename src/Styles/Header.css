@@ -190,8 +190,8 @@ body {
   right: 0;
   width: 210px;
   border: 2px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  background: linear-gradient(166deg, #20202000 0%, #5252522d 100%);
+  backdrop-filter: blur(8px);
+  background: linear-gradient(166deg, #202020 0%, #5252528a 100%);
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   border-radius: 12px;
   padding: 12px;

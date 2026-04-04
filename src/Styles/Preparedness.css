@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Aldrich&family=Geist+Mono:wght@100..900&display=swap');
+
+
 .preparedness container{
-    font-family: 'PP Neue Montreal', sans-serif;
+    font-family: 'Geist', sans-serif;
     padding: 40px 50px;
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -9,6 +13,7 @@
 }
 
 body {
+    padding: 0;
   background-color: #050C1A;
 }
 
@@ -19,7 +24,7 @@ body {
 }
 
 .toolkit-header h1{
-    font-family: 'PP Neue Montreal', sans-serif;
+    font-family: 'Geist', sans-serif;
     font-size: 30 px;
     font-weight: 300;
     letter-spacing: 0.5px;
@@ -28,7 +33,7 @@ body {
 }
 
 .toolkit-card h2{
-    font-family: 'PP Neue Montreal', sans-serif;
+    font-family: 'Geist', sans-serif;
     font-size: 20px;
     font-weight: 400;
     letter-spacing: 0.3px;
