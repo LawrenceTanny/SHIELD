@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Aldrich&family=Geist+Mono:wght@100..900&display=swap');
 
 
 .preparedness container{
     font-family: 'Geist', sans-serif;
-=======
-.preparedness-container{
-    font-family: 'PP Neue Montreal', sans-serif;
->>>>>>> main
     padding: 40px 50px;
     width: 100%;
     max-width: none;
