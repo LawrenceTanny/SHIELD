@@ -49,7 +49,6 @@ body {
   position: relative;
   padding: 0 40px;
   top: 0;
-  border-radius: 0 0 30px 30px;
   height: var(--header-h);
   border-bottom: 2px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
