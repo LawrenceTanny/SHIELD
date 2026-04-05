@@ -2,7 +2,7 @@
   --lm-bg:      #050c1a;
   --lm-surface: #1a1a1a;
   --lm-border:  rgba(255,255,255,0.1);
-  --lm-accent:  #4da3ff;
+  --lm-accent:  #e63946;
   --lm-ink:     #e4f3ff;
   --lm-muted:   rgba(228,243,255,0.6);
 }
@@ -84,7 +84,7 @@
   font-weight: 900;
   letter-spacing: 0.12em;
   color: var(--lm-accent);
-  text-shadow: 0 0 28px rgba(77,163,255,0.6);
+  text-shadow: 0 0 28px rgba(230,57,70,0.6);
   margin-bottom: 4px;
 }
 
@@ -128,8 +128,8 @@
 }
 .ltab:not(.ltab--on):hover { 
   color: var(--ink);
-  border-color: rgba(77,163,255,0.3);
-  background: rgba(77,163,255,0.08); }
+  border-color: rgba(230,57,70,0.3);
+  background: rgba(230,57,70,0.08); }
 
 /* Form */
 .login-form {
@@ -302,7 +302,7 @@
 }
 .lf-label input:focus {
   border-color: var(--lm-accent);
-  box-shadow: 0 0 0 3px rgba(77,163,255,0.15);
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.15);
 }
 .lf-label input::placeholder { color: rgba(228,243,255,0.25); }
 
@@ -323,7 +323,7 @@
 }
 .login-submit:hover {
   opacity: 0.88;
-  box-shadow: 0 0 18px rgba(77,163,255,0.4);
+  box-shadow: 0 0 18px rgba(230,57,70,0.4);
 }
 
 .login-hint {

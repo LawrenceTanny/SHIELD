@@ -3,7 +3,7 @@
   --as-surface: #0a1628;
   --as-surface2:#0f1e36;
   --as-border:  rgba(255,255,255,0.09);
-  --as-accent:  #4DA3FF;
+  --as-accent:  #E63946;
   --as-ink:     #e4f3ff;
   --as-muted:   rgba(190,220,255,0.55);
 }
@@ -115,8 +115,8 @@
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  background: rgba(77, 163, 255, 0.295);
-  border: 1px solid #4DA3FF;
+  background: rgba(230, 57, 70, 0.295);
+  border: 1px solid #E63946;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,7 +201,7 @@
 }
 .as-field input:focus {
   border-color: var(--as-accent);
-  box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  box-shadow: 0 0 0 3px rgba(255,90,103,0.1);
 }
 .as-field input::placeholder { color: rgba(190,220,255,0.25); }
 .as-input-readonly {
@@ -262,8 +262,8 @@
   transition: border-color 130ms, color 130ms;
 }
 .as-btn-cancel:hover {  color: var(--ink);
-  border-color: rgba(77,163,255,0.3);
-  background: rgba(77,163,255,0.08);
+  border-color: rgba(230,57,70,0.3);
+  background: rgba(230,57,70,0.08);
 }
 
 .as-btn-signout {
@@ -271,8 +271,8 @@
   text-transform: uppercase;
   padding: 9px 20px;
   border-radius: 9px;
-  border: 1px solid rgba(77, 163, 255, 0.35);
-  background: rgba(77, 163, 255, 0.12);
+  border: 1px solid rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.12);
   color: #ffd9cf;
   font-size: 0.9rem;
   cursor: pointer;
@@ -280,8 +280,8 @@
 }
 
 .as-btn-signout:hover {
-  background: rgba(77, 163, 255, 0.2);
-  border-color: rgba(77, 163, 255, 0.55);
+  background: rgba(230, 57, 70, 0.2);
+  border-color: rgba(230, 57, 70, 0.55);
   color: #fff;
 }
 
@@ -300,5 +300,5 @@
 }
 .as-btn-save:hover {
    opacity: 0.88;
-  box-shadow: 0 0 18px rgba(77,163,255,0.4);
+  box-shadow: 0 0 18px rgba(230,57,70,0.4);
 }

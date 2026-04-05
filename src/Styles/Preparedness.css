@@ -6,7 +6,7 @@
     max-width: 1400px;
     min-height: auto;
     height: auto;
-    border: 2px solid rgba(77, 163, 255, 0.5);
+    border: 2px solid rgba(230, 57, 70, 0.5);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     background: linear-gradient(155deg, rgba(8, 26, 47, 0.92) 0%, rgba(14, 31, 52, 0.9) 100%);
     backdrop-filter: blur(10px);
@@ -35,7 +35,7 @@ body {
     text-transform: uppercase;
     margin: 0;
     color: var(--accent);
-    text-shadow: 0 0 10px rgba(77, 163, 255, 0.4);
+    text-shadow: 0 0 10px rgba(230, 57, 70, 0.4);
 }
 
 .toolkit-card h2{
@@ -78,7 +78,7 @@ body {
     background: rgba(20, 20, 20, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-left: 6px solid #4da3ff;
+    border-left: 6px solid #e63946;
     border-radius: 20px;
     transition: all 0.3s ease;
     min-height: fit-content !important;
@@ -144,7 +144,7 @@ body {
 }
 
 .item-guide:hover{
-    background: rgba(77, 163, 255, 0.1);
+    background: rgba(230, 57, 70, 0.1);
     border-color: var(--accent);
 }
 
@@ -211,7 +211,7 @@ body {
 .checklist-item input[type = "checkbox"]{
     height: 18px;
     width: 18px;
-    accent-color: #4da3ff;
+    accent-color: #e63946;
     cursor: pointer;
     pointer-events: auto;
 }
@@ -251,9 +251,9 @@ body {
 }
 
 .pdf-btn:hover{
-    background: #6ab6ff;
+    background: #ff5a67;
     transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(77, 163, 255, 0.4);
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.4);
 }
 
 .pdf-btn:active{
@@ -365,7 +365,7 @@ body {
     max-width: 500px;
     padding: 40px;
     position: relative;
-    box-shadow: 0 0 40px rgba(77, 163, 255, 0.3);
+    box-shadow: 0 0 40px rgba(230, 57, 70, 0.3);
     animation: slideUp 0.3s ease;
 }
 
@@ -374,7 +374,7 @@ body {
     align-items: center;
     gap: 20px;
     margin-bottom: 25px;
-    border-bottom: 1px solid rgba(77, 163, 255, 0.3);
+    border-bottom: 1px solid rgba(230, 57, 70, 0.3);
     padding-bottom: 15px;
 }
 
@@ -490,19 +490,19 @@ body {
     .print-logo, 
     .label-guide,
     .accent-icon {
-        color: #4da3ff !important;
+        color: #e63946 !important;
     }
 
     .print-only-header {
         display: flex !important;
         flex-direction: column;
         align-items: center;
-        border-bottom: 2px solid #4da3ff;
+        border-bottom: 2px solid #e63946;
         margin-bottom: 30px;
         padding-bottom: 10px;
     }
     
-    .print-logo { font-size: 28px; font-weight: 900; color: #4da3ff !important; font-family: monospace; }
+    .print-logo { font-size: 28px; font-weight: 900; color: #e63946 !important; font-family: monospace; }
     .print-tagline { font-size: 10px; color: #666; }
 
     @media (orientation: landscape) {
@@ -524,14 +524,14 @@ body {
         margin-bottom: 15px !important;
         padding: 10px 15px !important;
         border: 1px solid #ddd !important;
-        border-left: 6px solid #4da3ff !important;
+        border-left: 6px solid #e63946 !important;
         background: white !important;
         color: black !important;
         page-break-inside: avoid; 
     }
 
     .toolkit-card h2 {
-        color: #4da3ff !important;
+        color: #e63946 !important;
         font-size: 22px !important;
         margin-bottom: 12px !important;
     }
@@ -582,7 +582,7 @@ body {
         content: "•";
         position: absolute;
         left: -15px;
-        color: #4da3ff !important;
+        color: #e63946 !important;
     }
 
     .checklist-items {
