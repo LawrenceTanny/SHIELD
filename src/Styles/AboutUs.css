@@ -412,10 +412,6 @@ font-family: "IBM Plex Mono", monospace;
   transform: translateX(10px); 
 }
 
-.vision-card p:hover .vision-card p {
-  font-size: 5px;
-}
-
 @keyframes scan {
   0% { top: -100%; }
   100% { top: 100%; }
