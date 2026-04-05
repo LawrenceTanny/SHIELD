@@ -170,26 +170,19 @@ export default function MainLayout() {
             </button>
             {userMenuOpen && (
               <div className="user-dropdown">
-                <p className="user-hint">
-                  {currentUser ? `Signed in as ${currentUser.name || currentUser.email}` : "Not signed in"}
-                </p>
                 {!currentUser && (
                   <button className="user-signin-btn" onClick={() => { setUserMenuOpen(false); setLoginOpen(true); }}>
                     Sign In
                   </button>
                 )}
                 {currentUser && (
-                  <button className="user-signin-btn" onClick={handleSignOut}>
-                    Sign Out
+                  <button
+                    className="user-acct-btn"
+                    onClick={() => { setUserMenuOpen(false); setAcctSettingsOpen(true); }}
+                  >
+                    Account Settings
                   </button>
                 )}
-                <button
-                  className="user-acct-btn"
-                  onClick={() => { setUserMenuOpen(false); setAcctSettingsOpen(true); }}
-                  disabled={!currentUser}
-                >
-                  Account Settings
-                </button>
               </div>
             )}
           </div>
@@ -229,12 +222,11 @@ export default function MainLayout() {
               {activeTab === "about" && <AboutUs />}
               {activeTab === "preparedness" && <Preparedness />}
               {activeTab === "home" && <News />}
+              <Footer />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      <Footer />
 
 
       {loginOpen && <Login onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />}
@@ -243,6 +235,7 @@ export default function MainLayout() {
           onClose={() => setAcctSettingsOpen(false)}
           currentUser={currentUser}
           onUserUpdated={handleUserUpdated}
+          onSignOut={handleSignOut}
         />
       )}
     </div>
