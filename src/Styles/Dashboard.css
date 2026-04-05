@@ -4,14 +4,14 @@
   --topbar-h: 70px;
   --footer-h: 40px;
   --panel-w:  400px;
-  --bg:       #050c1a;
-  --surface:  #D9D9D9;
-  --border:   #D9D9D9;
-  --accent:   #FF4400;
-  --accent-d: rgba(255,68,0,0.18);
-  --accent-g: rgba(255,68,0,0.55);
-  --ink:      #D9D9D9;
-  --ink2:      #1F1F1F;
+  --bg:       #07161f;
+  --surface:  #d6f6f1;
+  --border:   #90ddd4;
+  --accent:   #00B8A9;
+  --accent-d: rgba(0,184,169,0.18);
+  --accent-g: rgba(0,184,169,0.55);
+  --ink:      #e3f7f3;
+  --ink2:      #0f2b2a;
 }
 
 
@@ -62,9 +62,9 @@ body {
 }
 
 .dashboard-settings-btn:hover {
-  background: rgba(255, 68, 0, 0.18);
-  border-color: #ff4400;
-  color: #ffd7c8;
+  background: rgba(0, 184, 169, 0.18);
+  border-color: #00b8a9;
+  color: #d6f6f1;
 }
 
 .dashboard-settings-btn.is-open {
@@ -468,8 +468,8 @@ body {
 }
 
 .map-layer-toggle:hover:not(:disabled) {
-  background: rgba(255, 68, 0, 0.18);
-  border-color: #ff4400;
+  background: rgba(0, 184, 169, 0.18);
+  border-color: #00b8a9;
   color: #ffd7c8;
 }
 
@@ -479,7 +479,7 @@ body {
 }
 
 .map-layer-toggle.layer-on{
-  border-color: #ff4400;
+  border-color: #00b8a9;
 }
 
 .weather-badge {

@@ -138,8 +138,8 @@ export default function MainLayout() {
   };
 
   return (
-    <div className="main-layout">
-      <header className="main-header">
+    <div className="main-layout main-layout--dashboard">
+      <header className="main-header main-header--dashboard">
         <div className="header-left">
           <div className="brand">
             <button
@@ -147,7 +147,7 @@ export default function MainLayout() {
               className="brand-home-btn brand-name"
               onClick={() => handleTabChange("home")}
             >
-              SHIELD
+              ALERT PH
             </button>
             <span className="brand-sep" />
             <span className="brand-sub">Synchronized Hazard Information &amp; Emergency Live Dashboard</span>
