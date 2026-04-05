@@ -409,7 +409,11 @@ font-family: "IBM Plex Mono", monospace;
   border-left-width: 10px; 
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 
               0 0 20px rgba(255, 68, 0, 0.15);
-  transform: translateX(4px); 
+  transform: translateX(10px); 
+}
+
+.vision-card p:hover .vision-card p {
+  font-size: 5px;
 }
 
 @keyframes scan {
@@ -471,9 +475,14 @@ font-family: "IBM Plex Mono", monospace;
 
 .partner-card:hover {
   transform: translateY(-5px);
-  background: #ffffff;
+  background: #1a1a1a;
   border-color: var(--accent);
 }
+.partner-card:hover .partner-name{
+  transform: translateY(-5px);
+  color: #cfcfcf;
+}
+
 
 .partner-image {
   width: 100%;
