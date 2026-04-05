@@ -12,7 +12,7 @@ async function readJsonSafe(response) {
   }
 }
 
-export default function AccountSettings({ onClose, currentUser, onUserUpdated }) {
+export default function AccountSettings({ onClose, currentUser, onUserUpdated, onSignOut }) {
   const [displayName, setDisplayName] = useState(currentUser?.name || "");
   const [email] = useState(currentUser?.email || "");
   const [receiveAlerts, setReceiveAlerts] = useState(true);
@@ -119,6 +119,13 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated })
     }
   };
 
+  const handleSignOutClick = async () => {
+    if (typeof onSignOut === "function") {
+      await onSignOut();
+    }
+    onClose();
+  };
+
   if (!currentUser) {
     return (
       <div className="as-overlay" onClick={handleOverlayClick}>
@@ -207,6 +214,9 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated })
 
         {/* Footer */}
         <div className="as-footer">
+          <button className="as-btn-signout" onClick={handleSignOutClick}>
+            Sign Out
+          </button>
           <button className="as-btn-cancel" onClick={onClose}>Cancel</button>
           <button className="as-btn-save" onClick={handleSave} disabled={isLoading || isSaving}>
             {isSaving ? "Saving..." : "Save Changes"}
