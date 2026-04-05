@@ -50,10 +50,10 @@ const PreparednessToolkit = () => {
         'Turn off the main electricity switch if water enters your home.',
         'Boil water before drinking to avoid contamination.'
       ]
-    },
+    }, 
     'Volcano Activity': {
       icon: '🌋',
-      steps: [
+      steps: [ 
         'Wear an N95 mask or wet cloth to protect from ashfall.',
         'Stay indoors with windows and doors closed.',
         'Follow evacuation orders from local authorities immediately.',
@@ -167,5 +167,5 @@ const PreparednessToolkit = () => {
     </div>
   );
 };
-
-export default PreparednessToolkit;
+ 
+export default PreparednessToolkit; 
