@@ -5,13 +5,13 @@
   --footer-h: 40px;
   --panel-w:  400px;
   --bg:       #07161f;
-  --surface:  #e8f5ee;
-  --border:   #a8d5bc;
-  --accent:   #2E8B57;
-  --accent-d: rgba(46,139,87,0.18);
-  --accent-g: rgba(46,139,87,0.55);
-  --ink:      #ecfff4;
-  --ink2:      #0f2a1b;
+  --surface:  #e9f6ff;
+  --border:   #a8d8f0;
+  --accent:   #00A8E8;
+  --accent-d: rgba(0,168,232,0.18);
+  --accent-g: rgba(0,168,232,0.55);
+  --ink:      #f1f9ff;
+  --ink2:      #0f2336;
 }
 
 
@@ -62,9 +62,9 @@ body {
 }
 
 .dashboard-settings-btn:hover {
-  background: rgba(46, 139, 87, 0.18);
-  border-color: #2e8b57;
-  color: #e8f5ee;
+  background: rgba(0, 168, 232, 0.18);
+  border-color: #00a8e8;
+  color: #e9f6ff;
 }
 
 .dashboard-settings-btn.is-open {
@@ -129,7 +129,7 @@ body {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-d);
-  box-shadow: 0 0 10px rgba(71,200,138,0.22);
+  box-shadow: 0 0 10px rgba(255,127,107,0.22);
 }
 
 .user-wrap { position: relative; }
@@ -157,7 +157,7 @@ body {
   width: 100%;
   padding: 9px;
   border-radius: 8px;
-  border: 1px solid rgba(71,200,138,0.4);
+  border: 1px solid rgba(255,127,107,0.4);
   background: var(--accent-d);
   color: var(--accent);
   font-weight: 700;
@@ -165,7 +165,7 @@ body {
   cursor: pointer;
   transition: background 130ms;
 }
-.user-signin-btn:hover { background: rgba(71,200,138,0.3); }
+.user-signin-btn:hover { background: rgba(255,127,107,0.3); }
 
 .user-acct-btn {
   width: 100%;
@@ -468,8 +468,8 @@ body {
 }
 
 .map-layer-toggle:hover:not(:disabled) {
-  background: rgba(46, 139, 87, 0.18);
-  border-color: #2e8b57;
+  background: rgba(0, 168, 232, 0.18);
+  border-color: #00a8e8;
   color: #ffd7c8;
 }
 
@@ -479,7 +479,7 @@ body {
 }
 
 .map-layer-toggle.layer-on{
-  border-color: #2e8b57;
+  border-color: #00a8e8;
 }
 
 .weather-badge {
