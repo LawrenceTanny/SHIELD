@@ -150,7 +150,7 @@ export default function MainLayout() {
               ALERT PH
             </button>
             <span className="brand-sep" />
-            <span className="brand-sub"></span>
+            <span className="brand-sub">Philippine Disaster & Monitoring System</span>
           </div>
         </div>
 
