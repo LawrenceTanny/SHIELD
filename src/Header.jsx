@@ -23,21 +23,38 @@ function IconUser() {
   );
 }
 
+function IconMenu() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="22px"
+      viewBox="0 -960 960 960"
+      width="22px"
+      fill="currentColor"
+    >
+      <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+    </svg>
+  );
+}
+
 export default function MainLayout() {
   const [activeTab, setActiveTab] = useState("home");
   const [isLoading, setIsLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [acctSettingsOpen, setAcctSettingsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   
   const userRef = useRef(null);
+  const mobileNavRef = useRef(null);
 
   // Handle tab switching with loading effect
   const handleTabChange = (newTab) => {
     if (newTab !== activeTab) {
       setSettingsOpen(false);
+      setMobileNavOpen(false);
       setIsLoading(true);
       // Simulate loading for smooth transition
       setTimeout(() => {
@@ -48,15 +65,18 @@ export default function MainLayout() {
   };
 
   useEffect(() => {
-    if (!userMenuOpen) return;
+    if (!userMenuOpen && !mobileNavOpen) return;
     const handleClick = (e) => {
-      if (userRef.current && !userRef.current.contains(e.target)) {
+      const clickedUserMenu = userRef.current && userRef.current.contains(e.target);
+      const clickedMobileMenu = mobileNavRef.current && mobileNavRef.current.contains(e.target);
+      if (!clickedUserMenu && !clickedMobileMenu) {
         setUserMenuOpen(false);
+        setMobileNavOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [userMenuOpen]);
+  }, [userMenuOpen, mobileNavOpen]);
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 650);
@@ -160,11 +180,49 @@ export default function MainLayout() {
 
         {/* RIGHT NAV (User) */}
         <nav className="topbar-nav">
+          <div className="mobile-menu-wrap" ref={mobileNavRef}>
+            <button
+              className={"nav-btn" + (mobileNavOpen ? " nav-btn--on" : "")}
+              title="Navigation"
+              onClick={() => {
+                setUserMenuOpen(false);
+                setMobileNavOpen((prev) => !prev);
+              }}
+            >
+              <IconMenu />
+            </button>
+            {mobileNavOpen && (
+              <div className="mobile-tab-dropdown">
+                <button
+                  className={`mobile-tab-btn ${activeTab === "dashboard" ? "mobile-tab-active" : ""}`}
+                  onClick={() => handleTabChange("dashboard")}
+                >
+                  Dashboard
+                </button>
+                <button
+                  className={`mobile-tab-btn ${activeTab === "preparedness" ? "mobile-tab-active" : ""}`}
+                  onClick={() => handleTabChange("preparedness")}
+                >
+                  Preparedness
+                </button>
+                <button
+                  className={`mobile-tab-btn ${activeTab === "about" ? "mobile-tab-active" : ""}`}
+                  onClick={() => handleTabChange("about")}
+                >
+                  About Us
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="user-wrap" ref={userRef}>
             <button
               className={"nav-btn" + (userMenuOpen ? " nav-btn--on" : "")}
               title="Account"
-              onClick={() => setUserMenuOpen((v) => !v)}
+              onClick={() => {
+                setMobileNavOpen(false);
+                setUserMenuOpen((v) => !v);
+              }}
             >
               <IconUser />
             </button>
