@@ -29,17 +29,22 @@ body {
 }
 
 .about-us-page {
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  background: var(--bg);
-  min-height: 100%;
-  height: 100%;
-  color: var(--ink);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none; 
+    font-family: 'Inter', sans-serif;
+    margin: 40px auto 40px auto;  
+    padding: 30px 40px;            
+    width: 95%;                     
+    max-width: 1400px;        
+    
+    background: rgba(35, 35, 35, 0.9);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 68, 0, 0.5);
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    box-sizing: border-box; 
 }
 
 .about-us-page::-webkit-scrollbar {
@@ -47,16 +52,12 @@ body {
 }
 
 .about-us-container {
-  width: auto;
-  max-width: none;
-  margin: 80px 20px 40px 20px;
-  padding: 28px 32px 40px;
-  background: rgba(35, 35, 35, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 30px;
-  border: 2px solid rgba(255, 68, 0, 0.5);
-  min-height: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  margin: 0;
+  padding: 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .about-us-title {
@@ -66,7 +67,8 @@ body {
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-top: 0;
+  margin-bottom: 15px;
   text-shadow: 0 0 10px rgba(255, 68, 0, 0.4);
   word-wrap: break-word;
 }
@@ -108,24 +110,26 @@ body {
 
 .divider {
   width: 100%;
-  height: 1px;
-  background: rgba(255, 68, 0, 0.5);
-  margin-bottom: 32px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-top: 10px;
+  margin-bottom: 30px;
 }
 
 .card-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 30px;
   margin-bottom: 40px;
+  align-items: stretch;
   width: 100%;
 }
 
 .info-card {
-  padding: 24px;
-  background: rgba(20, 20, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
+  padding: 30px;
+  background: rgba(25, 25, 25, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px;
   color: var(--ink);
   min-height: auto;
   display: flex;
@@ -133,14 +137,16 @@ body {
   justify-content: flex-start;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  height: 100%;
+  min-height: auto;
 }
 
 .info-card h2 {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 16px;
-  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+  letter-spacing: 0.1em;
   color: var(--accent);
   word-wrap: break-word;
 }
@@ -234,33 +240,28 @@ body {
 }
 
 .dev-section {
-  margin-top: 40px;
   width: 100%;
+  margin-top: 40px; 
+  padding: 0;      
+  display: flex;
+  flex-direction: column;
 }
 
 .dev-title {
-  /* NEW: Use the brand's technical font */
-  font-family: "IBM Plex Mono", monospace;
-  
-  /* NEW: Match the 'UI' feel of the other headers */
-  font-size: 18px;           /* Slightly smaller but sharper */
-  font-weight: 700;
-  letter-spacing: 0.15em;    /* Spreads the letters out */
-  text-transform: uppercase; /* Ensures it stays All-Caps */
-  
-  color: var(--accent);
-  margin-bottom: 20px;
-  word-wrap: break-word;
-  
-  /* Optional: subtle glow to match your SHIELD branding */
-  text-shadow: 0 0 10px rgba(255, 68, 0, 0.2);
+font-family: "IBM Plex Mono", monospace;
+    font-size: 24px;
+    color: var(--accent);
+    margin-bottom: 25px;
+    text-align: left;
 }
 
 .dev-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-  width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 25px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .dev-card {
@@ -279,28 +280,26 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-/* --- The Little More Something (3D Transition) --- */
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-/* 1. Subtle 3D Tilt and Scale */
 .dev-card:hover {
-  background: #ffffff; /* Turns white on hover like Partners */
+  background: #ffffff; 
   transform: translateY(-8px) scale(1.03);
-  background: var(--surface2);    /* Slightly darker gray on hover */
-  border-color: var(--accent);    /* Brighter orange border */
+  background: var(--surface2);    
+  border-color: var(--accent);    
   box-shadow: 0 15px 35px rgba(255, 68, 0, 0.3);
 }
 
-/* 2. Interactive Background Slide-In */
 .dev-card::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;                    /* Start off-screen */
+  left: -100%;                   
   width: 100%;
   height: 100%;
   background: linear-gradient(120deg, transparent, rgba(255, 68, 0, 0.05), transparent);
@@ -309,7 +308,7 @@ body {
 }
 
 .dev-card:hover::before {
-  left: 100%;                     /* Slide across the card */
+  left: 100%;                    
 }
 
 .dev-avatar {
@@ -345,7 +344,7 @@ body {
 
 .dev-card:hover .dev-info {
   opacity: 1;
-  transform: translateY(0);       /* Slide up and fade in */
+  transform: translateY(0);       
 }
 
 .dev-name {
@@ -361,7 +360,7 @@ body {
 
 .dev-position {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted-dark);
   text-transform: uppercase;
   word-break: break-word;
@@ -369,34 +368,30 @@ body {
   opacity: 0.8;
 }
 
-/* This styles the overall section titles (Vision and Mission) */
 .vision-card h2 {
-  color: var(--accent); /* Your orange #FF4400 */
+  color: var(--accent); 
   margin-bottom: 15px;
 }
 
-/* This targets ONLY the Mission heading to create that space */
 .vision-card p + h2 {
-  margin-top: 40px; /* Adjust this value for more or less space */
+  margin-top: 40px; 
 }
 
-/* This creates the gray container for the text as seen in your image */
 .vision-card p {
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: var(--surface);     /* Your #D9D9D9 gray */
-  color: var(--ink2);             /* Dark #1F1F1F text */
-  padding: 24px 28px;             /* Extra padding on the left for the bar */
-  border-radius: 8px 16px 16px 8px; /* Asymmetric rounding for a "tab" look */
+  background: var(--surface);     
+  color: var(--ink2);             
+  padding: 25px;           
+  border-radius: 8px 16px 16px 8px; 
   
-  /* The "Something Extra": A thick solid accent bar on the left */
   border-left: 6px solid var(--accent); 
   border-top: 1px solid rgba(255, 255, 255, 0.4);
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
   line-height: 1.7;
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 500;
   text-transform: none;
   letter-spacing: 0.01em;
   position: relative;
@@ -405,18 +400,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* Subtle glow that makes it feel "active" */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 
               0 0 15px rgba(255, 68, 0, 0.05);
-  
   transition: all 0.3s ease;
 }
 
 .vision-card p:hover {
-  border-left-width: 10px; /* Expands slightly */
+  border-left-width: 10px; 
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 
               0 0 20px rgba(255, 68, 0, 0.15);
-  transform: translateX(4px); /* Tiny shift to the right */
+  transform: translateX(4px); 
 }
 
 @keyframes scan {
@@ -424,16 +417,14 @@ body {
   100% { top: 100%; }
 }
 
-/* Optional: Add a very faint "Scanning" line effect */
 .vision-card p::after {
   content: "";
   position: absolute;
   top: -100%;
   left: 0;
   width: 100%;
-  height: 50%; /* Height of the scanning "beam" */
+  height: 50%; 
   
-  /* Increased opacity to 0.1 so you can actually see it */
   background: linear-gradient(
     to bottom,
     transparent,
@@ -442,210 +433,174 @@ body {
   );
   
   pointer-events: none;
-  /* Adjust '3s' to make it faster or slower */
   animation: scan 4s linear infinite; 
 }
 
-@media (max-width: 1024px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .partners-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .dev-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.vision-card p {
+  background: var(--surface);
+  color: var(--ink2);
+  padding: 20px;
+  border-radius: 8px 16px 16px 8px;
+  border-left: 6px solid var(--accent);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
+.vision-card p:last-child {
+  margin-bottom: 0;
+}
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.partner-card {
+  background: var(--surface);
+  border: 1px solid rgba(255, 68, 0, 0.3);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.partner-card:hover {
+  transform: translateY(-5px);
+  background: #ffffff;
+  border-color: var(--accent);
+}
+
+.partner-image {
+  width: 100%;
+  max-width: 60px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.partner-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink2);
+  text-align: center;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.dev-section {
+  width: 100%;
+  margin-top: 10px; 
+}
+
+.dev-title {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.dev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.dev-card {
+  background: var(--surface);
+  border-left: 6px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.dev-card:hover {
+  transform: translateY(-5px);
+  background: #ffffff;
+}
+
+.dev-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px dashed var(--accent);
+  overflow: hidden;
+}
+
+.dev-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dev-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink2);
+  text-transform: uppercase;
+}
+
+.dev-position {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+}
 @media (max-width: 768px) {
   .about-us-page {
-    padding: 0;
-  }
-
-  .about-us-container {
-    padding: 20px 18px 28px;
-  }
-
-  .card-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .partners-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .dev-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .top-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 0 16px;
+    width: 95%;
+    margin: 20px auto;
+    padding: 20px;
   }
 
   .about-us-title {
-    font-size: 24px;
+    font-size: 26px;
   }
 
-  .brand-title {
-    font-size: 20px;
+  .card-grid {
+    grid-template-columns: 1fr; 
+    gap: 20px;
   }
 
-  .info-card {
-    padding: 18px;
-    min-height: 180px;
+  .partners-grid {
+    grid-template-columns: repeat(2, 1fr); 
   }
 
-  .info-card h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-
-  .partner-card {
-    padding: 12px;
-  }
-
-  .partner-logo {
-    width: 58px;
-    height: 58px;
-  }
-
-  .dev-card {
-    padding: 16px;
-  }
-
-  .dev-avatar {
-    width: 60px;
-    height: 60px;
+  .dev-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .about-us-page {
-    padding: 0;
-  }
-
-  .about-us-container {
-    padding: 16px 14px 22px;
-    margin: 0 auto;
-  }
-
-  .top-bar {
-    padding: 0;
-    gap: 8px;
-  }
-
-  .brand {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .brand-title {
-    font-size: 18px;
-  }
-
-  .brand-subtitle {
-    font-size: 10px;
-  }
-
-  .about-us-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-
-  .divider {
-    margin-bottom: 20px;
-  }
-
-  .card-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .info-card {
-    padding: 16px;
-    min-height: 150px;
-  }
-
-  .info-card h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .info-card p {
-    font-size: 13px;
+    padding: 15px;
   }
 
   .partners-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  .partner-card {
-    padding: 10px;
-    gap: 8px;
-  }
-
-  .partner-logo {
-    width: 56px;
-    height: 56px;
-    font-size: 10px;
-  }
-
-  .partner-name {
-    font-size: 11px;
-  }
-
-  .dev-section {
-    margin-top: 24px;
-  }
-
-  .dev-title {
-    font-size: 16px;
-    margin-bottom: 16px;
   }
 
   .dev-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
 
   .dev-card {
-    padding: 12px;
-    gap: 10px;
-    flex-direction: row;
+    flex-direction: row; 
     text-align: left;
+    padding: 10px;
   }
 
   .dev-avatar {
     width: 50px;
     height: 50px;
-    min-width: 50px;
   }
 
   .dev-info {
-    gap: 2px;
-    flex: 1;
     text-align: left;
-  }
-
-  .dev-name {
-    font-size: 13px;
-  }
-
-  .dev-position {
-    font-size: 11px;
   }
 }

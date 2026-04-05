@@ -35,21 +35,35 @@
     color: #ffb3b3;
 }
 
+.full-width{
+    width: 100%;
+}
+
 .hero-section {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
+    padding: 28px;
+    /* width: 100%; */
+    grid-template-columns: 1.6fr 1fr;
     gap: 24px;
     margin-bottom: 34px;
-    padding: 26px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 68, 0, 0.2);
-    background: linear-gradient(135deg, rgba(255, 68, 0, 0.12) 0%, rgba(26, 26, 26, 0.15) 100%);
+    background: linear-gradient(135deg, 
+    90deg,
+    rgba(255, 94, 0, 0.28) 0%,
+    rgba(255, 94, 0, 0.14) 30%,
+    rgba(10, 16, 28, 0.95) 75%,
+    rgba(5, 12, 26, 1) 100%);
+    border: 1px solid rgba(255, 68, 0, 0.8);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(255, 94, 0, 0.08);
 }
 
 .hero-content {
     display: flex;
+    padding: 12px 6px;
     flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    gap: 12px;
 }
 
 .hero-eyebrow {
@@ -61,41 +75,97 @@
 }
 
 .hero-title {
-    font-size: 2rem;
+    font-size: 2.3rem;
     line-height: 1.1;
+    margin: 0;
     color: #ffffff;
 }
 
 .hero-description {
     font-size: 0.95rem;
-    line-height: 1.65;
+    line-height: 1.7;
     color: #bdd0de;
-    max-width: 62ch;
+    max-width: 60ch;
 }
 
 .hero-highlights {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
+    justify-content: center;
+    gap: 14px;
 }
 
 .hero-highlight-card {
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(10, 16, 28, 0.45);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(10, 16, 28, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    transition: 0.3s ease;
 }
 
 .hero-highlight-card h3 {
-    font-size: 0.92rem;
+    font-size: 15px;
     margin-bottom: 6px;
     color: #ffffff;
 }
 
 .hero-highlight-card p {
-    font-size: 0.8rem;
+    font-size: 12px;
     line-height: 1.45;
     color: #adc1d2;
+}
+
+.hero-highlight-card:hover{
+    transform: translateY(-3px);
+    border-color: rgba(255, 94, 0, 0.25);
+}
+
+.hero-btn{
+    padding: 10px 20px;
+    width: fit-content;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;    
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-top: 20px;
+}
+
+.hero-btn:hover{
+    background: rgba(255,255,255,0.1);
+}
+
+.preparedness-card{
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.preparedness-card h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.prep-item {
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #d6e9ff;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.prep-item:hover {
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .news-main{
@@ -114,6 +184,13 @@
     border: 1px solid rgba(255, 68, 0, 0.2);
     border-radius: 15px;
     backdrop-filter: blur(10px);
+}
+
+.news-dashboard-layout{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-top: 30px;
 }
 
 .section-header{
@@ -187,8 +264,33 @@
 
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.news-side-panel{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.side-widget {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 68, 0, 0.12);
+    border-radius: 14px;
+}
+
+.side-widget h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.side-widget p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #b0c4de;
 }
 
 .news-item-card {

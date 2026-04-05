@@ -135,12 +135,15 @@ export default function NewsReport() {
         <section className="hero-section">
             <div className="hero-content">
                 <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
+
                 <h2 className="hero-title">Welcome to SHIELD</h2>
+
                 <p className="hero-description">
                     SHIELD is a disaster-monitoring platform built to help communities stay informed through
                     real-time hazard updates, weather intelligence, and emergency response awareness.
                 </p>
             </div>
+
             <div className="hero-highlights">
                 <div className="hero-highlight-card">
                     <h3>Live Hazard Tracking</h3>
@@ -155,6 +158,23 @@ export default function NewsReport() {
                     <p>Support safer decisions with timely information for response and readiness planning.</p>
                 </div>
             </div>
+
+            <div className = "preparedness-card">
+                <h3>Preparedness Hub</h3>
+
+                <div className = "prep-item">
+                    Prepare Go Bag
+                </div>
+
+                <div className = "prep-item">
+                    Join Local Drill
+                </div>
+
+                <div className = "prep-item">
+                    Locate/Find Nearest Shelter
+                </div>
+            </div>
+
         </section>
 
         
@@ -268,6 +288,7 @@ export default function NewsReport() {
     </div>
 
         <div className="bottom-news-section">
+            <div className="news-dashboard-layout">
             <div className="news-grid">
                 {isLoading ? (
                     Array.from({ length: LATEST_NEWS_LIMIT }).map((_, index) => (
@@ -306,6 +327,24 @@ export default function NewsReport() {
                     ))
                 )}
             </div>
+
+        <div className="news-side-panel">
+            <div className="side-widget">
+                <h3>Preparedness Tip</h3>
+                <p>Keep flashlights, batteries, water, and emergency contacts ready.</p>
+            </div>
+
+            <div className="side-widget">
+                <h3>Quick Alert</h3>
+                <p>Monitor typhoon movement and check local advisories regularly.</p>
+            </div>
+
+            <div className="side-widget">
+                <h3>Emergency Hotline</h3>
+                <p>911 / Local DRRM Office</p>
+            </div>
+        </div>
+        </div>
         </div>
     </div>
   );
