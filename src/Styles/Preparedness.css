@@ -460,7 +460,7 @@ body {
         margin-bottom: 2px !important;
         padding-top: 2px !important;
         padding-bottom: 2px !important;
-        display: block !important; /* Siguraduhing naka-stack sila */
+        display: block !important;
     }
 
     body * { visibility: hidden; }
@@ -538,7 +538,7 @@ body {
 
     .guides-grid {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important; /* Creates 2 equal columns */
+        grid-template-columns: 1fr 1fr !important;
         gap: 15px !important;
         width: 100% !important;
     }
