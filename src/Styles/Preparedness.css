@@ -29,29 +29,17 @@ body {
 }
 
 .toolkit-header h1{
-<<<<<<< HEAD
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 32 px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-=======
     font-family: 'Geist', sans-serif;
     font-size: 30 px;
     font-weight: 300;
     letter-spacing: 0.5px;
->>>>>>> branchNiAntoni
     margin: 0;
     color: var(--accent);
     text-shadow: 0 0 10px rgba(255, 68, 0, 0.4);
 }
 
 .toolkit-card h2{
-<<<<<<< HEAD
-    font-family: "IBM Plex Mono", monospace;
-=======
     font-family: 'Geist', sans-serif;
->>>>>>> branchNiAntoni
     font-size: 20px;
     font-weight: 700;
     letter-spacing: 0.15em;
