@@ -132,8 +132,8 @@ export default function NewsReport() {
         <div className="news-container">
 
 
-        <section className="hero-section">
-            <div className="hero-content">
+        <section className="landing-hero">
+            <div className="welcome-card">
                 <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
 
                 <h2 className="hero-title">Welcome to SHIELD</h2>
@@ -144,7 +144,7 @@ export default function NewsReport() {
                 </p>
             </div>
 
-            <div className="hero-highlights">
+            <div className="hero-cards-row">
                 <div className="hero-highlight-card">
                     <h3>Live Hazard Tracking</h3>
                     <p>Monitor earthquake and hazard data from trusted global sources in one view.</p>
@@ -156,22 +156,6 @@ export default function NewsReport() {
                 <div className="hero-highlight-card">
                     <h3>Preparedness Focus</h3>
                     <p>Support safer decisions with timely information for response and readiness planning.</p>
-                </div>
-            </div>
-
-            <div className = "preparedness-card">
-                <h3>Preparedness Hub</h3>
-
-                <div className = "prep-item">
-                    Prepare Go Bag
-                </div>
-
-                <div className = "prep-item">
-                    Join Local Drill
-                </div>
-
-                <div className = "prep-item">
-                    Locate/Find Nearest Shelter
                 </div>
             </div>
 
