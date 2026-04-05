@@ -15,6 +15,8 @@ const FALLBACK_DISASTERS = [
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
 const OWM_CLOUDS_TILE_URL = `${API_BASE_URL}/api/weather/clouds-tile/{z}/{x}/{y}.png`;
+const WEATHER_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const WEATHER_ROTATE_INTERVAL_MS = 7000;
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
@@ -215,6 +217,17 @@ function formatDisasterLocation(city, province) {
   return `${cityText}, ${provinceText}`;
 }
 
+function formatWeatherAsOf(value) {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+
+  return parsed.toLocaleTimeString("en-PH", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const skeletonRows = [1, 2, 3, 4];
   const [disasters,     setDisasters]     = useState([]);
@@ -223,6 +236,8 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [weatherStations, setWeatherStations] = useState([]);
   const [isLoadingWeather, setIsLoadingWeather] = useState(true);
   const [weatherError, setWeatherError] = useState("");
+  const [weatherFetchedAt, setWeatherFetchedAt] = useState(null);
+  const [weatherStationIndex, setWeatherStationIndex] = useState(0);
   const [focusedId,     setFocusedId]     = useState(null);
   const [showCloudLayer, setShowCloudLayer] = useState(false);
   const [cloudLayerAvailable, setCloudLayerAvailable] = useState(false);
@@ -323,6 +338,21 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   }, []);
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setWeatherStationIndex((prev) => {
+        if (weatherStations.length <= 1) return 0;
+        return (prev + 1) % weatherStations.length;
+      });
+    }, WEATHER_ROTATE_INTERVAL_MS);
+
+    return () => clearInterval(timer);
+  }, [weatherStations]);
+
+  useEffect(() => {
+    setWeatherStationIndex(0);
+  }, [weatherStations.length]);
+
+  useEffect(() => {
     const controller = new AbortController();
 
     const fetchWeather = async () => {
@@ -341,6 +371,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         const payload = await response.json();
         const stations = normalizeWeatherStations(payload);
         setWeatherStations(stations);
+        setWeatherFetchedAt(payload?.fetchedAt || new Date().toISOString());
         setCloudLayerAvailable(Boolean(payload?.cloudsLayerAvailable));
 
         if (stations.length === 0) {
@@ -373,11 +404,13 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                 condition: weatherCodeToCondition(weatherCode),
               },
             ]);
+            setWeatherFetchedAt(new Date().toISOString());
             setWeatherError("");
           } catch (backupError) {
             if (backupError.name !== "AbortError") {
               setWeatherError("Weather unavailable");
               setCloudLayerAvailable(false);
+              setWeatherFetchedAt(null);
             }
           }
         }
@@ -390,7 +423,14 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
     fetchWeather();
 
+    const intervalId = setInterval(() => {
+      if (!controller.signal.aborted) {
+        fetchWeather();
+      }
+    }, WEATHER_REFRESH_INTERVAL_MS);
+
     return () => {
+      clearInterval(intervalId);
       controller.abort();
     };
   }, []);
@@ -409,21 +449,36 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const focused = useMemo(() => filtered.find((d) => d.id === focusedId), [filtered, focusedId]);
 
   const weatherDisplay = useMemo(() => {
+    const activeStation = focused
+      ? selectWeatherStation(weatherStations, focused)
+      : (weatherStations[weatherStationIndex] || weatherStations[0] || null);
+
     if (isLoadingWeather) {
-      return { tempText: "--", condition: "Loading...", iconUrl: null };
+      return { tempText: "--", condition: "Loading...", iconUrl: null, cityText: "Fetching weather...", asOfText: "" };
     }
 
-    const summary = summarizePhilippinesWeather(weatherStations);
-    if (!summary) {
-      return { tempText: "--", condition: weatherError || "Unavailable", iconUrl: null };
+    if (!activeStation) {
+      return {
+        tempText: "--",
+        condition: weatherError || "Unavailable",
+        iconUrl: null,
+        cityText: "No city data",
+        asOfText: "",
+      };
     }
+
+    const conditionText = String(activeStation.condition || "Weather");
+    const cityText = String(activeStation.city || activeStation.name || "Philippines");
+    const asOfRaw = formatWeatherAsOf(weatherFetchedAt);
 
     return {
-      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}C` : "--",
-      condition: summary.condition || "Weather",
-      iconUrl: summary.iconUrl,
+      tempText: activeStation.tempC !== null ? `${Math.round(activeStation.tempC)}C` : "--",
+      condition: conditionText,
+      iconUrl: activeStation.iconUrl || null,
+      cityText,
+      asOfText: asOfRaw ? `${asOfRaw}` : "",
     };
-  }, [isLoadingWeather, weatherError, weatherStations]);
+  }, [focused, isLoadingWeather, weatherError, weatherStations, weatherStationIndex, weatherFetchedAt]);
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -448,9 +503,9 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
       <div className="content">
         <aside className="danger-panel">
           <div className="danger-head">
-            <h2>Active Dangers</h2>
+            <h2>Active Disasters</h2>
             <span className="count-pill">{filtered.length}</span>
-          </div>
+          </div> 
           <hr className="hr"></hr>
           <ul className="danger-list">
             {isLoadingData && (
@@ -543,6 +598,8 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               )}
               <div className="weather-temp">{weatherDisplay.tempText}</div>
               <div className="weather-condition">{weatherDisplay.condition}</div>
+              <div className="weather-location">{weatherDisplay.cityText}</div>
+              {weatherDisplay.asOfText && <div className="weather-updated">{weatherDisplay.asOfText}</div>}
             </div>
           </div>
           <MapContainer
