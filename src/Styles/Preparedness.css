@@ -18,7 +18,6 @@
 }
 
 body {
-    padding: 0;
   background-color: #050C1A;
 }
 
@@ -29,17 +28,18 @@ body {
 }
 
 .toolkit-header h1{
-    font-family: 'Geist', sans-serif;
-    font-size: 30 px;
-    font-weight: 300;
-    letter-spacing: 0.5px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 32 px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     margin: 0;
     color: var(--accent);
     text-shadow: 0 0 10px rgba(255, 68, 0, 0.4);
 }
 
 .toolkit-card h2{
-    font-family: 'Geist', sans-serif;
+    font-family: "IBM Plex Mono", monospace;
     font-size: 20px;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -342,149 +342,6 @@ body {
     color: black !important;
 }
 
-@media print {
-    @page { 
-        margin: 10mm; 
-        size: auto; 
-    }
-
-    html, body {
-        height: auto !important;
-        overflow: visible !important;
-        background: white !important;
-        color: black !important;
-    }
-    .emergency-contacts-list, 
-    .contacts-container,
-    .contact-item {
-        margin-top: 0 !important;
-        margin-bottom: 2px !important;
-        padding-top: 2px !important;
-        padding-bottom: 2px !important;
-        display: block !important; /* Siguraduhing naka-stack sila */
-    }
-
-    body * { visibility: hidden; }
-    .preparedness-container, .preparedness-container * { visibility: visible; }
-
-    .preparedness-container {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        background: white !important;
-    }
-
-    .print-only-header {
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-        border-bottom: 2px solid #ff4400;
-        margin-bottom: 30px;
-        padding-bottom: 10px;
-    }
-    .print-logo { font-size: 28px; font-weight: 900; color: #ff4400 !important; font-family: monospace; }
-    .print-tagline { font-size: 10px; color: #666; }
-
-    .toolkit-content {
-        display: block !important; 
-        width: 100% !important;
-    }
-
-    .toolkit-card {
-        display: block !important; 
-        width: 100% !important;
-        min-height: auto !important; 
-        margin-bottom: 15px !important;
-        padding: 10px 15px !important;
-        border: 1px solid #ddd !important;
-        border-left: 6px solid #ff4400 !important;
-        background: white !important;
-        color: black !important;
-        page-break-inside: avoid; 
-    }
-
-    .toolkit-card h2 {
-        color: #ff4400 !important;
-        font-size: 22px !important;
-        margin-bottom: 12px !important;
-    }
-
-    .guides-grid {
-        display: block !important;
-    }
-
-    .item-guide {
-        display: block !important;
-        margin-bottom: 12px !important;
-        padding: 0 !important;
-        text-align: left !important;
-        border: none !important;
-        background: none !important;
-    }
-
-    .label-guide {
-        font-weight: bold !important;
-        font-size: 20px !important;
-        color: black !important;
-        margin-bottom: 8px !important;
-        text-align: left !important;
-    }
-
-    .print-only-steps {
-        display: block !important;
-        text-align: left !important;
-    }
-
-    .print-only-steps ul {
-        list-style: none !important;
-        padding-left: 18px !important;
-    }
-
-    .print-only-steps li {
-        font-size: 16px !important;
-        line-height: 1.5 !important;
-        margin-bottom: 5px !important;
-        position: relative !important;
-        color: black !important;
-    }
-
-    .print-only-steps li::before {
-        content: "•";
-        position: absolute;
-        left: -15px;
-        color: #ff4400 !important;
-    }
-
-    .checklist-items {
-        display: block !important;
-        margin: 0 !important;
-    }
-
-    .checklist-item {
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        color: black !important;
-        font-size: 16px !important;
-        margin-bottom: 4px !important;
-    }
-
-    .pdf-btn, .print-actions, .toolkit-header, .description, .modal-overlay {
-        display: none !important;
-    }
-}
-
-@media print {
-    .gobag {
-        grid-column: span 2;
-    }
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -585,7 +442,155 @@ body {
 }
 
 @media print {
-    .modal-overlay {
+    @page { 
+        margin: 10mm; 
+        size: auto; 
+    }
+
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
+    }
+
+    .emergency-contacts-list, 
+    .contacts-container,
+    .contact-item {
+        margin-top: 0 !important;
+        margin-bottom: 2px !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        display: block !important;
+    }
+
+    body * { visibility: hidden; }
+    .preparedness-container, .preparedness-container * { visibility: visible; }
+
+    .preparedness-container {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    * {
+        color: black !important;
+        text-shadow: none !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+    }
+
+    .toolkit-card h2, 
+    .print-logo, 
+    .label-guide,
+    .accent-icon {
+        color: #ff4400 !important;
+    }
+
+    .print-only-header {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 2px solid #ff4400;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+    }
+    
+    .print-logo { font-size: 28px; font-weight: 900; color: #ff4400 !important; font-family: monospace; }
+    .print-tagline { font-size: 10px; color: #666; }
+
+    @media (orientation: landscape) {
+        .toolkit-content {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+        }
+    }
+    .action-guides {
+        grid-column: 1 / -1 !important; 
+        width: 100% !important;
+    }
+
+    .toolkit-card {
+        display: block !important; 
+        width: 100% !important;
+        min-height: auto !important; 
+        margin-bottom: 15px !important;
+        padding: 10px 15px !important;
+        border: 1px solid #ddd !important;
+        border-left: 6px solid #ff4400 !important;
+        background: white !important;
+        color: black !important;
+        page-break-inside: avoid; 
+    }
+
+    .toolkit-card h2 {
+        color: #ff4400 !important;
+        font-size: 22px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .guides-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px !important;
+        width: 100% !important;
+    }
+
+    .item-guide {
+        display: block !important;
+        margin-bottom: 12px !important;
+        padding: 5px !important;
+        text-align: left !important;
+        border: none !important;
+        background: none !important;
+    }
+
+    .label-guide {
+        font-weight: bold !important;
+        font-size: 18px !important;
+        color: black !important;
+        margin-bottom: 8px !important;
+        text-align: left !important;
+    }
+
+    .print-only-steps {
+        display: block !important;
+        text-align: left !important;
+    }
+
+    .print-only-steps ul {
+        list-style: none !important;
+        padding-left: 18px !important;
+    }
+
+    .print-only-steps li {
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        margin-bottom: 5px !important;
+        position: relative !important;
+        color: black !important;
+    }
+
+    .print-only-steps li::before {
+        content: "•";
+        position: absolute;
+        left: -15px;
+        color: #ff4400 !important;
+    }
+
+    .checklist-items {
+        display: block !important;
+        margin: 0 !important;
+    }
+
+    .pdf-btn, .print-actions, .toolkit-header, .description, .modal-overlay {
         display: none !important;
     }
 }
