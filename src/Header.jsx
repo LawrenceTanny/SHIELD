@@ -150,7 +150,7 @@ export default function MainLayout() {
               ALERT PH
             </button>
             <span className="brand-sep" />
-            <span className="brand-sub">Synchronized Hazard Information &amp; Emergency Live Dashboard</span>
+            <span className="brand-sub"></span>
           </div>
         </div>
 
