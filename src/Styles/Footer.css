@@ -1,9 +1,7 @@
 .app-footer {
   font-family: "Geist", sans-serif;
-  position: fixed;
-  left: 20px;
-  right: 20px;
-  bottom: 0;
+  position: relative;
+  margin: auto 20px 0;
   min-height: 40px;
   display: flex;
   align-items: center;
@@ -13,7 +11,7 @@
   backdrop-filter: blur(10px);
   color: #D9D9D9;
   font-size: 0.75rem;
-  z-index: 1200;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -25,9 +23,7 @@
 /* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .app-footer {
-    left: 18px;
-    right: 18px;
-    bottom: 6px;
+    margin: auto 18px 0;
     min-height: 38px;
     font-size: 0.7rem;
   }
@@ -36,9 +32,7 @@
 /* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .app-footer {
-    left: 14px;
-    right: 14px;
-    bottom: 5px;
+    margin: auto 14px 0;
     min-height: 36px;
     font-size: 0.65rem;
     border-radius: 40px;
@@ -48,9 +42,7 @@
 /* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .app-footer {
-    left: 10px;
-    right: 10px;
-    bottom: 4px;
+    margin: auto 10px 0;
     min-height: 34px;
     font-size: 0.6rem;
     border-radius: 30px;
@@ -60,9 +52,7 @@
 /* MOBILE PORTRAIT - < 640px */
 @media (max-width: 639px) {
   .app-footer {
-    left: 8px;
-    right: 8px;
-    bottom: 4px;
+    margin: auto 8px 0;
     min-height: 32px;
     font-size: 0.55rem;
     border-radius: 25px;
