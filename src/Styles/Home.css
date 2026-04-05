@@ -1,14 +1,16 @@
 *{
-    font-family: 'PP Neue Montreal', sans-serif;
+    font-family: 'Geist', sans-serif;
 }
 
 .news-container{
     display: flex;
     flex-direction: column;
     padding: 40px 50px;
+    margin-top: 3.5rem;
     width: 100%;
-    min-height: 100vh;
-    background: #050C1A;
+    min-height: auto; 
+    padding-bottom: 80px;
+    background: transparent;
     color: #ffffff;
 }
 

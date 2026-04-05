@@ -46,17 +46,21 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  position: relative;
-  padding: 0 40px;
+  position: fixed;
   top: 0;
-  border-radius: 0 0 30px 30px;
+  left: 20px;
+  right: 20px;
   height: var(--header-h);
+  border-radius: 0 0 30px 30px;
   border-bottom: 2px solid rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  background: none;
+  background: rgba(26, 26, 26, 0.55);
   z-index: 3000;
   gap: 20px;
+  padding: 0 40px;
   flex-wrap: nowrap;
+  transition: all 0.3s ease;
 }
 
 /* HEADER LEFT - BRAND */
@@ -151,7 +155,7 @@ body {
   border: #D9D9D9 solid 1px;
   backdrop-filter: blur(8px);
   background: var(--surface);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 60px rgba(0,0,0,0.6);
   font-weight: 800;
 }
 
@@ -200,8 +204,8 @@ body {
   right: 0;
   width: 210px;
   border: 2px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  background: linear-gradient(166deg, #20202000 0%, #5252522d 100%);
+  backdrop-filter: blur(8px);
+  background: linear-gradient(166deg, #202020 0%, #5252528a 100%);
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   border-radius: 12px;
   padding: 12px;
@@ -310,9 +314,10 @@ body {
 /* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .main-header {
+    left: 18px;
+    right: 18px;
     padding: 0 16px;
     gap: 16px;
-    flex-wrap: nowrap;
   }
 
   .brand-name {
@@ -337,9 +342,11 @@ body {
 /* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .main-header {
+    left: 14px;
+    right: 14px;
     padding: 0 14px;
     gap: 12px;
-    flex-wrap: nowrap;
+    border-radius: 0 0 40px 40px;
   }
 
   .brand-name {
@@ -377,13 +384,11 @@ body {
 /* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 4000;
+    left: 10px;
+    right: 10px;
     padding: 0 12px;
-    height: var(--header-h);
     gap: 8px;
-    flex-wrap: nowrap;
+    border-radius: 0 0 30px 30px;
   }
 
   .header-left {
@@ -448,13 +453,11 @@ body {
   }
 
   .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 4000;
+    left: 8px;
+    right: 8px;
     padding: 0 10px;
-    height: var(--header-h);
     gap: 6px;
-    flex-wrap: nowrap;
+    border-radius: 0 0 25px 25px;
   }
 
   .header-left {

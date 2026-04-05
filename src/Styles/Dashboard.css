@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Aldrich&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
 
 :root {
   --topbar-h: 70px;
@@ -308,16 +307,13 @@ body {
   position: absolute;
   right: -15px;  
   bottom: -0.3vw;  
-  
   width: 9em;  
   height: 9em;
-
   background: linear-gradient(180deg, #1F1F1F 100%, #373737 100%);
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-
   opacity: 0.; 
   background-repeat: no-repeat;
   background-size: contain;
@@ -417,12 +413,12 @@ body {
 }
 
 .di-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.7rem;
+  font-weight: 500;
   line-height: 1;
   color: #1a1a1a;
   margin: 0 80px 0 0;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   z-index: 3;
 }
 
