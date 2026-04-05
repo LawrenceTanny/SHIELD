@@ -266,6 +266,25 @@
   background: rgba(255,68,0,0.08);
 }
 
+.as-btn-signout {
+  font-family: "Geist Mono", monospace;
+  text-transform: uppercase;
+  padding: 9px 20px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 68, 0, 0.35);
+  background: rgba(255, 68, 0, 0.12);
+  color: #ffd9cf;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 130ms, border-color 130ms, color 130ms;
+}
+
+.as-btn-signout:hover {
+  background: rgba(255, 68, 0, 0.2);
+  border-color: rgba(255, 68, 0, 0.55);
+  color: #fff;
+}
+
 .as-btn-save {
   font-family: "Geist Mono", monospace;
   text-transform: uppercase;
