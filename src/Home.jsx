@@ -130,21 +130,18 @@ export default function NewsReport({ heroOnly = false, showHero = true }) {
 
     const handlePrevSlide = () => {
         setCurrentSlide((prev) => (prev === 0 ? latestNews.length - 1 : prev - 1));
-  };
+    };
 
     const handleNextSlide = () => {
         setCurrentSlide((prev) => (prev === latestNews.length - 1 ? 0 : prev + 1));
-  };
+    };
 
     const heroSection = (
         <section className="landing-hero">
             <div className="welcome-card">
-                <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
-
-                <h2 className="hero-title">Welcome to SHIELD</h2>
-
+                <h1 className="hero-title">ALERT PH</h1>
                 <p className="hero-description">
-                    SHIELD is a disaster-monitoring platform built to help communities stay informed through
+                    ALERT PH is a disaster-monitoring platform built to help communities stay informed through
                     real-time hazard updates, weather intelligence, and emergency response awareness.
                 </p>
             </div>
@@ -152,18 +149,46 @@ export default function NewsReport({ heroOnly = false, showHero = true }) {
             <div className="hero-cards-row">
                 <div className="hero-highlight-card">
                     <h3>Live Hazard Tracking</h3>
-                    <p>Monitor earthquake and hazard data from trusted global sources in one view.</p>
+                    <p>MONITOR EARTHQUAKE AND HAZARD DATA FROM TRUSTED GLOBAL SOURCES IN ONE VIEW.</p>
                 </div>
                 <div className="hero-highlight-card">
                     <h3>Weather Awareness</h3>
-                    <p>View nationwide weather context to better assess storm and typhoon formation risks.</p>
+                    <p>VIEW NATIONWIDE WEATHER CONTEXT TO BETTER ASSESS STORM AND TYPHOON FORMATION RISKS.</p>
                 </div>
                 <div className="hero-highlight-card">
                     <h3>Preparedness Focus</h3>
-                    <p>Support safer decisions with timely information for response and readiness planning.</p>
+                    <p>SUPPORT SAFER DECISIONS WITH TIMELY INFORMATION FOR RESPONSE AND READINESS PLANNING.</p>
                 </div>
             </div>
 
+            <div className="steps-container">
+                <p className="steps-title">BE READY. BE PREPARED</p>
+                <hr className="steps-divider" />
+
+                <div className="steps-row">
+                    <div className="step-pill">
+                        <span className="step-number">1</span> Prepare Go Bag
+                    </div>
+                    <div className="step-pill">
+                        <span className="step-number">2</span> Locate/Find Nearest Shelter
+                    </div>
+                    <div className="step-pill">
+                        <span className="step-number">3</span> Join Local Drill
+                    </div>
+                </div>
+            </div>
+
+            <a href="#dashboard-section" className="scroll-indicator" aria-label="Scroll to Dashboard">
+                {/* Left Side: Circle */}
+                <div className="scroll-circle">
+                    <svg className="scroll-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                        <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z" />
+                    </svg>
+                </div>
+
+                {/* Right Side: Text */}
+                <p className="scroll-text">TO DASHBOARD</p>
+            </a>
         </section>
     );
 
@@ -174,177 +199,177 @@ export default function NewsReport({ heroOnly = false, showHero = true }) {
             {heroOnly ? null : (
                 <>
 
-        
-        <div className="news-header">
-            <h1>News Report</h1>
-            {loadError && <p className="news-load-error">{loadError}</p>}
-    </div>
-    <div className="news-main">
-        <div className="latest-news">
-            <div className="section-header">
-                <h2>Latest News</h2>
-            </div>
-          
-            <div className="carousel-container" ref={carouselRef}>
-                <button className="carousel-btn prev-btn" onClick={handlePrevSlide} disabled={isLoading || latestNews.length <= 1}>
-                ‹
-                </button>
 
-            <div className="carousel-content">
-                {isLoading ? (
-                    <div className="news-card news-skeleton-card">
-                        <div className="skeleton-line skeleton-title" />
-                        <div className="skeleton-line skeleton-text" />
-                        <div className="skeleton-line skeleton-text short" />
-                        <div className="skeleton-line skeleton-date" />
+                    <div className="news-header">
+                        <h1>News Report</h1>
+                        {loadError && <p className="news-load-error">{loadError}</p>}
                     </div>
-                ) : latestNews.length === 0 ? (
-                    <div className="news-card active">
-                        <h3>No fresh headlines for today</h3>
-                        <p>New stories published today will automatically appear here.</p>
-                        <span className="news-date">Waiting for today&apos;s updates</span>
-                    </div>
-                ) : (
-                    <a
-                        className={`news-card active news-card-link ${latestNews[currentSlide]?.url === '#' ? 'disabled-link' : ''}`}
-                        href={latestNews[currentSlide]?.url || '#'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                            backgroundImage: latestNews[currentSlide]?.image
-                                ? `url('${latestNews[currentSlide].image}')`
-                                : 'none',
-                        }}
-                    >
-                        <div className="news-card-overlay">
-                            <h3>{latestNews[currentSlide]?.title}</h3>
-                            <p>{latestNews[currentSlide]?.description}</p>
-                            <span className="news-date">{latestNews[currentSlide]?.date}</span>
-                            <span className="news-read-more">Read full article</span>
+                    <div className="news-main">
+                        <div className="latest-news">
+                            <div className="section-header">
+                                <h2>Latest News</h2>
+                            </div>
+
+                            <div className="carousel-container" ref={carouselRef}>
+                                <button className="carousel-btn prev-btn" onClick={handlePrevSlide} disabled={isLoading || latestNews.length <= 1}>
+                                    ‹
+                                </button>
+
+                                <div className="carousel-content">
+                                    {isLoading ? (
+                                        <div className="news-card news-skeleton-card">
+                                            <div className="skeleton-line skeleton-title" />
+                                            <div className="skeleton-line skeleton-text" />
+                                            <div className="skeleton-line skeleton-text short" />
+                                            <div className="skeleton-line skeleton-date" />
+                                        </div>
+                                    ) : latestNews.length === 0 ? (
+                                        <div className="news-card active">
+                                            <h3>No fresh headlines for today</h3>
+                                            <p>New stories published today will automatically appear here.</p>
+                                            <span className="news-date">Waiting for today&apos;s updates</span>
+                                        </div>
+                                    ) : (
+                                        <a
+                                            className={`news-card active news-card-link ${latestNews[currentSlide]?.url === '#' ? 'disabled-link' : ''}`}
+                                            href={latestNews[currentSlide]?.url || '#'}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                backgroundImage: latestNews[currentSlide]?.image
+                                                    ? `url('${latestNews[currentSlide].image}')`
+                                                    : 'none',
+                                            }}
+                                        >
+                                            <div className="news-card-overlay">
+                                                <h3>{latestNews[currentSlide]?.title}</h3>
+                                                <p>{latestNews[currentSlide]?.description}</p>
+                                                <span className="news-date">{latestNews[currentSlide]?.date}</span>
+                                                <span className="news-read-more">Read full article</span>
+                                            </div>
+                                        </a>
+                                    )}
+                                </div>
+
+                                <button className="carousel-btn next-btn" onClick={handleNextSlide} disabled={isLoading || latestNews.length <= 1}>
+                                    ›
+                                </button>
+                            </div>
+
+                            {!isLoading && latestNews.length > 0 && (
+                                <div className="carousel-indicators">
+                                    {latestNews.map((_, index) => (
+                                        <div
+                                            key={index}
+                                            className={`indicator ${index === currentSlide ? 'active' : ''}`}
+                                            onClick={() => setCurrentSlide(index)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    </a>
-                )}
-            </div>
-            
-            <button className="carousel-btn next-btn" onClick={handleNextSlide} disabled={isLoading || latestNews.length <= 1}>
-                ›
-            </button>
-        </div>
 
-            {!isLoading && latestNews.length > 0 && (
-                <div className="carousel-indicators">
-                    {latestNews.map((_, index) => (
-                    <div
-                        key={index}
-                        className={`indicator ${index === currentSlide ? 'active' : ''}`}
-                        onClick={() => setCurrentSlide(index)}
-                    />
-                ))}
+                        <div className="social-section">
+                            <div className="section-header">
+                                <h2>Active Alerts</h2>
+                            </div>
+
+                            <div className="social-feed-container">
+                                {isLoading ? (
+                                    Array.from({ length: 2 }).map((_, index) => (
+                                        <div key={index} className="social-feed-item social-skeleton-item">
+                                            <div className="skeleton-line skeleton-title" />
+                                            <div className="skeleton-line skeleton-text" />
+                                            <div className="skeleton-line skeleton-date" />
+                                        </div>
+                                    ))
+                                ) : disasterAlerts.length === 0 ? (
+                                    <div className="social-feed-item">
+                                        <h4>No Active Alerts</h4>
+                                        <p>Currently no active disaster alerts. Continue monitoring for updates.</p>
+                                    </div>
+                                ) : (
+                                    disasterAlerts.map((alert) => (
+                                        <div key={alert.id} className="social-feed-item alert-item">
+                                            <div className="alert-header">
+                                                <h4>{alert.type}</h4>
+                                                <span className={`severity-badge severity-${alert.severity.toLowerCase()}`}>
+                                                    {alert.severity}
+                                                </span>
+                                            </div>
+                                            <p className="alert-title">{alert.title}</p>
+                                            <div className="alert-meta">
+                                                <span className="alert-location">📍 {alert.location}</span>
+                                                <span className="alert-timestamp">{alert.timestamp}</span>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
                     </div>
+
+                    <div className="bottom-news-section">
+                        <div className="news-dashboard-layout">
+                            <div className="news-grid">
+                                {isLoading ? (
+                                    Array.from({ length: LATEST_NEWS_LIMIT }).map((_, index) => (
+                                        <div key={index} className="news-item-card news-skeleton-card">
+                                            <div className="skeleton-line skeleton-title" />
+                                            <div className="skeleton-line skeleton-text" />
+                                            <div className="skeleton-line skeleton-text short" />
+                                        </div>
+                                    ))
+                                ) : bottomNewsCards.length === 0 ? (
+                                    <div className="news-item-card">
+                                        <h3>No older headlines yet</h3>
+                                        <p>Stories from yesterday and earlier will appear in this section.</p>
+                                    </div>
+                                ) : (
+                                    bottomNewsCards.map((item) => (
+                                        <a
+                                            key={item.id}
+                                            className={`news-item-card news-item-link ${item.url === '#' ? 'disabled-link' : ''}`}
+                                            href={item.url || '#'}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                backgroundImage: item.image
+                                                    ? `linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%), url('${item.image}')`
+                                                    : 'linear-gradient(135deg, rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%)',
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            }}
+                                        >
+                                            <div className="news-item-overlay">
+                                                <h3>{item.title}</h3>
+                                                <p>{item.description}</p>
+                                            </div>
+                                        </a>
+                                    ))
+                                )}
+                            </div>
+
+                            <div className="news-side-panel">
+                                <div className="side-widget">
+                                    <h3>Preparedness Tip</h3>
+                                    <p>Keep flashlights, batteries, water, and emergency contacts ready.</p>
+                                </div>
+
+                                <div className="side-widget">
+                                    <h3>Quick Alert</h3>
+                                    <p>Monitor typhoon movement and check local advisories regularly.</p>
+                                </div>
+
+                                <div className="side-widget">
+                                    <h3>Emergency Hotline</h3>
+                                    <p>911 / Local DRRM Office</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
             )}
-            </div>
-
-        <div className="social-section">
-            <div className="section-header">
-                <h2>Active Alerts</h2>
-            </div>
-
-            <div className="social-feed-container">
-                {isLoading ? (
-                    Array.from({ length: 2 }).map((_, index) => (
-                        <div key={index} className="social-feed-item social-skeleton-item">
-                            <div className="skeleton-line skeleton-title" />
-                            <div className="skeleton-line skeleton-text" />
-                            <div className="skeleton-line skeleton-date" />
-                        </div>
-                    ))
-                ) : disasterAlerts.length === 0 ? (
-                    <div className="social-feed-item">
-                        <h4>No Active Alerts</h4>
-                        <p>Currently no active disaster alerts. Continue monitoring for updates.</p>
-                    </div>
-                ) : (
-                    disasterAlerts.map((alert) => (
-                        <div key={alert.id} className="social-feed-item alert-item">
-                            <div className="alert-header">
-                                <h4>{alert.type}</h4>
-                                <span className={`severity-badge severity-${alert.severity.toLowerCase()}`}>
-                                    {alert.severity}
-                                </span>
-                            </div>
-                            <p className="alert-title">{alert.title}</p>
-                            <div className="alert-meta">
-                                <span className="alert-location">📍 {alert.location}</span>
-                                <span className="alert-timestamp">{alert.timestamp}</span>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
         </div>
-    </div>
-
-        <div className="bottom-news-section">
-            <div className="news-dashboard-layout">
-            <div className="news-grid">
-                {isLoading ? (
-                    Array.from({ length: LATEST_NEWS_LIMIT }).map((_, index) => (
-                        <div key={index} className="news-item-card news-skeleton-card">
-                            <div className="skeleton-line skeleton-title" />
-                            <div className="skeleton-line skeleton-text" />
-                            <div className="skeleton-line skeleton-text short" />
-                        </div>
-                    ))
-                ) : bottomNewsCards.length === 0 ? (
-                    <div className="news-item-card">
-                        <h3>No older headlines yet</h3>
-                        <p>Stories from yesterday and earlier will appear in this section.</p>
-                    </div>
-                ) : (
-                    bottomNewsCards.map((item) => (
-                        <a
-                            key={item.id}
-                            className={`news-item-card news-item-link ${item.url === '#' ? 'disabled-link' : ''}`}
-                            href={item.url || '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                backgroundImage: item.image
-                                    ? `linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%), url('${item.image}')`
-                                    : 'linear-gradient(135deg, rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%)',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                            }}
-                        >
-                            <div className="news-item-overlay">
-                                <h3>{item.title}</h3>
-                                <p>{item.description}</p>
-                            </div>
-                        </a>
-                    ))
-                )}
-            </div>
-
-        <div className="news-side-panel">
-            <div className="side-widget">
-                <h3>Preparedness Tip</h3>
-                <p>Keep flashlights, batteries, water, and emergency contacts ready.</p>
-            </div>
-
-            <div className="side-widget">
-                <h3>Quick Alert</h3>
-                <p>Monitor typhoon movement and check local advisories regularly.</p>
-            </div>
-
-            <div className="side-widget">
-                <h3>Emergency Hotline</h3>
-                <p>911 / Local DRRM Office</p>
-            </div>
-        </div>
-        </div>
-        </div>
-                                </>
-                        )}
-                </div>
-  );
+    );
 }

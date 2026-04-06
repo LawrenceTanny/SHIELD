@@ -5,38 +5,36 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Dashboard.css";
 
 const FALLBACK_DISASTERS = [
-  { id: 1, type: "Typhoon",           title: "Tropical Cyclone Wind Signal #2", severity: "High",   city: "Legazpi City",  lat: 13.1391, lng: 123.7438, source: "PAGASA",     updatedAt: "2026-03-14 08:30", status: "Active"     },
-  { id: 2, type: "Earthquake",        title: "Magnitude 5.4",                   severity: "Medium", city: "Naga City",     lat: 13.6218, lng: 123.1948, source: "PHIVOLCS",   updatedAt: "2026-03-14 09:05", status: "Active"     },
-  { id: 3, type: "Flood",             title: "Heavy Rainfall Advisory",         severity: "Low",    city: "Sorsogon City", lat: 12.9716, lng: 124.0053, source: "PAGASA",     updatedAt: "2026-03-14 10:20", status: "Monitoring" },
-  { id: 4, type: "Landslide",         title: "Soil Movement Risk",              severity: "High",   city: "Tabaco City",   lat: 13.3587, lng: 123.7338, source: "Local DRRM", updatedAt: "2026-03-14 10:50", status: "Active"     },
-  { id: 5, type: "Volcanic Activity", title: "Increased unrest near Kanlaon",  severity: "Medium", city: "Canlaon City",  lat: 10.3865, lng: 123.1966, source: "PHIVOLCS",   updatedAt: "2026-03-14 11:15", status: "Monitoring" },
-  { id: 6, type: "Thunderstorm",      title: "Severe thunderstorm warning",     severity: "Low",    city: "Davao City",    lat:  7.1907, lng: 125.4553, source: "PAGASA",     updatedAt: "2026-03-14 11:40", status: "Active"     }
+  { id: 1, type: "Typhoon", title: "Tropical Cyclone Wind Signal #2", severity: "High", city: "Legazpi City", lat: 13.1391, lng: 123.7438, source: "PAGASA", updatedAt: "2026-03-14 08:30", status: "Active" },
+  { id: 2, type: "Earthquake", title: "Magnitude 5.4", severity: "Medium", city: "Naga City", lat: 13.6218, lng: 123.1948, source: "PHIVOLCS", updatedAt: "2026-03-14 09:05", status: "Active" },
+  { id: 3, type: "Flood", title: "Heavy Rainfall Advisory", severity: "Low", city: "Sorsogon City", lat: 12.9716, lng: 124.0053, source: "PAGASA", updatedAt: "2026-03-14 10:20", status: "Monitoring" },
+  { id: 4, type: "Landslide", title: "Soil Movement Risk", severity: "High", city: "Tabaco City", lat: 13.3587, lng: 123.7338, source: "Local DRRM", updatedAt: "2026-03-14 10:50", status: "Active" },
+  { id: 5, type: "Volcanic Activity", title: "Increased unrest near Kanlaon", severity: "Medium", city: "Canlaon City", lat: 10.3865, lng: 123.1966, source: "PHIVOLCS", updatedAt: "2026-03-14 11:15", status: "Monitoring" },
+  { id: 6, type: "Thunderstorm", title: "Severe thunderstorm warning", severity: "Low", city: "Davao City", lat: 7.1907, lng: 125.4553, source: "PAGASA", updatedAt: "2026-03-14 11:40", status: "Active" }
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
 const OWM_CLOUDS_TILE_URL = `${API_BASE_URL}/api/weather/clouds-tile/{z}/{x}/{y}.png`;
-const WEATHER_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
-const WEATHER_ROTATE_INTERVAL_MS = 7000;
 
 const PH_CENTER = [12.8797, 121.774];
 const PH_BOUNDS = [[4.0, 114.0], [22.5, 129.0]];
 const OPEN_METEO_FALLBACK_URL = `https://api.open-meteo.com/v1/forecast?latitude=${PH_CENTER[0]}&longitude=${PH_CENTER[1]}&current=temperature_2m,weather_code&timezone=Asia%2FManila`;
 
 function severityColor(lvl) {
-  if (lvl === "High")   return "#FD694F";
+  if (lvl === "High") return "#FD694F";
   if (lvl === "Medium") return "#FDCE4F";
   return "#6AB144";
 }
 
 function IconSettings() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" /></svg>
   );
 }
 
 function IconClose() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg>
   );
 }
 
@@ -217,32 +215,19 @@ function formatDisasterLocation(city, province) {
   return `${cityText}, ${provinceText}`;
 }
 
-function formatWeatherAsOf(value) {
-  if (!value) return "";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "";
-
-  return parsed.toLocaleTimeString("en-PH", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
 export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const skeletonRows = [1, 2, 3, 4];
-  const [disasters,     setDisasters]     = useState([]);
+  const [disasters, setDisasters] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [dataError,     setDataError]     = useState("");
+  const [dataError, setDataError] = useState("");
   const [weatherStations, setWeatherStations] = useState([]);
   const [isLoadingWeather, setIsLoadingWeather] = useState(true);
   const [weatherError, setWeatherError] = useState("");
-  const [weatherFetchedAt, setWeatherFetchedAt] = useState(null);
-  const [weatherStationIndex, setWeatherStationIndex] = useState(0);
-  const [focusedId,     setFocusedId]     = useState(null);
+  const [focusedId, setFocusedId] = useState(null);
   const [showCloudLayer, setShowCloudLayer] = useState(false);
   const [cloudLayerAvailable, setCloudLayerAvailable] = useState(false);
-  const [selType,       setSelType]       = useState("All");
-  const [selSev,        setSelSev]        = useState("All");
+  const [selType, setSelType] = useState("All");
+  const [selSev, setSelSev] = useState("All");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -272,29 +257,29 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
             const payload = await response.json();
             const normalized = Array.isArray(payload)
               ? payload
-                  .map((item, index) => {
-                    const lat = Number(item.lat);
-                    const lng = Number(item.lng);
+                .map((item, index) => {
+                  const lat = Number(item.lat);
+                  const lng = Number(item.lng);
 
-                    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-                      return null;
-                    }
+                  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                    return null;
+                  }
 
-                    return {
-                      id: item.id || `${item.type || "disaster"}-${index}`,
-                      type: item.type || "General Disaster",
-                      title: item.title || "Disaster Update",
-                      severity: item.severity || "Low",
-                      city: item.city || "Unknown location",
-                      province: item.province || "",
-                      lat,
-                      lng,
-                      source: item.source || "Unknown source",
-                      updatedAt: item.updatedAt || "N/A",
-                      status: item.status || "Active",
-                    };
-                  })
-                  .filter(Boolean)
+                  return {
+                    id: item.id || `${item.type || "disaster"}-${index}`,
+                    type: item.type || "General Disaster",
+                    title: item.title || "Disaster Update",
+                    severity: item.severity || "Low",
+                    city: item.city || "Unknown location",
+                    province: item.province || "",
+                    lat,
+                    lng,
+                    source: item.source || "Unknown source",
+                    updatedAt: item.updatedAt || "N/A",
+                    status: item.status || "Active",
+                  };
+                })
+                .filter(Boolean)
               : [];
 
             if (normalized.length === 0) {
@@ -338,21 +323,6 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setWeatherStationIndex((prev) => {
-        if (weatherStations.length <= 1) return 0;
-        return (prev + 1) % weatherStations.length;
-      });
-    }, WEATHER_ROTATE_INTERVAL_MS);
-
-    return () => clearInterval(timer);
-  }, [weatherStations]);
-
-  useEffect(() => {
-    setWeatherStationIndex(0);
-  }, [weatherStations.length]);
-
-  useEffect(() => {
     const controller = new AbortController();
 
     const fetchWeather = async () => {
@@ -371,7 +341,6 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         const payload = await response.json();
         const stations = normalizeWeatherStations(payload);
         setWeatherStations(stations);
-        setWeatherFetchedAt(payload?.fetchedAt || new Date().toISOString());
         setCloudLayerAvailable(Boolean(payload?.cloudsLayerAvailable));
 
         if (stations.length === 0) {
@@ -404,13 +373,11 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                 condition: weatherCodeToCondition(weatherCode),
               },
             ]);
-            setWeatherFetchedAt(new Date().toISOString());
             setWeatherError("");
           } catch (backupError) {
             if (backupError.name !== "AbortError") {
               setWeatherError("Weather unavailable");
               setCloudLayerAvailable(false);
-              setWeatherFetchedAt(null);
             }
           }
         }
@@ -423,14 +390,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
     fetchWeather();
 
-    const intervalId = setInterval(() => {
-      if (!controller.signal.aborted) {
-        fetchWeather();
-      }
-    }, WEATHER_REFRESH_INTERVAL_MS);
-
     return () => {
-      clearInterval(intervalId);
       controller.abort();
     };
   }, []);
@@ -441,44 +401,29 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   }, [disasters]);
 
   const filtered = useMemo(() => disasters.filter((d) => {
-    const tOk = selType === "All" || d.type     === selType;
-    const sOk = selSev  === "All" || d.severity === selSev;
+    const tOk = selType === "All" || d.type === selType;
+    const sOk = selSev === "All" || d.severity === selSev;
     return tOk && sOk;
   }), [disasters, selType, selSev]);
 
   const focused = useMemo(() => filtered.find((d) => d.id === focusedId), [filtered, focusedId]);
 
   const weatherDisplay = useMemo(() => {
-    const activeStation = focused
-      ? selectWeatherStation(weatherStations, focused)
-      : (weatherStations[weatherStationIndex] || weatherStations[0] || null);
-
     if (isLoadingWeather) {
-      return { tempText: "--", condition: "Loading...", iconUrl: null, cityText: "Fetching weather...", asOfText: "" };
+      return { tempText: "--", condition: "Loading...", iconUrl: null };
     }
 
-    if (!activeStation) {
-      return {
-        tempText: "--",
-        condition: weatherError || "Unavailable",
-        iconUrl: null,
-        cityText: "No city data",
-        asOfText: "",
-      };
+    const summary = summarizePhilippinesWeather(weatherStations);
+    if (!summary) {
+      return { tempText: "--", condition: weatherError || "Unavailable", iconUrl: null };
     }
-
-    const conditionText = String(activeStation.condition || "Weather");
-    const cityText = String(activeStation.city || activeStation.name || "Philippines");
-    const asOfRaw = formatWeatherAsOf(weatherFetchedAt);
 
     return {
-      tempText: activeStation.tempC !== null ? `${Math.round(activeStation.tempC)}C` : "--",
-      condition: conditionText,
-      iconUrl: activeStation.iconUrl || null,
-      cityText,
-      asOfText: asOfRaw ? `${asOfRaw}` : "",
+      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}C` : "--",
+      condition: summary.condition || "Weather",
+      iconUrl: summary.iconUrl,
     };
-  }, [focused, isLoadingWeather, weatherError, weatherStations, weatherStationIndex, weatherFetchedAt]);
+  }, [isLoadingWeather, weatherError, weatherStations]);
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -498,14 +443,14 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
         aria-controls="dashboard-settings-drawer"
       >
         {settingsOpen ? <IconClose /> : <IconSettings />}
-  
+
       </button>
       <div className="content">
         <aside className="danger-panel">
           <div className="danger-head">
-            <h2>Active Disasters</h2>
+            <h2>Active Dangers</h2>
             <span className="count-pill">{filtered.length}</span>
-          </div> 
+          </div>
           <hr className="hr"></hr>
           <ul className="danger-list">
             {isLoadingData && (
@@ -528,18 +473,18 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               </li>
             )}
             <AnimatePresence mode="popLayout">
-              
+
               {!isLoadingData && filtered.map((d) => (
-                <motion.li 
-                  key={d.id} 
+                <motion.li
+                  key={d.id}
                   layout
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                  whileHover={{ 
-                    y: -5, 
-                    backgroundColor: "#E2E2E2", 
-                    transition: { duration: 0.2 } 
+                  whileHover={{
+                    y: -5,
+                    backgroundColor: "#E2E2E2",
+                    transition: { duration: 0.2 }
                   }}
                   whileTap={{ scale: 0.98 }}
                   className={`danger-item sev-${d.severity.toLowerCase()} type-${d.type.toLowerCase().replace(/\s+/g, '-')} ${focusedId === d.id ? 'is-focused' : ''}`}
@@ -548,25 +493,25 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                     backgroundColor: focusedId === d.id ? "rgba(116, 116, 116, 0.09)" : "#D9D9D9"
                   }}
                 >
-                <div className="di-content-wrapper">
-                  <div className="di-row">
-                    <h3 className="di-title">{d.title}</h3>
-                    <span className="di-source">{d.source}</span>
-                  </div>
-                  <div className="di-meta-row">
-                    {/* The status dot */}
-                    <span className={`status-dot ${d.status.toLowerCase()}`}></span>
-                    {/* The city text */}
-                    <p className="di-meta">{formatDisasterLocation(d.city, d.province)}</p>
+                  <div className="di-content-wrapper">
+                    <div className="di-row">
+                      <h3 className="di-title">{d.title}</h3>
+                      <span className="di-source">{d.source}</span>
+                    </div>
+                    <div className="di-meta-row">
+                      {/* The status dot */}
+                      <span className={`status-dot ${d.status.toLowerCase()}`}></span>
+                      {/* The city text */}
+                      <p className="di-meta">{formatDisasterLocation(d.city, d.province)}</p>
+                    </div>
+
+                    <div className="di-time-row">
+                      <span className="di-time">{d.updatedAt}</span>
+                    </div>
                   </div>
 
-                  <div className="di-time-row">
-                    <span className="di-time">{d.updatedAt}</span>
-                  </div>
-                </div>
-                
-              </motion.li>
-            ))}
+                </motion.li>
+              ))}
             </AnimatePresence>
           </ul>
         </aside>
@@ -598,8 +543,6 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
               )}
               <div className="weather-temp">{weatherDisplay.tempText}</div>
               <div className="weather-condition">{weatherDisplay.condition}</div>
-              <div className="weather-location">{weatherDisplay.cityText}</div>
-              {weatherDisplay.asOfText && <div className="weather-updated">{weatherDisplay.asOfText}</div>}
             </div>
           </div>
           <MapContainer
@@ -642,18 +585,18 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
                   eventHandlers={{ click: () => toggle(item.id) }}
                 >
                   <Popup className="custom-popup">
-                  <div style={{ color: '#D9D9D9', fontFamily: 'Geist' }}>
-                    <h4 style={{ margin: 0, color: severityColor(item.severity) }}>
-                      {item.type.toUpperCase()}
-                    </h4>
-                    <p style={{ fontSize: '1.1rem', fontWeight: '400', margin: '5px 0' }}>
-                      {item.title}
-                    </p>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                      {formatDisasterLocation(item.city, item.province)} • {item.source}
+                    <div style={{ color: '#D9D9D9', fontFamily: 'Geist' }}>
+                      <h4 style={{ margin: 0, color: severityColor(item.severity) }}>
+                        {item.type.toUpperCase()}
+                      </h4>
+                      <p style={{ fontSize: '1.1rem', fontWeight: '400', margin: '5px 0' }}>
+                        {item.title}
+                      </p>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                        {formatDisasterLocation(item.city, item.province)} • {item.source}
+                      </div>
                     </div>
-                  </div>
-                </Popup>
+                  </Popup>
                 </CircleMarker>
               );
             })}
