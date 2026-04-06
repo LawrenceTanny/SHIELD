@@ -4,15 +4,20 @@ import './Styles/Home.css';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
 const LATEST_NEWS_LIMIT = 7;
 
-export default function NewsReport() {
+export default function NewsReport({ heroOnly = false, showHero = true }) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const carouselRef = useRef(null);
-        const [newsItems, setNewsItems] = useState([]);
+    const [newsItems, setNewsItems] = useState([]);
     const [disasterAlerts, setDisasterAlerts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-        const [loadError, setLoadError] = useState('');
+    const [loadError, setLoadError] = useState('');
 
     useEffect(() => {
+        if (heroOnly) {
+            setIsLoading(false);
+            return;
+        }
+
         const controller = new AbortController();
 
         const fetchNews = async () => {
@@ -60,9 +65,13 @@ export default function NewsReport() {
         return () => {
             controller.abort();
         };
-    }, []);
+    }, [heroOnly]);
 
     useEffect(() => {
+        if (heroOnly) {
+            return;
+        }
+
         const controller = new AbortController();
 
         const fetchDisasters = async () => {
@@ -102,7 +111,7 @@ export default function NewsReport() {
         return () => {
             controller.abort();
         };
-    }, []);
+    }, [heroOnly]);
 
     const sortedNews = [...newsItems].sort((a, b) => {
         const aTime = new Date(a.publishedAt || a.date || 0).getTime();
@@ -127,11 +136,7 @@ export default function NewsReport() {
         setCurrentSlide((prev) => (prev === latestNews.length - 1 ? 0 : prev + 1));
   };
 
-    return (
-        
-        <div className="news-container">
-
-
+    const heroSection = (
         <section className="landing-hero">
             <div className="welcome-card">
                 <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
@@ -160,6 +165,14 @@ export default function NewsReport() {
             </div>
 
         </section>
+    );
+
+    return (
+        <div className="news-container">
+            {showHero ? heroSection : null}
+
+            {heroOnly ? null : (
+                <>
 
         
         <div className="news-header">
@@ -330,6 +343,8 @@ export default function NewsReport() {
         </div>
         </div>
         </div>
-    </div>
+                                </>
+                        )}
+                </div>
   );
 }
