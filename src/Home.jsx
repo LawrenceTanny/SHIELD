@@ -139,12 +139,9 @@ export default function NewsReport({ heroOnly = false, showHero = true }) {
     const heroSection = (
         <section className="landing-hero">
             <div className="welcome-card">
-                <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
-
-                <h2 className="hero-title">Welcome to SHIELD</h2>
-
+                <h1 className="hero-title">ALERT PH</h1>
                 <p className="hero-description">
-                    SHIELD is a disaster-monitoring platform built to help communities stay informed through
+                    ALERT PH is a disaster-monitoring platform built to help communities stay informed through
                     real-time hazard updates, weather intelligence, and emergency response awareness.
                 </p>
             </div>
@@ -152,18 +149,46 @@ export default function NewsReport({ heroOnly = false, showHero = true }) {
             <div className="hero-cards-row">
                 <div className="hero-highlight-card">
                     <h3>Live Hazard Tracking</h3>
-                    <p>Monitor earthquake and hazard data from trusted global sources in one view.</p>
+                    <p>MONITOR EARTHQUAKE AND HAZARD DATA FROM TRUSTED GLOBAL SOURCES IN ONE VIEW.</p>
                 </div>
                 <div className="hero-highlight-card">
                     <h3>Weather Awareness</h3>
-                    <p>View nationwide weather context to better assess storm and typhoon formation risks.</p>
+                    <p>VIEW NATIONWIDE WEATHER CONTEXT TO BETTER ASSESS STORM AND TYPHOON FORMATION RISKS.</p>
                 </div>
                 <div className="hero-highlight-card">
                     <h3>Preparedness Focus</h3>
-                    <p>Support safer decisions with timely information for response and readiness planning.</p>
+                    <p>SUPPORT SAFER DECISIONS WITH TIMELY INFORMATION FOR RESPONSE AND READINESS PLANNING.</p>
                 </div>
             </div>
 
+            <div className="steps-container">
+                <p className="steps-title">BE READY. BE PREPARED</p>
+                <hr className="steps-divider" />
+
+                <div className="steps-row">
+                    <div className="step-pill">
+                        <span className="step-number">1</span> Prepare Go Bag
+                    </div>
+                    <div className="step-pill">
+                        <span className="step-number">2</span> Locate/Find Nearest Shelter
+                    </div>
+                    <div className="step-pill">
+                        <span className="step-number">3</span> Join Local Drill
+                    </div>
+                </div>
+            </div>
+
+            <a href="#dashboard-section" className="scroll-indicator" aria-label="Scroll to Dashboard">
+                {/* Left Side: Circle */}
+                <div className="scroll-circle">
+                    <svg className="scroll-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                        <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z" />
+                    </svg>
+                </div>
+
+                {/* Right Side: Text */}
+                <p className="scroll-text">TO DASHBOARD</p>
+            </a>
         </section>
     );
 
