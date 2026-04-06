@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import './Styles/Preparedness.css';
 
 const PreparednessToolkit = () => {
-  const [selectedHazard, setSelectedHazard] = useState(null); 
-  
+  const [selectedHazard, setSelectedHazard] = useState(null);
+
   const handlePrint = () => {
     window.print();
   };
-  
+
   const emergencyContacts = [
     { name: 'Emergency Services', number: '911' },
     { name: 'Philippine Red Cross', number: '143 / (02) 8790-2300' },
@@ -50,10 +50,10 @@ const PreparednessToolkit = () => {
         'Turn off the main electricity switch if water enters your home.',
         'Boil water before drinking to avoid contamination.'
       ]
-    }, 
+    },
     'Volcano Activity': {
       icon: '🌋',
-      steps: [ 
+      steps: [
         'Wear an N95 mask or wet cloth to protect from ashfall.',
         'Stay indoors with windows and doors closed.',
         'Follow evacuation orders from local authorities immediately.',
@@ -96,19 +96,19 @@ const PreparednessToolkit = () => {
             ))}
           </div>
         </div>
-       
+
         <div className="toolkit-card gobag">
           <h2>GO-BAG CHECKLIST</h2>
           <div className="checklist-items">
             {goBagItems.map((item, index) => (
               <label key={index} className="checklist-item">
-                <input 
-                  type="checkbox" 
-                  onClick={(e) => e.stopPropagation()} 
-                  />
-                  <span>{item}</span>
-                </label>
-              ))}
+                <input
+                  type="checkbox"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <span>{item}</span>
+              </label>
+            ))}
           </div>
         </div>
 
@@ -117,8 +117,8 @@ const PreparednessToolkit = () => {
           <div className="guides-grid">
             {actionGuides.map((guide, index) => (
               <div
-                key={index} 
-                className="item-guide clickable" 
+                key={index}
+                className="item-guide clickable"
                 onClick={() => setSelectedHazard(guide.label)}
               >
                 <div className="icon-guide">{guide.icon}</div>
@@ -128,17 +128,17 @@ const PreparednessToolkit = () => {
                   <ul>
                     {hazardDetails[guide.label].steps.map((step, i) => (
                       <li key={i}>{step}</li>
-                  ))}
-                </ul>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="description">
-          <p>Click on an icon to view safety protocols and immediate steps to take.</p>
+            ))}
+          </div>
+          <div className="description">
+            <p>Click on an icon to view safety protocols and immediate steps to take.</p>
+          </div>
         </div>
       </div>
-    </div>
 
       <div className="print-actions">
         <button className="pdf-btn" onClick={handlePrint}>
@@ -167,5 +167,5 @@ const PreparednessToolkit = () => {
     </div>
   );
 };
- 
+
 export default PreparednessToolkit; 
