@@ -4,8 +4,8 @@ import "./Styles/AboutUs.css";
 export default function AboutUs() {
     const developers = [
         { id: 1, name: "Lawrence Tan", position: "Lead Developer", photo: "Profiles/Lawrence.png" },
-        { id: 2, name: "Sunset Raven", position: "Frontend Developer", photo: "Profiles/Wyeth.jpg" },
-        { id: 3, name: "Clark Antonii", position: "Frontend Developer", photo: "Profiles/Clark.png" },
+        { id: 2, name: "Wyeth Rellamas", position: "Frontend Developer", photo: "Profiles/Wyeth.jpg" },
+        { id: 3, name: "Clark Maglaque", position: "Frontend Developer", photo: "Profiles/Clark.png" },
         { id: 4, name: "Kent Hipolito", position: "Backend Developer", photo: "Profiles/Kent.jpg" },
         { id: 5, name: "Erl Samson", position: "Backend Developer", photo: "Profiles/Erl.png" },
     ];
