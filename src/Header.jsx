@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Header.css";
 import Dashboard from "./Dashboard";
 import AboutUs from "./AboutUs";
-import News from "./Home.jsx";
+import HomeContent from "./Home.jsx";
 import Login from "./Login";
 import AccountSettings from "./AccountSettings";
 import Footer from "./Footer";
@@ -163,10 +163,10 @@ export default function MainLayout() {
           </button>
 
           <button
-            className={`tab-btn ${activeTab === "preparedness" ? "tab-active" : ""}`}
-            onClick={() => handleTabChange("preparedness")}
+            className={`tab-btn ${activeTab === "news" ? "tab-active" : ""}`}
+            onClick={() => handleTabChange("news")}
           >
-            Preparedness
+            News
           </button>
           
           <button
@@ -200,10 +200,10 @@ export default function MainLayout() {
                   Dashboard
                 </button>
                 <button
-                  className={`mobile-tab-btn ${activeTab === "preparedness" ? "mobile-tab-active" : ""}`}
-                  onClick={() => handleTabChange("preparedness")}
+                  className={`mobile-tab-btn ${activeTab === "news" ? "mobile-tab-active" : ""}`}
+                  onClick={() => handleTabChange("news")}
                 >
-                  Preparedness
+                  News
                 </button>
                 <button
                   className={`mobile-tab-btn ${activeTab === "about" ? "mobile-tab-active" : ""}`}
@@ -278,8 +278,13 @@ export default function MainLayout() {
                 />
               )}
               {activeTab === "about" && <AboutUs />}
-              {activeTab === "preparedness" && <Preparedness />}
-              {activeTab === "home" && <News />}
+              {activeTab === "home" && <HomeContent heroOnly />}
+              {activeTab === "news" && (
+                <>
+                  <HomeContent showHero={false} />
+                  <Preparedness />
+                </>
+              )}
               <Footer />
             </motion.div>
           )}

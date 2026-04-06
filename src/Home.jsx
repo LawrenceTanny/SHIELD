@@ -4,7 +4,7 @@ import './Styles/Home.css';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
 const LATEST_NEWS_LIMIT = 7;
 
-export default function NewsReport() {
+export default function NewsReport({ heroOnly = false, showHero = true }) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const carouselRef = useRef(null);
     const [newsItems, setNewsItems] = useState([]);
@@ -13,6 +13,11 @@ export default function NewsReport() {
     const [loadError, setLoadError] = useState('');
 
     useEffect(() => {
+        if (heroOnly) {
+            setIsLoading(false);
+            return;
+        }
+
         const controller = new AbortController();
 
         const fetchNews = async () => {
@@ -60,9 +65,13 @@ export default function NewsReport() {
         return () => {
             controller.abort();
         };
-    }, []);
+    }, [heroOnly]);
 
     useEffect(() => {
+        if (heroOnly) {
+            return;
+        }
+
         const controller = new AbortController();
 
         const fetchDisasters = async () => {
@@ -102,7 +111,7 @@ export default function NewsReport() {
         return () => {
             controller.abort();
         };
-    }, []);
+    }, [heroOnly]);
 
     const sortedNews = [...newsItems].sort((a, b) => {
         const aTime = new Date(a.publishedAt || a.date || 0).getTime();
@@ -127,6 +136,7 @@ export default function NewsReport() {
         setCurrentSlide((prev) => (prev === latestNews.length - 1 ? 0 : prev + 1));
     };
 
+<<<<<<< HEAD
     return (
 
         <div className="news-container">
@@ -135,9 +145,16 @@ export default function NewsReport() {
             <section className="hero-section">
                 <div className="hero-content">
                     <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
+=======
+    const heroSection = (
+        <section className="landing-hero">
+            <div className="welcome-card">
+                <p className="hero-eyebrow">Synchronized Hazard Information & Emergency Live Dashboard</p>
+>>>>>>> origin/main
 
                     <h2 className="hero-title">Welcome to SHIELD</h2>
 
+<<<<<<< HEAD
                     <p className="hero-description">
                         SHIELD is a disaster-monitoring platform built to help communities stay informed through
                         real-time hazard updates, weather intelligence, and emergency response awareness.
@@ -148,6 +165,62 @@ export default function NewsReport() {
                     <div className="hero-highlight-card">
                         <h3>Live Hazard Tracking</h3>
                         <p>Monitor earthquake and hazard data from trusted global sources in one view.</p>
+=======
+                <p className="hero-description">
+                    SHIELD is a disaster-monitoring platform built to help communities stay informed through
+                    real-time hazard updates, weather intelligence, and emergency response awareness.
+                </p>
+            </div>
+
+            <div className="hero-cards-row">
+                <div className="hero-highlight-card">
+                    <h3>Live Hazard Tracking</h3>
+                    <p>Monitor earthquake and hazard data from trusted global sources in one view.</p>
+                </div>
+                <div className="hero-highlight-card">
+                    <h3>Weather Awareness</h3>
+                    <p>View nationwide weather context to better assess storm and typhoon formation risks.</p>
+                </div>
+                <div className="hero-highlight-card">
+                    <h3>Preparedness Focus</h3>
+                    <p>Support safer decisions with timely information for response and readiness planning.</p>
+                </div>
+            </div>
+
+        </section>
+    );
+
+    return (
+        <div className="news-container">
+            {showHero ? heroSection : null}
+
+            {heroOnly ? null : (
+                <>
+
+        
+        <div className="news-header">
+            <h1>News Report</h1>
+            {loadError && <p className="news-load-error">{loadError}</p>}
+    </div>
+    <div className="news-main">
+        <div className="latest-news">
+            <div className="section-header">
+                <h2>Latest News</h2>
+            </div>
+          
+            <div className="carousel-container" ref={carouselRef}>
+                <button className="carousel-btn prev-btn" onClick={handlePrevSlide} disabled={isLoading || latestNews.length <= 1}>
+                ‹
+                </button>
+
+            <div className="carousel-content">
+                {isLoading ? (
+                    <div className="news-card news-skeleton-card">
+                        <div className="skeleton-line skeleton-title" />
+                        <div className="skeleton-line skeleton-text" />
+                        <div className="skeleton-line skeleton-text short" />
+                        <div className="skeleton-line skeleton-date" />
+>>>>>>> origin/main
                     </div>
                     <div className="hero-highlight-card">
                         <h3>Weather Awareness</h3>
@@ -347,5 +420,14 @@ export default function NewsReport() {
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     );
+=======
+        </div>
+        </div>
+                                </>
+                        )}
+                </div>
+  );
+>>>>>>> origin/main
 }

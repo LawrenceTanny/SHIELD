@@ -39,10 +39,34 @@
     width: 100%;
 }
 
+.welcome-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 42px;
+    min-height: 240px;
+    background: linear-gradient(
+    90deg,
+    rgba(255, 68, 0, 0.16) 0%,
+    rgba(255, 68, 0, 0.08) 30%,
+    rgba(5, 12, 26, 0.95) 75%,
+    rgba(5, 12, 26, 1) 100%);    
+    border: 1px solid rgba(255, 68, 0, 0.15);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 24px rgba(255, 68, 0, 0.08);
+}
+
+.landing-hero{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 34px;
+}
+
 .hero-section {
     display: grid;
     padding: 28px;
-    /* width: 100%; */
     grid-template-columns: 1.6fr 1fr;
     gap: 24px;
     margin-bottom: 34px;
@@ -75,17 +99,17 @@
 }
 
 .hero-title {
-    font-size: 2.3rem;
+    font-size: 3rem;
+    font-weight: 600;
     line-height: 1.1;
-    margin: 0;
-    color: #ffffff;
+    margin-bottom: 18px;
 }
 
 .hero-description {
-    font-size: 0.95rem;
-    line-height: 1.7;
+    font-size: 1rem;
+    line-height: 1.8;
     color: #bdd0de;
-    max-width: 60ch;
+    max-width: 700px;
 }
 
 .hero-highlights {
@@ -96,11 +120,8 @@
 }
 
 .hero-highlight-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding: 18px;
-    background: rgba(10, 16, 28, 0.04);
+    background: rgba(10, 16, 28, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
     backdrop-filter: blur(8px);
@@ -121,7 +142,26 @@
 
 .hero-highlight-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(255, 94, 0, 0.25);
+    border-color: rgba(255, 68, 0, 0.2);
+}
+
+.hero-cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.hero-info-card {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    transition: 0.3s ease;
+}
+
+.hero-info-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 94, 0, 0.2);
 }
 
 .hero-btn {
