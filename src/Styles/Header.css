@@ -313,6 +313,15 @@ body {
   -ms-overflow-style: none;
 }
 
+.tab-content--home {
+  min-height: 100%;
+}
+
+.tab-content--home .home-container {
+  flex: 1;
+  min-height: auto;
+}
+
 .tab-content::-webkit-scrollbar {
   display: none;
 }
