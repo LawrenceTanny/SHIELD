@@ -4,6 +4,26 @@ import './Styles/News.css';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://shield-app-wmz37.ondigitalocean.app';
 const LATEST_NEWS_LIMIT = 7;
 
+
+const displayDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: '2-digit',
+  year: 'numeric',
+});
+
+function formatDisplayDate(value) {
+  if (!value) {
+    return 'N/A';
+  }
+
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value;
+  }
+
+  return displayDateFormatter.format(parsedDate);
+}
+
 export default function NewsReport() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [newsItems, setNewsItems] = useState([]);
@@ -32,7 +52,7 @@ export default function NewsReport() {
                 id: item.id || index + 1,
                 title: item.title || 'News Update',
                 description: item.description || 'No details available.',
-                date: item.publishedAt || item.date || 'N/A',
+                date: formatDisplayDate(item.publishedAt || item.date),
                 publishedAt: item.publishedAt || item.date || null,
                 source: item.source || 'SHIELD',
                 url: item.url || '#',
@@ -157,15 +177,22 @@ export default function NewsReport() {
                   href={latestNews[currentSlide]?.url || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    backgroundImage: latestNews[currentSlide]?.image ? `url('${latestNews[currentSlide].image}')` : 'none',
-                  }}
                 >
-                  <div className="news-card-overlay">
+                  <div
+                    className="news-card-media"
+                    style={{
+                      backgroundImage: latestNews[currentSlide]?.image
+                        ? `url('${latestNews[currentSlide].image}')`
+                        : 'linear-gradient(135deg, rgba(255, 68, 0, 0.25) 0%, rgba(15, 15, 15, 0.9) 100%)',
+                    }}
+                  />
+                  <div className="news-card-body">
                     <h3>{latestNews[currentSlide]?.title}</h3>
                     <p>{latestNews[currentSlide]?.description}</p>
-                    <span className="news-date">{latestNews[currentSlide]?.date}</span>
-                    <span className="news-read-more">Read full article</span>
+                    <div className="news-card-meta">
+                      <span className="news-date">{latestNews[currentSlide]?.date}</span>
+                      <span className="news-read-more">Read full article</span>
+                    </div>
                   </div>
                 </a>
               )}
@@ -251,17 +278,19 @@ export default function NewsReport() {
                   href={item.url || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    backgroundImage: item.image
-                      ? `linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%), url('${item.image}')`
-                      : 'linear-gradient(135deg, rgba(70, 130, 180, 0.2) 0%, rgba(100, 150, 180, 0.15) 100%)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
                 >
-                  <div className="news-item-overlay">
+                  <div
+                    className="news-item-media"
+                    style={{
+                      backgroundImage: item.image
+                        ? `url('${item.image}')`
+                        : 'linear-gradient(135deg, rgba(255, 68, 0, 0.2) 0%, rgba(16, 16, 16, 0.85) 100%)',
+                    }}
+                  />
+                  <div className="news-item-body">
                     <h3>{item.title}</h3>
                     <p>{item.description}</p>
+                    <span className="news-date">{item.date}</span>
                   </div>
                 </a>
               ))
