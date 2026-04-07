@@ -57,14 +57,16 @@ export default function HomeContent() {
                 </div>
             </div>
 
-            <a href="#dashboard-section" className="scroll-indicator" aria-label="Scroll to Dashboard">
-                <div className="scroll-circle">
-                    <svg className="scroll-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-                        <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z" />
-                    </svg>
-                </div>
-                <p className="scroll-text">TO DASHBOARD</p>
-            </a>
+            <div className="scroll-indicator-shell">
+                <a href="#dashboard-section" className="scroll-indicator" aria-label="Scroll to Dashboard">
+                    <div className="scroll-circle">
+                        <svg className="scroll-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z" />
+                        </svg>
+                    </div>
+                    <p className="scroll-text">TO DASHBOARD</p>
+                </a>
+            </div>
         </section>
         </section>
     );
