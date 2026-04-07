@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import './Styles/Home.css';
 
-export default function HomeContent() {
+export default function HomeContent({ onGoDashboard }) {
     const heroCards = useMemo(
         () => [
             {
@@ -58,14 +58,14 @@ export default function HomeContent() {
             </div>
 
             <div className="scroll-indicator-shell">
-                <a href="#dashboard-section" className="scroll-indicator" aria-label="Scroll to Dashboard">
+                <button type="button" className="scroll-indicator" aria-label="Go to Dashboard" onClick={onGoDashboard}>
                     <div className="scroll-circle">
                         <svg className="scroll-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
                             <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z" />
                         </svg>
                     </div>
                     <p className="scroll-text">TO DASHBOARD</p>
-                </a>
+                </button>
             </div>
         </section>
         </section>
