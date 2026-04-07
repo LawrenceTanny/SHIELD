@@ -146,10 +146,10 @@ export default function MainLayout() {
               className="brand-home-btn brand-name"
               onClick={() => handleTabChange("home")}
             >
-              ALERT PH
+              ALERT PH 
             </button>
             <span className="brand-sep" />
-            <span className="brand-sub">Synchronized Hazard Information &amp; Emergency Live Dashboard</span>
+            <span className="brand-sub">Philippine Disaster & Monitoring System</span>
           </div>
         </div>
 
@@ -277,7 +277,9 @@ export default function MainLayout() {
                 />
               )}
               {activeTab === "about" && <AboutUs />}
-              {activeTab === "home" && <HomeContent />}
+              {activeTab === "home" && (
+                <HomeContent onGoDashboard={() => handleTabChange("dashboard")} />
+              )}
               {activeTab === "news" && (
                 <>
                   <NewsReport />
