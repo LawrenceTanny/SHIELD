@@ -2,7 +2,7 @@
     width: 100%;
     min-height: calc(100vh - var(--header-h));
     padding: 48px 50px 80px;
-    background-image: url('../public/bg.png');
+    background-image: url('../bg.png');
     background-size: 120%;
     background-position: center;
     background-repeat: no-repeat;
