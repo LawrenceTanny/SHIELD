@@ -10,6 +10,15 @@ import AccountSettings from "./AccountSettings";
 import Footer from "./Footer";
 import Preparedness from "./Preparedness.jsx";
 
+const TAB_STORAGE_KEY = "shield.activeTab";
+const ALLOWED_TABS = new Set(["home", "dashboard", "news", "about"]);
+
+function getInitialTab() {
+  if (typeof window === "undefined") return "home";
+  const savedTab = window.localStorage.getItem(TAB_STORAGE_KEY);
+  return ALLOWED_TABS.has(savedTab) ? savedTab : "home";
+}
+
 function IconUser() {
   return (
     <svg 
@@ -39,7 +48,7 @@ function IconMenu() {
 }
 
 export default function MainLayout() {
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [isLoading, setIsLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -81,6 +90,10 @@ export default function MainLayout() {
     const t = setTimeout(() => setIsLoading(false), 650);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(TAB_STORAGE_KEY, activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     const controller = new AbortController();
