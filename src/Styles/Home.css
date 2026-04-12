@@ -1,37 +1,9 @@
-<<<<<<< HEAD
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-}
-
-.news-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-
-    font-family: "Geist", sans-serif;
-    align-items: center;
-    padding: 110px 50px 80px 50px;
-    width: 100%;
-    /* Changed from auto to vh to cover full screen */
-
-    background-image: url('../public/bg.png');
-    /* Responsive Background Image */
-    /* Adjust path to your folder */
-    background-size: cover;
-=======
 .home-container {
     width: 100%;
     min-height: calc(100vh - var(--header-h));
     padding: 48px 50px 80px;
     background-image: url('../bg.png');
     background-size: 120%;
->>>>>>> origin/main
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -66,6 +38,7 @@ body {
 }
 
 .hero-description {
+    font-family: 'Geist', sans-serif;
     font-size: 1.05rem;
     color: #cccccc;
     font-weight: 300;
@@ -97,10 +70,11 @@ body {
 }
 
 .hero-highlight-card h3 {
+    font-family: 'Geist', sans-serif;
     margin: 0;
     padding: 14px 16px;
     background: rgba(63, 63, 63, 0.55);
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     font-weight: 400;
     letter-spacing: -0.03rem;
     color: var(--ink);
@@ -279,6 +253,7 @@ body {
 }
 
 @keyframes bounceHorizontalGroup {
+
     0%,
     100% {
         transform: translateY(0);
