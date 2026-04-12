@@ -314,7 +314,7 @@ body {
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  opacity: 0.; 
+  opacity: 0.32;
   background-repeat: no-repeat;
   background-size: contain;
   pointer-events: none; 
@@ -322,9 +322,9 @@ body {
 }
 
 .danger-item.type-typhoon::after {bottom: -20px; -webkit-mask-image: url("/storm_icon.svg"); mask-image: url("/storm_icon.svg");}
-.danger-item.type-earthquake::after {bottom: -20px;-webkit-mask-image: url("/earthquake_icon.svg"); mask-image: url("/earthquake_icon.svg");}
+.danger-item.type-earthquake::after {bottom: -20px; -webkit-mask-image: url("/earthquake_icon.svg"); mask-image: url("/earthquake_icon.svg");}
 .danger-item.type-flood::after {-webkit-mask-image: url("/flood_icon.svg"); mask-image: url("/flood_icon.svg");}
-.danger-item.type-landslide::after {bottom: -20px;-webkit-mask-image: url("/landslide_icon.svg"); mask-image: url("/landslide_icon.svg");}
+.danger-item.type-landslide::after {bottom: -20px; -webkit-mask-image: url("/landslide_icon.svg"); mask-image: url("/landslide_icon.svg");}
 .danger-item.type-volcanic-activity::after {bottom: -20px; -webkit-mask-image: url("/volcano_icon.svg"); mask-image: url("/volcano_icon.svg");}
 .danger-item.type-thunderstorm::after {bottom: -8px; -webkit-mask-image: url("/thunderstorm_icon.svg"); mask-image: url("/thunderstorm_icon.svg");}
 .danger-item.type-wildfire::after {bottom: -20px; -webkit-mask-image: url("/fire_icon.svg"); mask-image: url("/fire_icon.svg");}

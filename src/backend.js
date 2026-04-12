@@ -1,3 +1,11 @@
+// SHIELD Backend Server
+// original name was SHIELD, NOW IT'S ALERT PH.
+// Halos ako lang gumawa ng backend hayssst
+// Ginawa ko dito a Node.js Express server with MongoDB for user authentication, disaster data caching, and alert logging. It fetches earthquake and hazard data from USGS and NASA EONET APIs, normalizes and enriches the data with reverse geocoding, and serves it to the frontend. The server also handles user sign-up, session management, and stores user preferences for receiving disaster alerts.
+// Oo ako lang gumawa, ayaw pa mahiya nung iba. Autocutoff to sa 4th year HAHAHAHAHA.
+// Ako na nga gagawa ehh di pa nila simulan yung project sa ibang programming. lahat inaasa sakin nuyun?
+// Kung nabasa niyo to sir wag niyo nalang po bangitin pero legit halos ako lang gumawa neto HAHAHAHAHA, yung design nila sa frontend no choice baka magalit pag pinalitan ko ng mas maayos hehehe.
+
 import express from 'express';
 import cors from 'cors';
 import { MongoClient, ObjectId } from 'mongodb';
@@ -450,7 +458,7 @@ async function reverseGeocodeCoordinates(lat, lng) {
 }
 
 async function fetchDisastersFromProviders() {
-  const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=10';
+  const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=20';
   const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
   const requestTimeoutMs = 15000;
 
@@ -864,7 +872,7 @@ let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
 const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 10)));
-const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 25));
+const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 4));
 const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 5));
 
 function getManilaDateKey(date = new Date()) {
