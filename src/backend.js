@@ -1,10 +1,6 @@
 // SHIELD Backend Server
 // original name was SHIELD, NOW IT'S ALERT PH.
-// Halos ako lang gumawa ng backend hayssst
-// Ginawa ko dito a Node.js Express server with MongoDB for user authentication, disaster data caching, and alert logging. It fetches earthquake and hazard data from USGS and NASA EONET APIs, normalizes and enriches the data with reverse geocoding, and serves it to the frontend. The server also handles user sign-up, session management, and stores user preferences for receiving disaster alerts.
-// Oo ako lang gumawa, ayaw pa mahiya nung iba. Autocutoff to sa 4th year HAHAHAHAHA.
-// Ako na nga gagawa ehh di pa nila simulan yung project sa ibang programming. lahat inaasa sakin nuyun?
-// Kung nabasa niyo to sir wag niyo nalang po bangitin pero legit halos ako lang gumawa neto HAHAHAHAHA, yung design nila sa frontend no choice baka magalit pag pinalitan ko ng mas maayos hehehe.
+
 
 import express from 'express';
 import cors from 'cors';
@@ -31,7 +27,9 @@ const allowedOrigins = new Set(
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
-    'https://shield.lawrencetan1104.workers.dev'
+    'https://shield.lawrencetan1104.workers.dev',
+    'http://alertph.com',
+    'https://alertph.com'
   ].filter(Boolean)
 );
 
@@ -1254,7 +1252,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NODEMAILER_PASS  
   }
 });
-
+// Halos ako lang gumawa ng backend hayssst
+// Ginawa ko dito a Node.js Express server with MongoDB for user authentication, disaster data caching, and alert logging. It fetches earthquake and hazard data from USGS and NASA EONET APIs, normalizes and enriches the data with reverse geocoding, and serves it to the frontend. The server also handles user sign-up, session management, and stores user preferences for receiving disaster alerts.
 app.post('/api/admin/alert', async (req, res) => {
   try {
     const { targetProvince, disasterType, message } = req.body;
