@@ -1271,9 +1271,9 @@ app.post('/api/admin/alert', async (req, res) => {
     }
     const emailList = affectedUsers.map(user => user.email);
     const mailOptions = {
-      from: `"SHIELD Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
+      from: `"Alert PH Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
       bcc: emailList, 
-      subject: `🚨 SHIELD ALERT: ${disasterType} Warning for ${targetProvince}`,
+      subject: `ALERT PH: ${disasterType} Warning for ${targetProvince}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #ff4d4d; border-radius: 10px; overflow: hidden;">
           <div style="background-color: #ff4d4d; color: white; padding: 15px; text-align: center;">
@@ -1286,7 +1286,7 @@ app.post('/api/admin/alert', async (req, res) => {
             <p style="font-size: 16px; line-height: 1.5; color: #333;">${message}</p>
             <br/>
             <p style="font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 10px;">
-              Stay safe. This is an automated priority message from the SHIELD Disaster Dashboard.
+              Stay safe. This is an automated priority message from the <b>Alert PH</b> Disaster Dashboard.
             </p>
           </div>
         </div>
@@ -1369,9 +1369,9 @@ async function sendAutoAlertsForCurrentDisasters() {
 
 
         const mailOptions = {
-          from: `"SHIELD Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
+          from: `"Alert PH Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
           bcc: emailList,
-          subject: `SHIELD ALERT: ${disaster.type} warning for ${province}`,
+          subject: `ALERT PH: ${disaster.type} warning for ${province}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 2px solid #ff4d4d; border-radius: 10px; overflow: hidden;">
               <div style="background-color: #ff4d4d; color: white; padding: 14px; text-align: center;">
@@ -1384,7 +1384,7 @@ async function sendAutoAlertsForCurrentDisasters() {
                 <p style="font-size: 14px; color: #555;">Location detail: ${disaster.city}</p>
                 <p style="font-size: 14px; color: #555;">Source: ${disaster.source}</p>
                 <hr style="border: 1px solid #ffcccc; margin: 18px 0;" />
-                <p style="font-size: 14px; line-height: 1.6; margin: 0;">Stay alert and monitor official advisories. This is an automated notification from SHIELD.</p>
+                <p style="font-size: 14px; line-height: 1.6; margin: 0;">Stay alert and monitor official advisories. This is an automated notification from <b>Alert PH</b>.</p>
               </div>
             </div>
           `
@@ -1513,7 +1513,7 @@ app.post('/api/admin/email/test', async (req, res) => {
       to,
       subject: 'SHIELD test email',
       text: `If you received this email, SMTP is working. Sent at ${new Date().toISOString()}`
-    });
+    });   
 
     res.status(200).json({ message: `Test email sent to ${to}` });
   } catch (error) {
