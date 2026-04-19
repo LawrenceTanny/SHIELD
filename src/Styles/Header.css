@@ -109,6 +109,7 @@ body {
 }
 
 .brand-sub {
+  font-family: "Geist", sans-serif;
   font-size: 0.8rem;
   color: var(--ink);
   white-space: nowrap;
@@ -406,7 +407,6 @@ body {
     margin: 0 14px;
     padding: 0 14px;
     gap: 12px;
-    border-radius: 0 0 40px 40px;
   }
 
   .brand-name {
@@ -447,7 +447,6 @@ body {
     margin: 0 10px;
     padding: 0 12px;
     gap: 8px;
-    border-radius: 0 0 30px 30px;
   }
 
   .header-left {
@@ -508,7 +507,6 @@ body {
     margin: 0 8px;
     padding: 0 10px;
     gap: 6px;
-    border-radius: 0 0 25px 25px;
   }
 
   .header-left {
