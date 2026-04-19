@@ -676,7 +676,7 @@
   }
 
   .news-header h1 {
-    font-size: 24px;
+    font-size: 2rem;
   }
 
   .news-main,
@@ -697,10 +697,6 @@
     gap: 10px;
   }
 
-  .carousel-content {
-    height: 240px;
-  }
-
   .news-grid {
     grid-template-columns: 1fr;
   }
@@ -718,8 +714,8 @@
     padding: 14px 16px 18px;
   }
 
-  .news-card-media {
-    height: 118px;
+  .news-card-body {
+    padding: 30px 40px 40px;
   }
 
   .carousel-btn {
@@ -747,7 +743,7 @@
   }
 
   .news-header h1 {
-    font-size: 20px;
+    font-size: 1.8rem;
   }
 
   .section-header {
@@ -756,7 +752,7 @@
   }
 
   .section-header h2 {
-    font-size: 15px;
+    font-size: 1.4rem;
   }
 
   .latest-news,
@@ -772,19 +768,37 @@
   .news-card-meta {
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 10px;
+  }
+
+  .social-feed-item {
+    padding: 15px 20px 10px 20px;
+    min-height: 120px;
+  }
+
+  .social-feed-item.danger-item {
+    padding: 15px 15px 15px 25px;
+    min-height: 120px;
+  }
+
+  .social-feed-item h4 {
+    font-size: 1.3rem;
+  }
+
+  .news-card-body {
+    padding: 20px 20px 30px;
   }
 
   .news-card h3 {
-    font-size: 10px;
+    font-size: 1.25rem;
   }
 
   .news-card p,
   .social-feed-item p,
   .side-widget p,
   .news-read-more,
-  .news-date,
-  .news-card-body {
-    font-size: 8px;
+  .news-date {
+    font-size: 0.9rem;
   }
 
   .carousel-btn {
@@ -811,6 +825,6 @@
   }
 
   .news-item-card p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 }
