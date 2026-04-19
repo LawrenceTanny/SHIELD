@@ -474,22 +474,17 @@
   gap: 10px;
 }
 
-/* --- Danger Card Styles --- */
 
-/* Base card overrides for the Alert items */
 .social-feed-item.danger-item {
   position: relative;
   background: #D9D9D9 !important;
-  /* Forces the light gray card style */
   padding: 20px 30px 15px 40px;
-  /* Space on left for severity bar */
   min-height: 160px;
   border: none;
   overflow: hidden;
   transition: transform 350ms ease-in-out;
 }
 
-/* The Left Severity Bar */
 .danger-item::before {
   content: "";
   position: absolute;
@@ -515,7 +510,7 @@
 .danger-item::after {
   content: "";
   position: absolute;
-  right: -10px;
+  right: -15px;
   bottom: -15px;
   width: 140px;
   height: 140px;
@@ -528,8 +523,6 @@
   z-index: 1;
   pointer-events: none;
 }
-
-
 
 .danger-item .alert-meta {
   color: var(--ink2) !important;
@@ -612,17 +605,17 @@
 }
 
 .severity-high {
-  background: #ff6b6b;
+  background: #FD694F;
   color: #ffffff;
 }
 
 .severity-medium {
-  background: #ffa500;
+  background: #FDCE4F;
   color: #ffffff;
 }
 
 .severity-low {
-  background: #4ecdc4;
+  background: #6AB144;
   color: #ffffff;
 }
 
@@ -782,7 +775,7 @@
   }
 
   .social-feed-item h4 {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 
   .news-card-body {
@@ -805,6 +798,106 @@
     width: 32px;
     height: 32px;
     font-size: 18px;
+  }
+
+  .news-item-card {
+    min-height: 140px;
+    padding: 0;
+  }
+
+  .news-item-media {
+    height: 100px;
+  }
+
+  .news-item-body {
+    padding: 12px 14px 16px;
+  }
+
+  .news-item-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .news-item-card p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .news-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .latest-news .section-header h2,
+  .social-section .section-header h2 {
+    font-size: 1.3rem;
+    padding: 2vw 4vw;
+  }
+
+  .latest-news,
+  .social-section,
+  .news-side-panel .side-widget {
+    padding: 12px;
+    border: none;
+  }
+
+  .news-card {
+    padding: 12px;
+  }
+
+  .news-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+
+  .social-feed-container {
+    padding: 100px 15px 15px;
+  }
+
+  .social-section {
+    padding: 15px;
+    border: none;
+  }
+
+  .social-feed-item {
+    padding: 15px 20px 10px 20px;
+    min-height: 120px;
+  }
+
+  .social-feed-item.danger-item {
+    padding: 15px 15px 15px 25px;
+    min-height: 120px;
+  }
+
+  .social-feed-item h4 {
+    font-size: 1.5rem;
+  }
+
+  .news-card-body {
+    padding: 40px 30px 30px;
+  }
+
+  .news-card h3 {
+    font-size: 1rem;
+  }
+
+  .news-card p,
+  .social-feed-item p,
+  .side-widget p,
+  .news-read-more,
+  .news-date {
+    font-size: 0.5rem;
+  }
+
+  .danger-item::after {
+    width: 100px;
+    height: 100px;
+  }
+
+  .carousel-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
   }
 
   .news-item-card {
