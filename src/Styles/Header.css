@@ -377,8 +377,8 @@ body {
 /* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .main-header {
-    margin: 0 18px;
-    padding: 0 16px;
+    margin: 0;
+    padding: 0 25px;
     gap: 16px;
   }
 
@@ -404,8 +404,8 @@ body {
 /* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .main-header {
-    margin: 0 14px;
-    padding: 0 14px;
+    margin: 0;
+    padding: 0 25px;
     gap: 12px;
   }
 
@@ -444,8 +444,8 @@ body {
 /* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .main-header {
-    margin: 0 10px;
-    padding: 0 12px;
+    margin: 0;
+    padding: 0 25px;
     gap: 8px;
   }
 
