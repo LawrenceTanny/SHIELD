@@ -672,6 +672,35 @@
     font-size: 2rem;
   }
 
+  .social-section .section-header h2,
+  .latest-news .section-header h2 {
+    font-size: 1.8rem;
+    padding: 16px 20px;
+  }
+
+  .side-widget h3 {
+    font-size: 1.6rem;
+  }
+
+  .social-feed-item h4 {
+    font-size: 1.5rem;
+  }
+
+  .news-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .news-item-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .news-card p,
+  .social-feed-item p,
+  .side-widget p,
+  .news-item-card p {
+    font-size: 0.9rem;
+  }
+
   .news-main,
   .news-dashboard-layout {
     gap: 16px;
@@ -736,7 +765,7 @@
   }
 
   .news-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
   }
 
   .section-header {
@@ -744,8 +773,40 @@
     padding-bottom: 10px;
   }
 
-  .section-header h2 {
+  .social-section .section-header h2,
+  .latest-news .section-header h2 {
+    font-size: 1.5rem;
+    padding: 12px 16px;
+  }
+
+  .side-widget h3 {
     font-size: 1.4rem;
+  }
+
+  .social-feed-item h4 {
+    font-size: 1.4rem;
+  }
+
+  .news-card h3 {
+    font-size: 1.25rem;
+  }
+
+  .news-item-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .news-card p,
+  .social-feed-item p,
+  .side-widget p,
+  .news-read-more,
+  .news-item-card p,
+  .danger-item .alert-title {
+    font-size: 0.85rem;
+  }
+
+  .news-date,
+  .alert-meta {
+    font-size: 0.75rem;
   }
 
   .latest-news,
@@ -774,24 +835,8 @@
     min-height: 120px;
   }
 
-  .social-feed-item h4 {
-    font-size: 1.5rem;
-  }
-
   .news-card-body {
     padding: 20px 20px 30px;
-  }
-
-  .news-card h3 {
-    font-size: 1.25rem;
-  }
-
-  .news-card p,
-  .social-feed-item p,
-  .side-widget p,
-  .news-read-more,
-  .news-date {
-    font-size: 0.9rem;
   }
 
   .carousel-btn {
@@ -812,32 +857,58 @@
   .news-item-body {
     padding: 12px 14px 16px;
   }
-
-  .news-item-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .news-item-card p {
-    font-size: 0.85rem;
-  }
 }
 
 @media (max-width: 320px) {
   .news-header h1 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
   .latest-news .section-header h2,
   .social-section .section-header h2 {
-    font-size: 1.3rem;
-    padding: 2vw 4vw;
+    font-size: 1.25rem;
+    padding: 12px 14px;
+  }
+
+  .side-widget h3 {
+    font-size: 1.25rem;
+  }
+
+  .social-feed-item h4 {
+    font-size: 1.2rem;
+  }
+
+  .news-card h3 {
+    font-size: 1rem;
+  }
+
+  .news-item-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .news-card p,
+  .social-feed-item p,
+  .side-widget p,
+  .news-read-more,
+  .news-item-card p,
+  .alert-location,
+  .danger-item .alert-title {
+    font-size: 0.6rem;
+  }
+
+
+  .news-date,
+  .alert-meta,
+  .news-read-more,
+  .alert-timestamp {
+    font-size: 0.4rem;
   }
 
   .latest-news,
   .social-section,
   .news-side-panel .side-widget {
     padding: 12px;
-    border: none;
+    border-left-width: 2px;
   }
 
   .news-card {
@@ -851,7 +922,7 @@
   }
 
   .social-feed-container {
-    padding: 100px 15px 15px;
+    padding: 60px 0;
   }
 
   .social-section {
@@ -860,33 +931,17 @@
   }
 
   .social-feed-item {
-    padding: 15px 20px 10px 20px;
-    min-height: 120px;
+    padding: 15px 15px 10px 15px;
+    min-height: 110px;
   }
 
   .social-feed-item.danger-item {
-    padding: 15px 15px 15px 25px;
-    min-height: 120px;
-  }
-
-  .social-feed-item h4 {
-    font-size: 1.5rem;
+    padding: 15px 15px 15px 20px;
+    min-height: 110px;
   }
 
   .news-card-body {
-    padding: 40px 30px 30px;
-  }
-
-  .news-card h3 {
-    font-size: 1rem;
-  }
-
-  .news-card p,
-  .social-feed-item p,
-  .side-widget p,
-  .news-read-more,
-  .news-date {
-    font-size: 0.5rem;
+    padding: 20px 20px 20px;
   }
 
   .danger-item::after {
@@ -895,29 +950,20 @@
   }
 
   .carousel-btn {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     font-size: 14px;
   }
 
   .news-item-card {
-    min-height: 140px;
-    padding: 0;
+    min-height: 130px;
   }
 
   .news-item-media {
-    height: 100px;
+    height: 90px;
   }
 
   .news-item-body {
-    padding: 12px 14px 16px;
-  }
-
-  .news-item-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .news-item-card p {
-    font-size: 0.85rem;
+    padding: 10px 12px 14px;
   }
 }
