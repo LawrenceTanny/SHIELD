@@ -32,6 +32,7 @@ export default function NewsReport() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const carouselRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -127,10 +128,17 @@ export default function NewsReport() {
   const bottomNewsCards = sortedNews.slice(LATEST_NEWS_LIMIT);
 
   useEffect(() => {
-    if (currentSlide >= latestNews.length) {
-      setCurrentSlide(0);
+    if (isLoading || latestNews.length <= 1) return;
+    
+    let interval;
+    if (!isHovered) {
+      interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev === latestNews.length - 1 ? 0 : prev + 1));
+      }, 5000);
     }
-  }, [currentSlide, latestNews.length]);
+    
+    return () => clearInterval(interval);
+  }, [isLoading, latestNews.length, isHovered]);
 
   const handlePrevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? latestNews.length - 1 : prev - 1));
@@ -153,12 +161,20 @@ export default function NewsReport() {
             <h2>Latest News</h2>
           </div>
 
-          <div className="carousel-container" ref={carouselRef}>
+          <div 
+            className="carousel-container" 
+            ref={carouselRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <button className="carousel-btn prev-btn" onClick={handlePrevSlide} disabled={isLoading || latestNews.length <= 1}>
               ‹
             </button>
 
-            <div className="carousel-content">
+            <div 
+              className="carousel-content" 
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
               {isLoading ? (
                 <div className="news-card news-skeleton-card">
                   <div className="skeleton-line skeleton-title" />
@@ -173,29 +189,32 @@ export default function NewsReport() {
                   <span className="news-date">Waiting for today&apos;s updates</span>
                 </div>
               ) : (
-                <a
-                  className={`news-card active news-card-link ${latestNews[currentSlide]?.url === '#' ? 'disabled-link' : ''}`}
-                  href={latestNews[currentSlide]?.url || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div
-                    className="news-card-media"
-                    style={{
-                      backgroundImage: latestNews[currentSlide]?.image
-                        ? `url('${latestNews[currentSlide].image}')`
-                        : 'linear-gradient(135deg, rgba(255, 68, 0, 0.25) 0%, rgba(15, 15, 15, 0.9) 100%)',
-                    }}
-                  />
-                  <div className="news-card-body">
-                    <h3>{latestNews[currentSlide]?.title}</h3>
-                    <p>{latestNews[currentSlide]?.description}</p>
-                    <div className="news-card-meta">
-                      <span className="news-date">{latestNews[currentSlide]?.date}</span>
-                      <span className="news-read-more">Read full article</span>
+                latestNews.map((item, index) => (
+                  <a
+                    key={item.id || index}
+                    className={`news-card active news-card-link ${item.url === '#' ? 'disabled-link' : ''}`}
+                    href={item.url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div
+                      className="news-card-media"
+                      style={{
+                        backgroundImage: item.image
+                          ? `url('${item.image}')`
+                          : 'linear-gradient(135deg, rgba(255, 68, 0, 0.25) 0%, rgba(15, 15, 15, 0.9) 100%)',
+                      }}
+                    />
+                    <div className="news-card-body">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <div className="news-card-meta">
+                        <span className="news-date">{item.date}</span>
+                        <span className="news-read-more">Read full article</span>
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
+                ))
               )}
             </div>
 
