@@ -5,6 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://shield-app-wm
 const LATEST_NEWS_LIMIT = 7;
 
 
+
 const displayDateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: '2-digit',
@@ -48,17 +49,17 @@ export default function NewsReport() {
         const payload = await response.json();
         const normalized = Array.isArray(payload)
           ? payload
-              .map((item, index) => ({
-                id: item.id || index + 1,
-                title: item.title || 'News Update',
-                description: item.description || 'No details available.',
-                date: formatDisplayDate(item.publishedAt || item.date),
-                publishedAt: item.publishedAt || item.date || null,
-                source: item.source || 'SHIELD',
-                url: item.url || '#',
-                image: item.image || null,
-              }))
-              .filter((item) => item.title)
+            .map((item, index) => ({
+              id: item.id || index + 1,
+              title: item.title || 'News Update',
+              description: item.description || 'No details available.',
+              date: formatDisplayDate(item.publishedAt || item.date),
+              publishedAt: item.publishedAt || item.date || null,
+              source: item.source || 'SHIELD',
+              url: item.url || '#',
+              image: item.image || null,
+            }))
+            .filter((item) => item.title)
           : [];
 
         setNewsItems(normalized);
@@ -95,13 +96,13 @@ export default function NewsReport() {
         const payload = await response.json();
         const alerts = Array.isArray(payload)
           ? payload.slice(0, 2).map((item, index) => ({
-              id: item.id || index + 1,
-              type: item.type || 'Alert',
-              title: item.title || 'Alert Update',
-              location: item.city || item.province || 'Philippines',
-              severity: item.severity || 'Medium',
-              timestamp: item.updatedAt || new Date().toLocaleDateString('en-PH'),
-            }))
+            id: item.id || index + 1,
+            type: item.type || 'Alert',
+            title: item.title || 'Alert Update',
+            location: item.city || item.province || 'Philippines',
+            severity: item.severity || 'Medium',
+            timestamp: item.updatedAt || new Date().toLocaleDateString('en-PH'),
+          }))
           : [];
 
         setDisasterAlerts(alerts);
@@ -236,19 +237,33 @@ export default function NewsReport() {
                 <p>Currently no active disaster alerts. Continue monitoring for updates.</p>
               </div>
             ) : (
-              disasterAlerts.map((alert) => (
-                <div key={alert.id} className="social-feed-item alert-item">
-                  <div className="alert-header">
-                    <h4>{alert.type}</h4>
-                    <span className={`severity-badge severity-${alert.severity.toLowerCase()}`}>{alert.severity}</span>
+              disasterAlerts.map((alert) => {
+                const typeClass = alert.type?.toLowerCase().replace(/\s+/g, '-');
+                const severityClass = alert.severity?.toLowerCase();
+
+                return (
+                  <div
+                    key={alert.id}
+                    className={`social-feed-item danger-item type-${typeClass} sev-${severityClass}`}
+                  >
+                    <div className="alert-header">
+                      <div className="alert-type-group">
+                        <h4>{alert.type}</h4>
+                      </div>
+                      <span className={`severity-badge severity-${severityClass}`}>
+                        {alert.severity}
+                      </span>
+                    </div>
+
+                    <p className="alert-title">{alert.title}</p>
+
+                    <div className="alert-meta">
+                      <span className="alert-location">{alert.location}</span>
+                      <span className="alert-timestamp">{alert.timestamp}</span>
+                    </div>
                   </div>
-                  <p className="alert-title">{alert.title}</p>
-                  <div className="alert-meta">
-                    <span className="alert-location">📍 {alert.location}</span>
-                    <span className="alert-timestamp">{alert.timestamp}</span>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -315,6 +330,6 @@ export default function NewsReport() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
