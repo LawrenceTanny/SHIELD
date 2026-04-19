@@ -38,6 +38,7 @@
 }
 
 .hero-description {
+    font-family: 'Geist', sans-serif;
     font-size: 1.05rem;
     color: #cccccc;
     font-weight: 300;
@@ -69,17 +70,18 @@
 }
 
 .hero-highlight-card h3 {
+    font-family: 'Geist', sans-serif;
     margin: 0;
-    padding: 14px 16px;
+    padding: 14px 26px;
     background: rgba(63, 63, 63, 0.55);
-    font-size: 1.35rem;
+    font-size: 2rem;
     font-weight: 400;
     letter-spacing: -0.03rem;
     color: var(--ink);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: left;
+    gap: 15px;
 }
 
 .hero-highlight-card p {
@@ -251,6 +253,7 @@
 }
 
 @keyframes bounceHorizontalGroup {
+
     0%,
     100% {
         transform: translateY(0);
@@ -258,5 +261,141 @@
 
     50% {
         transform: translateY(10px);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .news-container {
+        padding: 110px 40px 40px 40px;
+    }
+
+    .hero-cards-row {
+        gap: 20px;
+    }
+
+    .hero-title {
+        font-size: 5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-cards-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-title {
+        font-size: 4rem;
+    }
+
+    .step-pill {
+        font-size: 1.2rem;
+        padding: 8px 20px 8px 8px;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .news-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .news-container {
+        padding: 90px 20px 40px 20px;
+    }
+
+    .landing-hero {
+        min-height: auto;
+        padding-top: 0;
+        margin-bottom: 50px;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .hero-cards-row {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .steps-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .step-pill {
+        width: 100%;
+        max-width: 300px;
+        justify-content: flex-start;
+    }
+
+    .scroll-indicator {
+        margin: 5rem 0 0 0;
+    }
+
+    .news-main {
+        flex-direction: column;
+    }
+
+    .news-dashboard-layout {
+        flex-direction: column;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-side-panel {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 3.2rem;
+    }
+
+    .welcome-card {
+        padding: 15px 0;
+    }
+
+    .hero-highlight-card h3 {
+        font-size: 1.5rem;
+    }
+
+    .news-header h1 {
+        font-size: 32px;
+    }
+
+    .scroll-circle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .scroll-text {
+        font-size: 1.2rem;
+    }
+
+    .step-pill {
+        font-size: 1rem;
+    }
+
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
     }
 }
