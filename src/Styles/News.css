@@ -222,7 +222,7 @@
   padding: 0;
   border-radius: 20px;
   backdrop-filter: blur(10px);
-  background: linear-gradient(166deg, rgba(32, 32, 32, 0.18) 0%, rgba(82, 82, 82, 0.18) 100%);
+  background: linear-gradient(166deg, rgb(10, 10, 10) 0%, rgba(82, 82, 82, 0.18) 100%);
   border: 2px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   color: #ffffff;
@@ -451,12 +451,12 @@
 
 .latest-news .section-header h2::before,
 .social-section .section-header h2::before {
-    content: '';
-    width: 10px;
-    height: 10px;
-    background: #ff4400;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 68, 0, 0.76);
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #ff4400;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 68, 0, 0.76);
 }
 
 .social-section .section-header {
