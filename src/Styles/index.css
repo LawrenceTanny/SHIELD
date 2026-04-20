@@ -1,4 +1,3 @@
-/* SHIELD global resets — app styles live in App.css */
 *,
 *::before,
 *::after {
@@ -7,4 +6,252 @@
 
 body {
     margin: 0;
+}
+
+body.theme-transition,
+body.theme-transition *,
+body.theme-transition *::before,
+body.theme-transition *::after {
+    transition: background-color 0.38s ease, color 0.38s ease, border-color 0.38s ease, fill 0.38s ease, stroke 0.38s ease, box-shadow 0.38s ease;
+}
+
+body[data-theme="light"] {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --surface2: #edf1f5;
+    --border: rgba(18, 28, 45, 0.14);
+    --accent: #ff4400;
+    --accent-d: rgba(255, 68, 0, 0.12);
+    --accent-g: rgba(255, 68, 0, 0.32);
+    --ink: #142236;
+    --ink2: #0f1a2b;
+    --muted: rgba(20, 34, 54, 0.68);
+    --muted-dark: rgba(20, 34, 54, 0.68);
+    --as-ink: #142236;
+    --as-muted: rgba(20, 34, 54, 0.62);
+    --lm-ink: #142236;
+    --lm-muted: rgba(20, 34, 54, 0.62);
+}
+
+body[data-theme="light"],
+body[data-theme="light"] .main-layout,
+body[data-theme="light"] .dashboard-wrapper,
+body[data-theme="light"] .tab-content {
+    background: var(--bg) !important;
+    color: var(--ink) !important;
+}
+
+body[data-theme="light"] .main-header {
+    border-bottom: 1px solid var(--border) !important;
+    background: rgba(239, 243, 248, 0.46) !important;
+}
+
+body[data-theme="light"] .brand-sub,
+body[data-theme="light"] .tab-btn,
+body[data-theme="light"] .user-hint,
+body[data-theme="light"] .app-footer {
+    color: var(--ink) !important;
+}
+
+body[data-theme="light"] .tab-btn.tab-active,
+body[data-theme="light"] .main-header .nav-btn,
+body[data-theme="light"] .mobile-tab-btn.mobile-tab-active,
+body[data-theme="light"] .as-btn-outline,
+body[data-theme="light"] .ltab--on {
+    background: var(--surface) !important;
+    color: var(--ink2) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 10px 24px rgba(10, 20, 35, 0.12) !important;
+}
+
+body[data-theme="light"] .mobile-tab-dropdown,
+body[data-theme="light"] .main-header .user-dropdown,
+body[data-theme="light"] .danger-panel,
+body[data-theme="light"] .settings-drawer,
+body[data-theme="light"] .news-report-container,
+body[data-theme="light"] .preparedness-container,
+body[data-theme="light"] .about-us-page,
+body[data-theme="light"] .login-modal,
+body[data-theme="light"] .as-modal,
+body[data-theme="light"] .weather-badge,
+body[data-theme="light"] .map-layer-toggle {
+    background: linear-gradient(166deg, rgba(246, 249, 252, 0.34) 0%, rgba(232, 238, 246, 0.42) 100%) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 16px 35px rgba(10, 20, 35, 0.12) !important;
+    color: var(--ink) !important;
+}
+
+body[data-theme="light"] .mobile-tab-btn,
+body[data-theme="light"] .main-header .user-dropdown .user-signin-btn,
+body[data-theme="light"] .main-header .user-dropdown .user-acct-btn,
+body[data-theme="light"] .settings-field select,
+body[data-theme="light"] .lf-label select,
+body[data-theme="light"] .lf-label input,
+body[data-theme="light"] .as-field input {
+    background: var(--surface2) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--ink) !important;
+}
+
+body[data-theme="light"] .home-container {
+    background-color: var(--bg) !important;
+    color: var(--ink) !important;
+}
+
+body[data-theme="light"] .home-container::before {
+    background-image: url('/lightbg.png') !important;
+    filter: invert(1) hue-rotate(180deg) saturate(1.05) contrast(1.02);
+}
+
+body[data-theme="light"] .hero-description,
+body[data-theme="light"] .news-item-card p,
+body[data-theme="light"] .side-widget p,
+body[data-theme="light"] .description p,
+body[data-theme="light"] .contact-name,
+body[data-theme="light"] .dev-position,
+body[data-theme="light"] .as-hint,
+body[data-theme="light"] .news-card p,
+body[data-theme="light"] .login-tagline,
+body[data-theme="light"] .as-toggle span {
+    color: var(--muted) !important;
+}
+
+body[data-theme="light"] .scroll-text,
+body[data-theme="light"] .scroll-arrow,
+body[data-theme="light"] .news-header h1,
+body[data-theme="light"] .latest-news .section-header h2,
+body[data-theme="light"] .social-section .section-header h2,
+body[data-theme="light"] .news-item-card h3,
+body[data-theme="light"] .danger-head h2,
+body[data-theme="light"] .settings-head h3,
+body[data-theme="light"] .settings-label,
+body[data-theme="light"] .di-title,
+body[data-theme="light"] .di-meta,
+body[data-theme="light"] .di-source,
+body[data-theme="light"] .side-widget h3,
+body[data-theme="light"] .as-field span,
+body[data-theme="light"] .as-section-title,
+body[data-theme="light"] .lf-label,
+body[data-theme="light"] .toolkit-card,
+body[data-theme="light"] .info-card,
+body[data-theme="light"] .dev-card,
+body[data-theme="light"] .partner-card,
+body[data-theme="light"] .contact-number,
+body[data-theme="light"] .label-guide,
+body[data-theme="light"] .checklist-item {
+    color: var(--ink2) !important;
+}
+
+body[data-theme="light"] .scroll-arrow {
+    fill: #111827 !important;
+}
+
+body[data-theme="light"] .scroll-circle {
+    border-color: #111827 !important;
+}
+
+body[data-theme="light"] .hero-highlight-card,
+body[data-theme="light"] .step-pill,
+body[data-theme="light"] .latest-news,
+body[data-theme="light"] .social-section,
+body[data-theme="light"] .news-item-card,
+body[data-theme="light"] .toolkit-card,
+body[data-theme="light"] .info-card,
+body[data-theme="light"] .dev-card,
+body[data-theme="light"] .partner-card,
+body[data-theme="light"] .danger-item,
+body[data-theme="light"] .danger-item-empty,
+body[data-theme="light"] .filter-item.active {
+    background: rgba(255, 255, 255, 0.72) !important;
+    border-color: var(--border) !important;
+}
+
+body[data-theme="light"] .settings-field select {
+    background: rgba(255, 255, 255, 0.58) !important;
+}
+
+body[data-theme="light"] .hero-highlight-card h3 {
+    background: var(--surface2) !important;
+}
+
+body[data-theme="light"] .latest-news .section-header h2,
+body[data-theme="light"] .social-section .section-header h2 {
+    background: rgba(235, 240, 247, 0.9) !important;
+}
+
+body[data-theme="light"] .news-item-media::after {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.9) 100%) !important;
+}
+
+body[data-theme="light"] .news-card-media::after {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 0%, rgba(20, 34, 54, 0.4) 100%) !important;
+}
+
+body[data-theme="light"] .news-card .news-date,
+body[data-theme="light"] .news-date {
+    color: rgba(20, 34, 54, 0.7) !important;
+}
+
+body[data-theme="light"] .side-widget {
+    border-color: rgba(20, 34, 54, 0.16) !important;
+    border-left-color: rgba(20, 34, 54, 0.16) !important;
+}
+
+body[data-theme="light"] .map-wrap::after {
+    background: rgba(255, 255, 255, 0.22) !important;
+}
+
+body[data-theme="light"] .map-canvas .leaflet-tile-pane {
+    filter: saturate(1.02) hue-rotate(0deg) contrast(1.01) brightness(1.02) !important;
+}
+
+body[data-theme="light"] .cloud-layer--light {
+    filter: grayscale(1) brightness(0.42) contrast(1.45) saturate(0) !important;
+    mix-blend-mode: multiply;
+}
+
+body[data-theme="light"] .weather-icon {
+    background: rgba(16, 24, 39, 0.76) !important;
+    border-radius: 999px;
+    padding: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+body[data-theme="light"] .latest-news .news-card h3,
+body[data-theme="light"] .latest-news .news-card p,
+body[data-theme="light"] .latest-news .news-date,
+body[data-theme="light"] .latest-news .news-read-more {
+    color: #ffffff !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+body[data-theme="light"] .latest-news .news-card-media::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0.9) 100%) !important;
+}
+
+body[data-theme="light"] .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.85) !important;
+    color: rgba(20, 34, 54, 0.78) !important;
+    border: 1px solid var(--border) !important;
+}
+
+body[data-theme="light"] .leaflet-control-attribution a {
+    color: #cc4a26 !important;
+}
+
+body[data-theme="light"] .app-footer {
+    border-top: 1px solid var(--border) !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+}
+
+body[data-theme="light"] .dashboard-settings-btn {
+    background: rgba(31, 31, 31, 0.42) !important;
+    border-color: rgba(31, 31, 31, 0.52) !important;
+    color: #f3f4f6 !important;
+}
+
+body[data-theme="light"] .dashboard-settings-btn:hover {
+    background: rgba(31, 31, 31, 0.58) !important;
+    border-color: rgba(31, 31, 31, 0.68) !important;
+    color: #ffffff !important;
 }

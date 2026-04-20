@@ -231,7 +231,8 @@
   font-size: 0.87rem;
   color: var(--as-ink);
 }
-.as-toggle input[type="checkbox"] {
+.as-toggle input[type="checkbox"],
+.as-toggle input[type="radio"] {
   width: 15px;
   height: 15px;
   accent-color: var(--as-accent);
