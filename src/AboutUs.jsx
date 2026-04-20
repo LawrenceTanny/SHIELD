@@ -3,11 +3,11 @@ import "./Styles/AboutUs.css";
 
 export default function AboutUs() {
     const developers = [
-        { id: 1, name: "Lawrence Tan", position: "Lead Developer", photo: "Profiles/Lawrence.png" },
-        { id: 2, name: "Wyeth Rellamas", position: "Frontend Developer", photo: "Profiles/Wyeth.jpg" },
-        { id: 3, name: "Clark Maglaque", position: "Frontend Developer", photo: "Profiles/Clark.png" },
-        { id: 4, name: "Kent Hipolito", position: "Backend Developer", photo: "Profiles/Kent.jpg" },
-        { id: 5, name: "Erl Samson", position: "Backend Developer", photo: "Profiles/Erl.png" },
+        { id: 1, name: "Lawrence Tan", position: "Lead Developer", photo: "Profiles/Lawrence.png", github: "https://github.com/LawrenceTanny" },
+        { id: 2, name: "Wyeth Rellamas", position: "Frontend Developer", photo: "Profiles/Wyeth.jpg", github: "https://github.com/Rellamas" },
+        { id: 3, name: "Clark Maglaque", position: "Frontend Developer", photo: "Profiles/Clark.png", github: "https://github.com/def-Antoni" },
+        { id: 4, name: "Kent Hipolito", position: "Backend Developer", photo: "Profiles/Kent.jpg", github: "https://github.com/KentHipolito" },
+        { id: 5, name: "Erl Samson", position: "Backend Developer", photo: "Profiles/Erl.png", github: "https://github.com/yaziz26" },
     ];
 
     const apiPartners = [
@@ -65,19 +65,27 @@ export default function AboutUs() {
                     <h2 className="dev-title">DEVELOPMENT TEAM</h2>
                     <div className="dev-grid">
                         {developers.map((dev) => (
-                            <div key={dev.id} className="dev-card">
-                                <div className="dev-avatar">
-                                    {dev.photo ? (
-                                        <img src={dev.photo} alt={dev.name} className="dev-image" />
-                                    ) : (
-                                        <span className="placeholder-text">Add Photo</span>
-                                    )}
-                                </div>
-                                <div className="dev-info">
-                                    <p className="dev-name">{dev.name}</p>
-                                    <p className="dev-position">{dev.position}</p>
-                                </div>
+                            <a 
+                                key={dev.id} 
+                                href={dev.github} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="dev-card-link"
+                           >
+                        <div className="dev-card">
+                            <div className="dev-avatar">
+                                {dev.photo ? (
+                                    <img src={dev.photo} alt={dev.name} className="dev-image" />
+                                ) : (
+                                <span className="placeholder-text">Add Photo</span>
+                            )}
                             </div>
+            <div className="dev-info">
+                <p className="dev-name">{dev.name}</p>
+                <p className="dev-position">{dev.position}</p>
+            </div>
+        </div>
+    </a>
                         ))}
                     </div>
                 </section>
