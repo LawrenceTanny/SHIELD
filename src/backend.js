@@ -682,7 +682,8 @@ app.post('/api/signup', async (req, res) => {
       },
       preferences: {
         receiveDisasterAlerts: true,
-        subscribeNewsletter: false
+        subscribeNewsletter: false,
+        theme: 'light' // NIlagyan ko na nggggg light and dark modeee tapos ayaw na ko kalaro nila sa valorant hayss hirap mabohai. goodbye talaga to sana wala akong kakilala pag nag reshuffle.
       },
       accountStatus: 'Active',
       signupDate: new Date()
@@ -709,7 +710,8 @@ function toPublicUser(userDoc) {
     accountStatus: userDoc?.accountStatus || 'Active',
     preferences: {
       receiveDisasterAlerts: userDoc?.preferences?.receiveDisasterAlerts !== false,
-      subscribeNewsletter: userDoc?.preferences?.subscribeNewsletter === true
+      subscribeNewsletter: userDoc?.preferences?.subscribeNewsletter === true,
+      theme: userDoc?.preferences?.theme === 'dark' ? 'dark' : 'light'
     }
   };
 }
@@ -811,6 +813,9 @@ app.patch('/api/account', requireAuth, async (req, res) => {
       }
       if (typeof preferences.subscribeNewsletter === 'boolean') {
         updates['preferences.subscribeNewsletter'] = preferences.subscribeNewsletter;
+      }
+      if (preferences.theme === 'light' || preferences.theme === 'dark') {
+        updates['preferences.theme'] = preferences.theme;
       }
     }
 

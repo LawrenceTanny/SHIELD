@@ -311,6 +311,17 @@ font-family: "IBM Plex Mono", monospace;
   left: 100%;                    
 }
 
+.dev-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dev-card-link:hover .dev-card {
+    transform: translateY(-5px);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
 .dev-avatar {
   width: 75px;
   height: 75px;
@@ -608,4 +619,70 @@ font-family: "IBM Plex Mono", monospace;
   .dev-info {
     text-align: left;
   }
+}
+
+/* Reactive hover polish: keep dark mode style language, avoid black fill on hover */
+.partner-card,
+.dev-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.partner-card::before,
+.dev-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 68, 0, 0.16) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+.partner-card:hover::before,
+.dev-card:hover::before {
+  transform: translateX(120%);
+}
+
+.partner-card:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--accent);
+  box-shadow: 0 10px 26px rgba(255, 68, 0, 0.3), 0 0 20px rgba(255, 68, 0, 0.2);
+}
+
+.partner-card:hover .partner-name {
+  color: var(--ink);
+  text-shadow: 0 0 12px rgba(255, 68, 0, 0.45);
+}
+
+.dev-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 14px 32px rgba(255, 68, 0, 0.3), 0 0 18px rgba(255, 68, 0, 0.2);
+}
+
+.dev-card:hover .dev-name,
+.dev-card:hover .dev-position {
+  text-shadow: 0 0 12px rgba(255, 68, 0, 0.32);
+}
+
+/* Light mode shine behavior for About Us card texts */
+body[data-theme="light"] .about-us-page .partner-card:hover {
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 26px rgba(255, 68, 0, 0.24), 0 0 18px rgba(20, 34, 54, 0.16);
+}
+
+body[data-theme="light"] .about-us-page .partner-card:hover .partner-name {
+  color: #0f1a2b;
+  text-shadow: 0 0 10px rgba(255, 68, 0, 0.22);
+}
+
+body[data-theme="light"] .about-us-page .dev-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 28px rgba(255, 68, 0, 0.2), 0 0 16px rgba(20, 34, 54, 0.14);
+}
+
+body[data-theme="light"] .about-us-page .dev-card:hover .dev-name,
+body[data-theme="light"] .about-us-page .dev-card:hover .dev-position {
+  color: #0f1a2b;
+  text-shadow: 0 0 10px rgba(255, 68, 0, 0.2);
 }

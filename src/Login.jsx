@@ -280,8 +280,12 @@ export default function Login({ onClose, onLogin }) {
               <div className="login-row">
                 <label className="lf-label lf-col-1">
                   <span>Province {submitAttempted && isRequiredMissing("province") && <span className="required-mark">*</span>}</span>
-                  <input list="p-list" value={form.province} onChange={handleProvinceChange} required />
-                  <datalist id="p-list">{provinces.map(p => <option key={p.code} value={p.name} />)}</datalist>
+                  <select value={form.province} onChange={handleProvinceChange} required>
+                    <option value="" disabled>Select a Province</option>
+                    {provinces.map((p) => (
+                      <option key={p.code} value={p.name}>{p.name}</option>
+                    ))}
+                  </select>
                 </label>
                 <label className="lf-label lf-col-1">
                   <span>City {submitAttempted && isRequiredMissing("city") && <span className="required-mark">*</span>}</span>

@@ -290,7 +290,8 @@
   box-sizing: border-box;
 }
 
-.lf-label input {
+.lf-label input,
+.lf-label select {
   padding: 10px 12px;
   border-radius: 9px;
   border: 1px solid var(--lm-border);
@@ -300,11 +301,20 @@
   outline: none;
   transition: border-color 130ms, box-shadow 130ms;
 }
-.lf-label input:focus {
+.lf-label input:focus,
+.lf-label select:focus {
   border-color: var(--lm-accent);
   box-shadow: 0 0 0 3px rgba(255,68,0,0.15);
 }
 .lf-label input::placeholder { color: rgba(228,243,255,0.25); }
+
+.lf-label select {
+  appearance: none;
+}
+
+.lf-label select option {
+  color: #142236;
+}
 
 .login-submit {
   font-family: "Geist Mono", monospace;
@@ -355,5 +365,10 @@
   .login-row {
     flex-direction: column;
     gap: 14px;
+  }
+
+  .lf-label select,
+  .lf-label input {
+    font-size: 0.88rem;
   }
 }

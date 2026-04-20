@@ -260,6 +260,8 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .danger-list::-webkit-scrollbar {
@@ -1461,13 +1463,17 @@ body {
     right: 8px;
     bottom: max(8px, env(safe-area-inset-bottom));
     width: auto;
-    max-height: 32dvh;
+    height: 32dvh;
+    max-height: none;
     border-radius: 10px;
     z-index: 1250;
   }
 
   .danger-head {
     padding: 7px 10px;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
   }
 
   .danger-head h2 {
