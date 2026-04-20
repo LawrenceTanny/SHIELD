@@ -311,6 +311,17 @@ font-family: "IBM Plex Mono", monospace;
   left: 100%;                    
 }
 
+.dev-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dev-card-link:hover .dev-card {
+    transform: translateY(-5px);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
 .dev-avatar {
   width: 75px;
   height: 75px;
