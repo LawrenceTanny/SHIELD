@@ -12,11 +12,12 @@ async function readJsonSafe(response) {
   }
 }
 
-export default function AccountSettings({ onClose, currentUser, onUserUpdated, onSignOut }) {
+export default function AccountSettings({ onClose, currentUser, currentTheme = "light", onUserUpdated, onSignOut }) {
   const [displayName, setDisplayName] = useState(currentUser?.name || "");
   const [email] = useState(currentUser?.email || "");
   const [receiveAlerts, setReceiveAlerts] = useState(true);
   const [newsletter, setNewsletter] = useState(false);
+  const [themePreference, setThemePreference] = useState(currentTheme === "dark" ? "dark" : "light");
   const [statusMessage, setStatusMessage] = useState("");
   const [messageType, setMessageType] = useState("neutral");
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +53,7 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
           setDisplayName(user.name || currentUser.name || "");
           setReceiveAlerts(user?.preferences?.receiveDisasterAlerts !== false);
           setNewsletter(user?.preferences?.subscribeNewsletter === true);
+          setThemePreference(user?.preferences?.theme === "dark" ? "dark" : "light");
         }
       } catch (error) {
         if (error.name !== "AbortError") {
@@ -69,6 +71,10 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
 
     return () => controller.abort();
   }, [currentUser?.email, currentUser?.name]);
+
+  useEffect(() => {
+    setThemePreference(currentTheme === "dark" ? "dark" : "light");
+  }, [currentTheme]);
 
   const handleSave = async () => {
     if (!currentUser?.email) {
@@ -95,7 +101,8 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
           name: displayName.trim(),
           preferences: {
             receiveDisasterAlerts: receiveAlerts,
-            subscribeNewsletter: newsletter
+            subscribeNewsletter: newsletter,
+            theme: themePreference
           }
         })
       });
@@ -205,6 +212,32 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
                 disabled={isLoading || isSaving}
               />
               <span>Subscribe to SHIELD newsletter</span>
+            </label>
+          </section>
+
+          <hr className="hr"></hr>
+
+          <section className="as-section">
+            <h3 className="as-section-title">Appearance</h3>
+            <label className="as-toggle">
+              <input
+                type="radio"
+                name="theme-preference"
+                checked={themePreference === "light"}
+                onChange={() => setThemePreference("light")}
+                disabled={isLoading || isSaving}
+              />
+              <span>Light mode</span>
+            </label>
+            <label className="as-toggle">
+              <input
+                type="radio"
+                name="theme-preference"
+                checked={themePreference === "dark"}
+                onChange={() => setThemePreference("dark")}
+                disabled={isLoading || isSaving}
+              />
+              <span>Dark mode</span>
             </label>
           </section>
 
