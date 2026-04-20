@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { AttributionControl } from "react-leaflet";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,13 +28,13 @@ function severityColor(lvl) {
 
 function IconSettings() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" /></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" /></svg>
   );
 }
 
 function IconClose() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg>
   );
 }
 
@@ -215,8 +215,18 @@ function formatDisasterLocation(city, province) {
   return `${cityText}, ${provinceText}`;
 }
 
-export default function Dashboard({ settingsOpen, setSettingsOpen }) {
+export default function Dashboard({ theme = "light", settingsOpen, setSettingsOpen }) {
   const skeletonRows = [1, 2, 3, 4];
+  const dangerPanelRef = useRef(null);
+  const dangerHeadRef = useRef(null);
+  const dangerListRef = useRef(null);
+  const dragStateRef = useRef({
+    active: false,
+    startY: 0,
+    startHeight: 0,
+    collapsedHeight: 0,
+    expandedHeight: 0,
+  });
   const [disasters, setDisasters] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [dataError, setDataError] = useState("");
@@ -228,6 +238,72 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
   const [cloudLayerAvailable, setCloudLayerAvailable] = useState(false);
   const [selType, setSelType] = useState("All");
   const [selSev, setSelSev] = useState("All");
+  const [isMobileSheet, setIsMobileSheet] = useState(false);
+  const [sheetHeight, setSheetHeight] = useState(null);
+
+  const mapTileUrl = theme === "light"
+    ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const updateSheetMode = () => {
+      setIsMobileSheet(window.innerWidth < 640);
+    };
+
+    updateSheetMode();
+    window.addEventListener("resize", updateSheetMode);
+
+    return () => window.removeEventListener("resize", updateSheetMode);
+  }, []);
+
+  const clampSheetHeight = (nextHeight) => {
+    const { collapsedHeight, expandedHeight } = dragStateRef.current;
+    return Math.min(expandedHeight, Math.max(collapsedHeight, nextHeight));
+  };
+
+  const handleDangerDragStart = (event) => {
+    if (!isMobileSheet) return;
+
+    const panel = dangerPanelRef.current;
+    if (!panel) return;
+
+    dragStateRef.current.active = true;
+    dragStateRef.current.startY = event.clientY;
+    dragStateRef.current.startHeight = sheetHeight ?? panel.getBoundingClientRect().height;
+
+    if (event.currentTarget?.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    event.preventDefault();
+  };
+
+  const handleDangerDragMove = (event) => {
+    if (!dragStateRef.current.active) return;
+
+    const deltaY = dragStateRef.current.startY - event.clientY;
+    setSheetHeight(clampSheetHeight(dragStateRef.current.startHeight + deltaY));
+  };
+
+  const handleDangerDragEnd = (event) => {
+    if (!dragStateRef.current.active) return;
+
+    dragStateRef.current.active = false;
+    const { collapsedHeight, expandedHeight } = dragStateRef.current;
+    const midpoint = (collapsedHeight + expandedHeight) / 2;
+    const currentHeight = sheetHeight ?? dragStateRef.current.startHeight;
+    setSheetHeight(currentHeight >= midpoint ? expandedHeight : collapsedHeight);
+
+    if (event.currentTarget?.releasePointerCapture) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // Ignore pointer-capture cleanup failures on mobile browsers.
+      }
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -406,6 +482,28 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
     return tOk && sOk;
   }), [disasters, selType, selSev]);
 
+  useEffect(() => {
+    if (!isMobileSheet || typeof window === "undefined") {
+      setSheetHeight(null);
+      return undefined;
+    }
+
+    const headHeight = dangerHeadRef.current?.getBoundingClientRect().height || 56;
+    const listHeight = dangerListRef.current?.scrollHeight || 0;
+    const viewportHeight = window.innerHeight;
+    const availableHeight = Math.max(240, viewportHeight - 65 - 36 - 20);
+    const collapsedHeight = Math.min(Math.max(214, viewportHeight * 0.32), availableHeight * 0.6);
+    const expandedHeight = Math.min(availableHeight, Math.max(headHeight + listHeight + 16, collapsedHeight));
+
+    dragStateRef.current.collapsedHeight = collapsedHeight;
+    dragStateRef.current.expandedHeight = expandedHeight;
+
+    setSheetHeight((currentHeight) => {
+      const nextHeight = currentHeight === null ? collapsedHeight : currentHeight;
+      return Math.min(expandedHeight, Math.max(collapsedHeight, nextHeight));
+    });
+  }, [isMobileSheet, disasters.length, isLoadingData, dataError]);
+
   const focused = useMemo(() => filtered.find((d) => d.id === focusedId), [filtered, focusedId]);
 
   const weatherDisplay = useMemo(() => {
@@ -424,6 +522,12 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
       iconUrl: summary.iconUrl,
     };
   }, [isLoadingWeather, weatherError, weatherStations]);
+
+    const weatherStackStyle = isMobileSheet
+      ? {
+          bottom: `calc(max(8px, env(safe-area-inset-bottom)) + ${(sheetHeight ?? dragStateRef.current.collapsedHeight ?? 0) + 8}px)`,
+        }
+      : undefined;
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -446,13 +550,24 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
       </button>
       <div className="content">
-        <aside className="danger-panel">
-          <div className="danger-head">
+        <aside
+          ref={dangerPanelRef}
+          className="danger-panel"
+          style={isMobileSheet && sheetHeight ? { height: `${sheetHeight}px` } : undefined}
+        >
+          <div
+            ref={dangerHeadRef}
+            className="danger-head"
+            onPointerDown={handleDangerDragStart}
+            onPointerMove={handleDangerDragMove}
+            onPointerUp={handleDangerDragEnd}
+            onPointerCancel={handleDangerDragEnd}
+          >
             <h2>Active Dangers</h2>
             <span className="count-pill">{filtered.length}</span>
           </div>
           <hr className="hr"></hr>
-          <ul className="danger-list">
+          <ul ref={dangerListRef} className="danger-list">
             {isLoadingData && (
               skeletonRows.map((row) => (
                 <li key={row} className="danger-item danger-item-skeleton" aria-hidden="true">
@@ -518,7 +633,7 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
 
         {/* MAP */}
         <main className="map-wrap">
-          <div className="weather-stack">
+          <div className="weather-stack" style={weatherStackStyle}>
             <button
               type="button"
               className={`map-layer-toggle${showCloudLayer && cloudLayerAvailable ? " layer-on" : ""}`}
@@ -560,13 +675,14 @@ export default function Dashboard({ settingsOpen, setSettingsOpen }) {
             <MapController focused={focused} />
             <TileLayer
               attribution='&copy; OpenStreetMap contributors &copy; CARTO'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url={mapTileUrl}
             />
             {showCloudLayer && cloudLayerAvailable && (
               <TileLayer
                 attribution='&copy; OpenWeather'
                 url={OWM_CLOUDS_TILE_URL}
-                opacity={0.65}
+                opacity={theme === "light" ? 0.88 : 0.65}
+                className={theme === "light" ? "cloud-layer cloud-layer--light" : "cloud-layer"}
               />
             )}
             {filtered.map((item) => {
