@@ -11,7 +11,17 @@ import Footer from "./Footer";
 import Preparedness from "./Preparedness.jsx";
 
 const TAB_STORAGE_KEY = "shield.activeTab";
+const THEME_STORAGE_KEY = "shield.theme";
 const ALLOWED_TABS = new Set(["home", "dashboard", "news", "about"]);
+
+function normalizeTheme(value) {
+  return value === "dark" ? "dark" : "light";
+}
+
+function getInitialTheme() {
+  if (typeof window === "undefined") return "light";
+  return normalizeTheme(window.localStorage.getItem(THEME_STORAGE_KEY));
+}
 
 function getInitialTab() {
   if (typeof window === "undefined") return "home";
@@ -49,6 +59,7 @@ function IconMenu() {
 
 export default function MainLayout() {
   const [activeTab, setActiveTab] = useState(getInitialTab);
+  const [theme, setTheme] = useState(getInitialTheme);
   const [isLoading, setIsLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -59,6 +70,20 @@ export default function MainLayout() {
   
   const userRef = useRef(null);
   const mobileNavRef = useRef(null);
+
+  const applyTheme = (nextTheme, animate = true) => {
+    const normalized = normalizeTheme(nextTheme);
+    setTheme(normalized);
+    document.documentElement.dataset.theme = normalized;
+    document.body.dataset.theme = normalized;
+
+    if (animate) {
+      document.body.classList.add("theme-transition");
+      window.setTimeout(() => {
+        document.body.classList.remove("theme-transition");
+      }, 420);
+    }
+  };
 
   const handleTabChange = (newTab) => {
     if (newTab !== activeTab) {
@@ -96,6 +121,10 @@ export default function MainLayout() {
   }, [activeTab]);
 
   useEffect(() => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  useEffect(() => {
     const controller = new AbortController();
 
     const loadSessionUser = async () => {
@@ -113,10 +142,14 @@ export default function MainLayout() {
         const payload = await response.json();
         if (payload?.user) {
           setCurrentUser(payload.user);
+          applyTheme(payload?.user?.preferences?.theme, false);
+        } else {
+          applyTheme(theme, false);
         }
       } catch (error) {
         if (error.name !== "AbortError") {
           setCurrentUser(null);
+          applyTheme(theme, false);
         }
       }
 
@@ -128,10 +161,12 @@ export default function MainLayout() {
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
+    applyTheme(user?.preferences?.theme);
   };
 
   const handleUserUpdated = (user) => {
     setCurrentUser(user);
+    applyTheme(user?.preferences?.theme);
   };
 
   const handleSignOut = async () => {
@@ -285,6 +320,7 @@ export default function MainLayout() {
             >
               {activeTab === "dashboard" && (
                 <Dashboard
+                  theme={theme}
                   settingsOpen={settingsOpen}
                   setSettingsOpen={setSettingsOpen}
                 />
@@ -311,6 +347,7 @@ export default function MainLayout() {
         <AccountSettings
           onClose={() => setAcctSettingsOpen(false)}
           currentUser={currentUser}
+          currentTheme={theme}
           onUserUpdated={handleUserUpdated}
           onSignOut={handleSignOut}
         />
