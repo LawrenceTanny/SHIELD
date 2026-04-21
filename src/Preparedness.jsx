@@ -3,6 +3,10 @@ import './Styles/Preparedness.css';
 
 const PreparednessToolkit = () => {
   const [selectedHazard, setSelectedHazard] = useState(null);
+  const [checked, setChecked] = useState({});
+
+  const toggle = (i) => setChecked(prev => ({ ...prev, [i]: !prev[i] }));
+  const packedCount = Object.values(checked).filter(Boolean).length;
 
   const handlePrint = () => {
     window.print();
@@ -85,33 +89,55 @@ const PreparednessToolkit = () => {
       </div>
 
       <div className="toolkit-content">
+
+        {/* ── Emergency Contacts ── */}
         <div className="toolkit-card emergency-contacts">
           <h2>Emergency Contacts</h2>
           <div className="contact-list">
             {emergencyContacts.map((contact, index) => (
               <div key={index} className="contact-item">
-                <p className="contact-name">{contact.name}</p>
-                <p className="contact-number">{contact.number}</p>
+                <div className="contact-left">
+                  <span className="contact-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="contact-name">{contact.name}</span>
+                </div>
+                <span className="contact-number">{contact.number}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* ── Go-Bag Checklist ── */}
         <div className="toolkit-card gobag">
           <h2>Go-Bag Checklist</h2>
           <div className="checklist-items">
             {goBagItems.map((item, index) => (
-              <label key={index} className="checklist-item">
-                <input
-                  type="checkbox"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <span>{item}</span>
-              </label>
+              <div
+                key={index}
+                className="checklist-item"
+                onClick={() => toggle(index)}
+                style={checked[index] ? { opacity: 0.4 } : {}}              >
+                <span className="item-num">{String(index + 1).padStart(2, '0')}</span>
+                <span className={`item-text${checked[index] ? ' struck' : ''}`}>
+                  {item}
+                </span>
+                <div className={`item-check${checked[index] ? ' done' : ''}`}>
+                  {checked[index] && <span className="check-mark">✓</span>}
+                </div>
+              </div>
             ))}
+          </div>
+          <div className="checklist-progress">
+            <div className="progress-bar-wrap">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${(packedCount / goBagItems.length) * 100}%` }}
+              />
+            </div>
+            <span className="progress-label">{packedCount}/{goBagItems.length} PACKED</span>
           </div>
         </div>
 
+        {/* ── Action Guides (unchanged) ── */}
         <div className="toolkit-card action-guides">
           <h2>Immediate Action Guides</h2>
           <div className="guides-stack">
@@ -127,7 +153,6 @@ const PreparednessToolkit = () => {
                 <div className="icon-guide">
                   <img src={guide.icon} alt={guide.label} />
                 </div>
-
                 <div className="print-only-steps">
                   <ul>
                     {hazardDetails[guide.label].steps.map((step, i) => (
@@ -142,6 +167,7 @@ const PreparednessToolkit = () => {
             <p className="action-footer-text">CLICK ON AN ICON TO VIEW SAFETY PROTOCOLS AND IMMEDIATE STEPS TO TAKE.</p>
           </div>
         </div>
+
       </div>
 
       <div className="print-actions">
@@ -174,4 +200,4 @@ const PreparednessToolkit = () => {
   );
 };
 
-export default PreparednessToolkit; 
+export default PreparednessToolkit;
