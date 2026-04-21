@@ -54,7 +54,6 @@ body {
     padding: 10px 30px 30px 30px;
     border-radius: 18px;
     backdrop-filter: blur(10px);
-
     border: 2px solid rgba(255, 255, 255, 0.171);
     display: flex;
     flex-direction: column;
@@ -65,7 +64,6 @@ body {
 }
 
 .toolkit-card:hover {
-    transform: translateY(-6px);
     border-color: rgba(255, 68, 0, 0.8);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 68, 0, 0.25);
     background: linear-gradient(166deg, rgba(42, 42, 42, 0.25) 0%, rgba(92, 92, 92, 0.25) 100%);
@@ -87,84 +85,208 @@ body {
     gap: 10px;
 }
 
+/* ── EMERGENCY CONTACTS ─────────────────────────────────────────── */
 .contact-list {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 20px;
+    gap: 0;
 }
 
 .contact-item {
-    display: flex;
-    flex-direction: column;
-    padding: 15px 20px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    position: relative;
     transition: all 0.2s ease;
 }
 
-.contact-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+.contact-item:last-child {
+    border-bottom: none;
+}
+
+.contact-item::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    right: -30px;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 68, 0, 0.04);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.contact-item:hover::before {
+    opacity: 1;
+}
+
+.contact-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 1;
+}
+
+.contact-index {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.62rem;
+    color: #ff4400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.8;
 }
 
 .contact-name {
-    font-size: 1rem;
-    font-weight: 500;
-    margin: 0 0 5px 0;
-    color: var(--ink);
-    opacity: 70%;
-    letter-spacing: -0.02em;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: none;
+    padding: 0;
+    margin: 0;
 }
 
 .contact-number {
     font-family: 'Geist Mono', monospace;
-    font-size: 1rem;
-    font-weight: 500;
-    margin: 0;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-weight: 400;
     color: #ffffff;
-    letter-spacing: 0.05em;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+    text-align: right;
 }
 
+/* ── GO-BAG CHECKLIST ───────────────────────────────────────────── */
 .checklist-items {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 16px;
+    gap: 0;
 }
 
 .checklist-item {
     display: flex;
-    padding: 12px 18px;
-    font-size: 1rem;
-    gap: 15px;
+    padding: 11px 0;
+    gap: 14px;
     align-items: center;
-    color: #cccccc;
+    color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
     user-select: none;
-    line-height: 1.5;
+    line-height: 1.4;
     transition: all 0.2s ease;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0;
+    background: none;
+    position: relative;
+}
+
+.checklist-item:last-child {
+    border-bottom: none;
 }
 
 .checklist-item:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Hide the native checkbox — custom .item-check is used instead */
 .checklist-item input[type="checkbox"] {
-    height: 20px;
-    width: 20px;
-    accent-color: #ff4400;
-    cursor: pointer;
-    pointer-events: auto;
-    flex-shrink: 0;
+    display: none;
 }
 
+.item-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    color: #ff4400;
+    opacity: 0.7;
+    min-width: 18px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+}
+
+.item-text {
+    flex: 1;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+}
+
+.item-text.struck {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.item-check {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+}
+
+.item-check.done {
+    background: #ff4400;
+    border-color: #ff4400;
+}
+
+.check-mark {
+    display: block;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    font-family: 'Geist', sans-serif;
+}
+
+.checklist-progress {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #ff4400;
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.progress-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+/* ── ACTION GUIDES ──────────────────────────────────────────────── */
 .guides-stack {
     display: flex;
     flex-direction: column;
@@ -238,7 +360,7 @@ body {
     font-size: 0.75rem;
     line-height: 1.4;
     margin: 0;
-    color: #a8b8c4;
+    color: var(--ink);
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -248,6 +370,7 @@ body {
     margin-top: auto;
 }
 
+/* ── PRINT BUTTON ───────────────────────────────────────────────── */
 .print-actions {
     display: flex;
     justify-content: center;
@@ -285,6 +408,7 @@ body {
     transform: translateY(1px);
 }
 
+/* ── MODAL ──────────────────────────────────────────────────────── */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -404,7 +528,7 @@ body {
     }
 }
 
-/* Responsiveness */
+/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 1200px) {
     .toolkit-content {
         grid-template-columns: repeat(2, 1fr);
@@ -493,11 +617,11 @@ body {
     }
 
     .contact-item {
-        padding: 10px 12px;
+        padding: 10px 0;
     }
 
     .contact-name {
-        font-size: 0.9rem;
+        font-size: 0.7rem;
     }
 
     .contact-number {
@@ -505,7 +629,7 @@ body {
     }
 
     .checklist-item {
-        padding: 8px 12px;
+        padding: 8px 0;
         font-size: 0.9rem;
     }
 
@@ -514,7 +638,7 @@ body {
     }
 }
 
-/* Print Styles */
+/* ── PRINT ──────────────────────────────────────────────────────── */
 .print-only-header,
 .print-steps,
 .print-only-steps {
@@ -607,6 +731,111 @@ body {
         page-break-inside: avoid;
     }
 
+    /* Checklist rows */
+    .checklist-items {
+        display: block !important;
+        margin: 0 !important;
+    }
+
+    .checklist-item {
+        opacity: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #eee !important;
+        background: transparent !important;
+    }
+
+    .item-num {
+        color: #ff4400 !important;
+        opacity: 1 !important;
+    }
+
+    .item-text {
+        color: black !important;
+        flex: 1 !important;
+    }
+
+    .item-text.struck {
+        text-decoration: line-through !important;
+        color: #999 !important;
+    }
+
+    /* Custom checkbox box */
+    .item-check {
+        width: 16px !important;
+        height: 16px !important;
+        border: 1.5px solid #bbb !important;
+        border-radius: 4px !important;
+        background: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .item-check.done {
+        background: #ff4400 !important;
+        border-color: #ff4400 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* ✓ text character — always prints */
+    .check-mark {
+        display: block !important;
+        visibility: visible !important;
+        color: #ffffff !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+        font-weight: 700 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Progress bar */
+    .checklist-progress {
+        display: flex !important;
+        margin-top: 10px !important;
+        padding-top: 8px !important;
+        border-top: 1px solid #ddd !important;
+    }
+
+    .progress-bar-wrap {
+        background: #eee !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .progress-bar-fill {
+        background: #ff4400 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .progress-label {
+        color: #666 !important;
+    }
+
+    /* Contact card */
+    .contact-index {
+        color: #ff4400 !important;
+        opacity: 1 !important;
+    }
+
+    .contact-name {
+        color: #666 !important;
+    }
+
+    .contact-number {
+        color: black !important;
+        text-align: right !important;
+    }
+
+    /* Action guides */
     .guides-stack {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
