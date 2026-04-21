@@ -19,7 +19,6 @@ body {
     background-color: #050C1A;
 }
 
-/* Header */
 .toolkit-header {
     padding-bottom: 20px;
     margin-bottom: 40px;
@@ -40,7 +39,6 @@ body {
     text-shadow: 0 0 60px rgba(255, 68, 0, 0.452);
 }
 
-/* Main Content Grid */
 .toolkit-content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -49,7 +47,6 @@ body {
     align-items: stretch;
 }
 
-/* Base style for Cards */
 .toolkit-card {
     padding: 10px 30px 30px 30px;
     border-radius: 18px;
@@ -85,7 +82,6 @@ body {
     gap: 10px;
 }
 
-/* ── EMERGENCY CONTACTS ─────────────────────────────────────────── */
 .contact-list {
     display: flex;
     flex-direction: column;
@@ -147,6 +143,7 @@ body {
     color: rgba(255, 255, 255, 0.45);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    line-height: 1;
     background: none;
     padding: 0;
     margin: 0;
@@ -167,7 +164,6 @@ body {
     text-align: right;
 }
 
-/* ── GO-BAG CHECKLIST ───────────────────────────────────────────── */
 .checklist-items {
     display: flex;
     flex-direction: column;
@@ -199,7 +195,6 @@ body {
     color: #ffffff;
 }
 
-/* Hide the native checkbox — custom .item-check is used instead */
 .checklist-item input[type="checkbox"] {
     display: none;
 }
@@ -286,7 +281,6 @@ body {
     white-space: nowrap;
 }
 
-/* ── ACTION GUIDES ──────────────────────────────────────────────── */
 .guides-stack {
     display: flex;
     flex-direction: column;
@@ -370,7 +364,6 @@ body {
     margin-top: auto;
 }
 
-/* ── PRINT BUTTON ───────────────────────────────────────────────── */
 .print-actions {
     display: flex;
     justify-content: center;
@@ -408,7 +401,6 @@ body {
     transform: translateY(1px);
 }
 
-/* ── MODAL ──────────────────────────────────────────────────────── */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -528,7 +520,6 @@ body {
     }
 }
 
-/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 1200px) {
     .toolkit-content {
         grid-template-columns: repeat(2, 1fr);
@@ -555,6 +546,7 @@ body {
 
     .toolkit-header h1 {
         font-size: 2.5rem;
+        letter-spacing: -0.05em;
     }
 
     .toolkit-content {
@@ -633,12 +625,15 @@ body {
         font-size: 0.9rem;
     }
 
+    .action-footer-text {
+        font-size: 0.5rem;
+    }
+
     .label-guide {
         font-size: 1.2rem;
     }
 }
 
-/* ── PRINT ──────────────────────────────────────────────────────── */
 .print-only-header,
 .print-steps,
 .print-only-steps {
@@ -731,7 +726,6 @@ body {
         page-break-inside: avoid;
     }
 
-    /* Checklist rows */
     .checklist-items {
         display: block !important;
         margin: 0 !important;
@@ -762,7 +756,6 @@ body {
         color: #999 !important;
     }
 
-    /* Custom checkbox box */
     .item-check {
         width: 16px !important;
         height: 16px !important;
@@ -784,7 +777,6 @@ body {
         print-color-adjust: exact !important;
     }
 
-    /* ✓ text character — always prints */
     .check-mark {
         display: block !important;
         visibility: visible !important;
@@ -796,7 +788,6 @@ body {
         print-color-adjust: exact !important;
     }
 
-    /* Progress bar */
     .checklist-progress {
         display: flex !important;
         margin-top: 10px !important;
@@ -820,7 +811,6 @@ body {
         color: #666 !important;
     }
 
-    /* Contact card */
     .contact-index {
         color: #ff4400 !important;
         opacity: 1 !important;
@@ -835,7 +825,6 @@ body {
         text-align: right !important;
     }
 
-    /* Action guides */
     .guides-stack {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
