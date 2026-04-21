@@ -3,6 +3,10 @@ import './Styles/Preparedness.css';
 
 const PreparednessToolkit = () => {
   const [selectedHazard, setSelectedHazard] = useState(null);
+  const [checked, setChecked] = useState({});
+
+  const toggle = (i) => setChecked(prev => ({ ...prev, [i]: !prev[i] }));
+  const packedCount = Object.values(checked).filter(Boolean).length;
 
   const handlePrint = () => {
     window.print();
@@ -17,15 +21,15 @@ const PreparednessToolkit = () => {
   ];
 
   const actionGuides = [
-    { icon: '🌪️', label: 'Typhoon' },
-    { icon: '🌍', label: 'Earthquake' },
-    { icon: '💧', label: 'Flooding' },
-    { icon: '🌋', label: 'Volcano Activity' },
+    { icon: '/storm_icon.svg', label: 'Typhoon' },
+    { icon: '/earthquake_icon.svg', label: 'Earthquake' },
+    { icon: '/flood_icon.svg', label: 'Flooding' },
+    { icon: '/volcano_icon.svg', label: 'Volcano Activity' },
   ];
 
   const hazardDetails = {
     Typhoon: {
-      icon: '🌪️',
+      icon: '/storm_icon.svg',
       steps: [
         'Stay indoors and keep updated with weather reports.',
         'Evacuate if your area is prone to floods or landslides.',
@@ -34,7 +38,7 @@ const PreparednessToolkit = () => {
       ]
     },
     Earthquake: {
-      icon: '🌍',
+      icon: '/earthquake_icon.svg',
       steps: [
         'Drop, Cover, and Hold on under a sturdy table.',
         'Stay away from glass windows, shelves, and heavy objects.',
@@ -43,7 +47,7 @@ const PreparednessToolkit = () => {
       ]
     },
     Flooding: {
-      icon: '💧',
+      icon: '/flood_icon.svg',
       steps: [
         'Move to higher ground immediately.',
         'Avoid walking or driving through flood waters.',
@@ -52,7 +56,7 @@ const PreparednessToolkit = () => {
       ]
     },
     'Volcano Activity': {
-      icon: '🌋',
+      icon: '/volcano_icon.svg',
       steps: [
         'Wear an N95 mask or wet cloth to protect from ashfall.',
         'Stay indoors with windows and doors closed.',
@@ -85,45 +89,70 @@ const PreparednessToolkit = () => {
       </div>
 
       <div className="toolkit-content">
+
+        {/* ── Emergency Contacts ── */}
         <div className="toolkit-card emergency-contacts">
           <h2>Emergency Contacts</h2>
           <div className="contact-list">
             {emergencyContacts.map((contact, index) => (
               <div key={index} className="contact-item">
-                <p className="contact-name">{contact.name}</p>
-                <p className="contact-number">{contact.number}</p>
+                <div className="contact-left">
+                  <span className="contact-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="contact-name">{contact.name}</span>
+                </div>
+                <span className="contact-number">{contact.number}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* ── Go-Bag Checklist ── */}
         <div className="toolkit-card gobag">
-          <h2>GO-BAG CHECKLIST</h2>
+          <h2>Go-Bag Checklist</h2>
           <div className="checklist-items">
             {goBagItems.map((item, index) => (
-              <label key={index} className="checklist-item">
-                <input
-                  type="checkbox"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <span>{item}</span>
-              </label>
+              <div
+                key={index}
+                className="checklist-item"
+                onClick={() => toggle(index)}
+                style={checked[index] ? { opacity: 0.4 } : {}}              >
+                <span className="item-num">{String(index + 1).padStart(2, '0')}</span>
+                <span className={`item-text${checked[index] ? ' struck' : ''}`}>
+                  {item}
+                </span>
+                <div className={`item-check${checked[index] ? ' done' : ''}`}>
+                  {checked[index] && <span className="check-mark">✓</span>}
+                </div>
+              </div>
             ))}
+          </div>
+          <div className="checklist-progress">
+            <div className="progress-bar-wrap">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${(packedCount / goBagItems.length) * 100}%` }}
+              />
+            </div>
+            <span className="progress-label">{packedCount}/{goBagItems.length} PACKED</span>
           </div>
         </div>
 
+        {/* ── Action Guides (unchanged) ── */}
         <div className="toolkit-card action-guides">
           <h2>Immediate Action Guides</h2>
-          <div className="guides-grid">
+          <div className="guides-stack">
             {actionGuides.map((guide, index) => (
               <div
                 key={index}
                 className="item-guide clickable"
                 onClick={() => setSelectedHazard(guide.label)}
               >
-                <div className="icon-guide">{guide.icon}</div>
-                <p className="label-guide">{guide.label}</p>
-
+                <div className="item-guide-content">
+                  <p className="label-guide">{guide.label}</p>
+                </div>
+                <div className="icon-guide">
+                  <img src={guide.icon} alt={guide.label} />
+                </div>
                 <div className="print-only-steps">
                   <ul>
                     {hazardDetails[guide.label].steps.map((step, i) => (
@@ -135,14 +164,15 @@ const PreparednessToolkit = () => {
             ))}
           </div>
           <div className="description">
-            <p>Click on an icon to view safety protocols and immediate steps to take.</p>
+            <p className="action-footer-text">CLICK ON AN ICON TO VIEW SAFETY PROTOCOLS AND IMMEDIATE STEPS TO TAKE.</p>
           </div>
         </div>
+
       </div>
 
       <div className="print-actions">
         <button className="pdf-btn" onClick={handlePrint}>
-          PRINT & PDF
+          PRINT A COPY
         </button>
       </div>
 
@@ -151,7 +181,9 @@ const PreparednessToolkit = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setSelectedHazard(null)}>&times;</button>
             <div className="modal-header">
-              <span className="modal-icon">{hazardDetails[selectedHazard].icon}</span>
+              <span className="modal-icon">
+                <img src={hazardDetails[selectedHazard].icon} alt="" style={{ width: '40px', filter: 'brightness(0) invert(1)' }} />
+              </span>
               <h3>{selectedHazard} Safety Guide</h3>
             </div>
             <div className="modal-body">
@@ -168,4 +200,4 @@ const PreparednessToolkit = () => {
   );
 };
 
-export default PreparednessToolkit; 
+export default PreparednessToolkit;
