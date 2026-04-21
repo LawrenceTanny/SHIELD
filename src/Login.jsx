@@ -227,8 +227,8 @@ export default function Login({ onClose, onLogin }) {
       >
         <button className="login-close" onClick={onClose}>✕</button>
         <div className="login-brand">
-          <span className="login-logo">SHIELD</span>
-          <p className="login-tagline">Synchronized Hazard Information Dashboard</p>
+          <span className="login-logo">ALERT PH</span>
+          <p className="login-tagline">Philippine Disaster & Monitoring System</p>
         </div>
 
         <div className="login-tabs">
