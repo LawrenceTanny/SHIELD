@@ -372,11 +372,14 @@ export default function Login({ onClose, onLogin }) {
             </div>
           ) : (
             <>
-              {statusMessage && (
-                <div className={`status-indicator status-indicator--${messageType}`}>
-                  {statusMessage}
+              <div className="status-slot" aria-live="polite" aria-atomic="true">
+                <div
+                  className={`status-indicator status-indicator--${messageType} ${statusMessage ? "is-visible" : "is-hidden"}`}
+                  role={statusMessage ? "status" : undefined}
+                >
+                  {statusMessage || "Status message"}
                 </div>
-              )}
+              </div>
 
               {(tab === "forgot" || tab === "reset") && (
                 <div className="reset-header">
@@ -395,7 +398,7 @@ export default function Login({ onClose, onLogin }) {
                     <>
                       <div>
                         <label className="lf-label">
-                          <span>UserName {submitAttempted && isRequiredMissing("username") && <span className="required-mark">*</span>}</span>
+                          <span>User Name {submitAttempted && isRequiredMissing("username") && <span className="required-mark">*</span>}</span>
                           <input type="text" value={form.username} onChange={set("username")} placeholder="juan123" required />
                         </label>
                       </div>
