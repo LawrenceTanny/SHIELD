@@ -25,9 +25,8 @@
   background: linear-gradient(166deg, #2020203d 0%, #5252522d 100%);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   border-radius: 18px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
+  width: min(460px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 32px));
   display: flex;
   flex-direction: column;
   animation: as-in 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -112,6 +111,12 @@
   padding: 18px 24px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.as-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -254,6 +259,27 @@
   box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
 }
 
+.as-field select {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--as-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 130ms, box-shadow 130ms;
+}
+
+.as-field select:focus {
+  border-color: var(--as-accent);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.as-field select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .as-field input::placeholder {
   color: rgba(190, 220, 255, 0.25);
 }
@@ -362,4 +388,70 @@
 .as-btn-save:hover {
   opacity: 0.88;
   box-shadow: 0 0 18px rgba(255, 68, 0, 0.4);
+}
+
+@media (max-width: 640px) {
+  .as-overlay {
+    padding: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .as-modal {
+    width: min(340px, calc(100vw - 24px));
+    max-height: min(560px, calc(100vh - 24px));
+    margin-top: 0;
+    border-radius: 14px;
+  }
+
+  .as-head {
+    padding: 14px 16px;
+  }
+
+  .as-head h2 {
+    font-size: 1.35rem;
+  }
+
+  .as-section {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .as-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .as-field span,
+  .as-toggle span {
+    font-size: 0.9rem;
+  }
+
+  .as-field input,
+  .as-field select {
+    font-size: 0.86rem;
+    padding: 8px 10px;
+  }
+
+  .as-footer {
+    padding: 10px 16px 14px;
+    flex-wrap: wrap;
+  }
+
+  .as-btn-cancel,
+  .as-btn-save,
+  .as-btn-signout {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .as-overlay {
+    padding: 10px;
+  }
+
+  .as-modal {
+    width: min(320px, calc(100vw - 20px));
+    max-height: min(520px, calc(100vh - 20px));
+  }
 }
