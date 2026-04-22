@@ -4,6 +4,7 @@
   margin: 40px auto 24px;
   padding: 30px 40px;
   border-radius: 20px;
+  background: rgba(14, 14, 14, 0.05);
   border: none;
   backdrop-filter: blur(10px);
   color: #ffffff;
