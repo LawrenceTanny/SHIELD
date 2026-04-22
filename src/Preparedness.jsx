@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import './Styles/Preparedness.css';
 
 const PreparednessToolkit = () => {
@@ -176,13 +177,13 @@ const PreparednessToolkit = () => {
         </button>
       </div>
 
-      {selectedHazard && (
+      {selectedHazard && typeof document !== 'undefined' && createPortal(
         <div className="modal-overlay" onClick={() => setSelectedHazard(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setSelectedHazard(null)}>&times;</button>
             <div className="modal-header">
               <span className="modal-icon">
-                <img src={hazardDetails[selectedHazard].icon} alt="" style={{ width: '40px', filter: 'brightness(0) invert(1)' }} />
+                <img className="modal-icon-img" src={hazardDetails[selectedHazard].icon} alt="" />
               </span>
               <h3>{selectedHazard} Safety Guide</h3>
             </div>
@@ -194,7 +195,8 @@ const PreparednessToolkit = () => {
               </ul>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
