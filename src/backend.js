@@ -8,6 +8,7 @@ import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 
@@ -90,6 +91,7 @@ let lastReverseGeocodeAt = 0;
 const DISASTER_REFRESH_INTERVAL_MS = Number(process.env.DISASTER_REFRESH_INTERVAL_MS || 60 * 1000);
 const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS || 5 * 60 * 1000);
 const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS || 'false').toLowerCase() === 'true';
+const PASSWORD_RESET_TOKEN_TTL_MINUTES = Math.max(5, Number(process.env.PASSWORD_RESET_TOKEN_TTL_MINUTES || 20));
 
 let disasterRefreshInFlight = null;
 let lastDisasterRefreshRun = {
@@ -372,6 +374,46 @@ function mergeDisastersById(primaryDisasters, fallbackDisasters) {
   }
 
   return Array.from(merged.values());
+}
+
+function hashResetToken(token) {
+  return crypto.createHash('sha256').update(String(token)).digest('hex');
+}
+
+function buildPasswordResetUrl(resetToken) {
+  const base = String(process.env.PASSWORD_RESET_URL_BASE || CLIENT_ORIGIN || '').trim();
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const url = new URL(normalizedBase || 'http://localhost:5173');
+  url.searchParams.set('resetToken', resetToken);
+  return url.toString();
+}
+
+async function sendPasswordResetEmail({ toEmail, resetUrl, expiresMinutes }) {
+  const mailOptions = {
+    from: `"Alert PH Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
+    to: toEmail,
+    subject: 'Alert PH Password Reset Request',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+        <div style="background: #111827; color: #ffffff; padding: 16px 20px;">
+          <h2 style="margin: 0; font-size: 20px;">Reset your Alert PH password</h2>
+        </div>
+        <div style="padding: 20px; background: #ffffff; color: #111827; line-height: 1.6;">
+          <p style="margin-top: 0;">We received a request to reset your password.</p>
+          <p>Click the button below to continue. This link expires in <strong>${expiresMinutes} minutes</strong>.</p>
+          <p style="margin: 22px 0;">
+            <a href="${resetUrl}" style="background: #ff4400; color: #ffffff; text-decoration: none; padding: 12px 18px; border-radius: 8px; display: inline-block; font-weight: 700;">Reset Password</a>
+          </p>
+          <p style="font-size: 13px; color: #4b5563;">If the button does not work, copy this link into your browser:</p>
+          <p style="font-size: 13px; word-break: break-all; color: #1f2937;">${resetUrl}</p>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 0;">If you did not request this, you can ignore this email.</p>
+        </div>
+      </div>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
 }
 
 function isSourceMatch(disaster, source) {
@@ -772,6 +814,107 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const normalizedEmail = String(req.body?.email || '').trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASS) {
+      console.warn('Forgot password requested but email transport is not configured.');
+      return res.status(503).json({ message: 'Password reset email service is unavailable right now.' });
+    }
+
+    const usersCollection = await getUsersCollection();
+    const user = await usersCollection.findOne({ email: normalizedEmail });
+
+    if (user) {
+      const plainResetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenHash = hashResetToken(plainResetToken);
+      const expiresAt = new Date(Date.now() + PASSWORD_RESET_TOKEN_TTL_MINUTES * 60 * 1000);
+
+      await usersCollection.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            resetPasswordTokenHash: resetTokenHash,
+            resetPasswordExpiresAt: expiresAt,
+            updatedAt: new Date()
+          }
+        }
+      );
+
+      const resetUrl = buildPasswordResetUrl(plainResetToken);
+      await sendPasswordResetEmail({
+        toEmail: normalizedEmail,
+        resetUrl,
+        expiresMinutes: PASSWORD_RESET_TOKEN_TTL_MINUTES
+      });
+    }
+
+    return res.status(200).json({
+      message: 'If an account exists for this email, a reset link has been sent.'
+    });
+  } catch (error) {
+    console.error('Forgot password request failed:', error);
+    return res.status(500).json({ message: 'Failed to process forgot password request.' });
+  }
+});
+
+app.post('/api/reset-password', async (req, res) => {
+  try {
+    const token = String(req.body?.token || '').trim();
+    const newPassword = String(req.body?.password || '');
+    const confirmPassword = String(req.body?.confirmPassword || '');
+
+    if (!token || !newPassword || !confirmPassword) {
+      return res.status(400).json({ message: 'Token, password, and password confirmation are required.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match.' });
+    }
+
+    const usersCollection = await getUsersCollection();
+    const tokenHash = hashResetToken(token);
+
+    const user = await usersCollection.findOne({
+      resetPasswordTokenHash: tokenHash,
+      resetPasswordExpiresAt: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Reset link is invalid or expired.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await usersCollection.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          password: hashedPassword,
+          updatedAt: new Date()
+        },
+        $unset: {
+          resetPasswordTokenHash: '',
+          resetPasswordExpiresAt: ''
+        }
+      }
+    );
+
+    return res.status(200).json({ message: 'Password has been reset successfully.' });
+  } catch (error) {
+    console.error('Reset password failed:', error);
+    return res.status(500).json({ message: 'Failed to reset password.' });
+  }
+});
+
 app.post('/api/logout', (req, res) => {
   req.session.destroy((error) => {
     if (error) {
@@ -787,7 +930,7 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
   return res.status(200).json({ user: toPublicUser(req.authUser) });
 });
 
-app.get('/api/account', requireAuth, async (req, res) => {
+app.get('/api/account', requireAuth, async (req, res) => { // PARA SA ACCOUNTS LOLLLL
   try {
     return res.status(200).json({
       user: toPublicUser(req.authUser)
@@ -800,11 +943,51 @@ app.get('/api/account', requireAuth, async (req, res) => {
 
 app.patch('/api/account', requireAuth, async (req, res) => {
   try {
-    const { name, preferences } = req.body || {};
+    const { name, preferences, province, city, currentPassword, newPassword, confirmPassword } = req.body || {};
 
     const updates = {};
     if (typeof name === 'string' && name.trim()) {
       updates.name = name.trim();
+    }
+
+    if (typeof province === 'string') {
+      if (!province.trim()) {
+        return res.status(400).json({ message: 'Province cannot be empty.' });
+      }
+      updates['location.province'] = province.trim();
+    }
+
+    if (typeof city === 'string') {
+      if (!city.trim()) {
+        return res.status(400).json({ message: 'City cannot be empty.' });
+      }
+      updates['location.city'] = city.trim();
+    }
+
+    const passwordChangeRequested =
+      typeof currentPassword === 'string' ||
+      typeof newPassword === 'string' ||
+      typeof confirmPassword === 'string';
+
+    if (passwordChangeRequested) {
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ message: 'Current password, new password, and confirmation are required.' });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'New password must be at least 6 characters.' });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: 'New passwords do not match.' });
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, req.authUser.password);
+      if (!isCurrentPasswordValid) {
+        return res.status(401).json({ message: 'Current password is incorrect.' });
+      }
+
+      updates.password = await bcrypt.hash(newPassword, 10);
     }
 
     if (preferences && typeof preferences === 'object') {
@@ -874,7 +1057,7 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 10)));
+const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 11)));
 const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 4));
 const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 5));
 

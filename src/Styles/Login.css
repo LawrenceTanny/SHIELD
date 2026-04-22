@@ -138,10 +138,92 @@
   gap: 14px;
 }
 
+.status-indicator {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--lm-ink);
+  border: 1px solid var(--lm-border);
+}
+
+.status-indicator--success {
+  color: #2e7d32;
+  border-color: rgba(46, 125, 50, 0.35);
+}
+
+.status-indicator--error {
+  color: #c41c3b;
+  border-color: rgba(196, 28, 59, 0.35);
+}
+
+body[data-theme="light"] .status-indicator {
+  background: rgba(255, 255, 255, 0.96);
+  color: #111827;
+  border-color: rgba(17, 24, 39, 0.12);
+}
+
+body[data-theme="light"] .status-indicator--success {
+  background: rgba(255, 255, 255, 0.96);
+  color: #166534;
+  border-color: rgba(22, 101, 52, 0.2);
+}
+
+body[data-theme="light"] .status-indicator--error {
+  background: rgba(255, 255, 255, 0.96);
+  color: #b91c1c;
+  border-color: rgba(185, 28, 28, 0.2);
+}
+
 .login-fields-animated {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.reset-header {
+  margin-bottom: 14px;
+}
+
+.reset-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--lm-ink);
+}
+
+.reset-header p {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--lm-muted);
+}
+
+.password-field-wrap {
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-inline-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2px;
+}
+
+.login-inline-actions--center {
+  justify-content: center;
+  margin-top: 2px;
 }
 
 .flip-ltr {
@@ -312,6 +394,10 @@
   appearance: none;
 }
 
+.lf-label input.input-error {
+  border: 2px solid #ff4d6d;
+}
+
 .lf-label select option {
   color: #142236;
 }
@@ -351,6 +437,18 @@
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
+}
+
+body[data-theme="light"] .reset-header h3 {
+  color: #111827;
+}
+
+body[data-theme="light"] .reset-header p {
+  color: rgba(17, 24, 39, 0.75);
+}
+
+body[data-theme="light"] .password-toggle-icon {
+  color: #374151;
 }
 
 @media (max-width: 640px) {

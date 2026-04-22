@@ -56,7 +56,7 @@ export default function NewsReport() {
               description: item.description || 'No details available.',
               date: formatDisplayDate(item.publishedAt || item.date),
               publishedAt: item.publishedAt || item.date || null,
-              source: item.source || 'SHIELD',
+              source: item.source || 'Alert PH',
               url: item.url || '#',
               image: item.image || null,
             }))
