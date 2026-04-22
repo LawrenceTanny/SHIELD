@@ -1505,6 +1505,8 @@ body {
 
   .di-meta {
     font-size: 0.6rem;
+    padding-right: 100px;
+    line-height: 1;
   }
 
   .di-time {
