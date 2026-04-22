@@ -60,6 +60,12 @@ body[data-theme="light"] .as-overlay .as-field input {
     color: #1F1F1F !important;
 }
 
+body[data-theme="light"] .as-overlay .as-field select {
+    background: var(--surface2) !important;
+    border: 1px solid var(--border) !important;
+    color: #1F1F1F !important;
+}
+
 body[data-theme="light"] .as-overlay .as-field input::placeholder {
     color: #1F1F1F !important;
 }
@@ -196,7 +202,8 @@ body[data-theme="light"] .main-header .user-dropdown .user-acct-btn,
 body[data-theme="light"] .settings-field select,
 body[data-theme="light"] .lf-label select,
 body[data-theme="light"] .lf-label input,
-body[data-theme="light"] .as-field input {
+body[data-theme="light"] .as-field input,
+body[data-theme="light"] .as-field select {
     background: var(--surface2) !important;
     border: 1px solid var(--border) !important;
     color: var(--ink) !important;

@@ -787,7 +787,7 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
   return res.status(200).json({ user: toPublicUser(req.authUser) });
 });
 
-app.get('/api/account', requireAuth, async (req, res) => {
+app.get('/api/account', requireAuth, async (req, res) => { // PARA SA ACCOUNTS LOLLLL
   try {
     return res.status(200).json({
       user: toPublicUser(req.authUser)
@@ -800,11 +800,51 @@ app.get('/api/account', requireAuth, async (req, res) => {
 
 app.patch('/api/account', requireAuth, async (req, res) => {
   try {
-    const { name, preferences } = req.body || {};
+    const { name, preferences, province, city, currentPassword, newPassword, confirmPassword } = req.body || {};
 
     const updates = {};
     if (typeof name === 'string' && name.trim()) {
       updates.name = name.trim();
+    }
+
+    if (typeof province === 'string') {
+      if (!province.trim()) {
+        return res.status(400).json({ message: 'Province cannot be empty.' });
+      }
+      updates['location.province'] = province.trim();
+    }
+
+    if (typeof city === 'string') {
+      if (!city.trim()) {
+        return res.status(400).json({ message: 'City cannot be empty.' });
+      }
+      updates['location.city'] = city.trim();
+    }
+
+    const passwordChangeRequested =
+      typeof currentPassword === 'string' ||
+      typeof newPassword === 'string' ||
+      typeof confirmPassword === 'string';
+
+    if (passwordChangeRequested) {
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ message: 'Current password, new password, and confirmation are required.' });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'New password must be at least 6 characters.' });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: 'New passwords do not match.' });
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, req.authUser.password);
+      if (!isCurrentPasswordValid) {
+        return res.status(401).json({ message: 'Current password is incorrect.' });
+      }
+
+      updates.password = await bcrypt.hash(newPassword, 10);
     }
 
     if (preferences && typeof preferences === 'object') {
@@ -874,7 +914,7 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 10)));
+const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 11)));
 const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 4));
 const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 5));
 

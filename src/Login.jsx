@@ -109,7 +109,7 @@ export default function Login({ onClose, onLogin }) {
 
     if (!validateEmail(form.email)) {
       setEmailError(true);
-      setStatusMessage("Invalid Email! Use format: name@example.com");
+      setStatusMessage("Invalid Email format");
       setMessageType("error");
       return;
     }
@@ -258,12 +258,9 @@ export default function Login({ onClose, onLogin }) {
         ) : (
           <>
         {statusMessage && (
-          <div className="status-indicator" style={{ 
-            textAlign: "center", padding: "10px", marginBottom: "15px", borderRadius: "8px", fontSize: "0.85em",
-            backgroundColor: "#1a1a1a",
-            color: messageType === "success" ? "#2e7d32" : "#c41c3b",
-            border: `1px solid ${messageType === "success" ? "#2e7d32" : "#c41c3b"}`
-          }}>{statusMessage}</div>
+          <div className={`status-indicator status-indicator--${messageType}`}>
+            {statusMessage}
+          </div>
         )}
 
         <form className="login-form" onSubmit={handleSubmit} onInvalid={() => setSubmitAttempted(true)}>
@@ -289,8 +286,14 @@ export default function Login({ onClose, onLogin }) {
                 </label>
                 <label className="lf-label lf-col-1">
                   <span>City {submitAttempted && isRequiredMissing("city") && <span className="required-mark">*</span>}</span>
-                  <input list="c-list" value={form.city} onChange={set("city")} disabled={!form.province} placeholder="Enter a Province First" required />
-                  <datalist id="c-list">{cities.map(c => <option key={c.code} value={c.name} />)}</datalist>
+                  <select value={form.city} onChange={set("city")} disabled={!form.province || !cities.length} required>
+                    <option value="" disabled>
+                      {!form.province ? "Select a Province First" : !cities.length ? "Loading Cities..." : "Select a City"}
+                    </option>
+                    {cities.map((c) => (
+                      <option key={c.code} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
                 </label>
               </div>
             </>
