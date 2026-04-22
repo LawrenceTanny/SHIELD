@@ -27,94 +27,6 @@ body[data-theme="light"] {
     --ink2: #1f1f1f;
 }
 
-body[data-theme="light"] .as-overlay .as-head h2,
-body[data-theme="light"] .as-overlay .as-section-title,
-body[data-theme="light"] .as-overlay .as-field span {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-hint,
-body[data-theme="light"] .as-overlay .as-toggle span,
-body[data-theme="light"] .as-overlay .as-readonly-tag {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-field input {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-field input::placeholder {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-close {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-btn-cancel {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-overlay .as-btn-signout {
-    color: #dc2626 !important;
-}
-
-body[data-theme="light"] .as-overlay .as-btn-save {
-    color: white !important;
-}
-
-body[data-theme="light"] .as-overlay .as-error {
-    color: #ef4444 !important;
-}
-
-body[data-theme="light"] .as-overlay .as-success {
-    color: #10b981 !important;
-}
-
-body[data-theme="light"] .as-modal .as-toggle span {
-    color: #1F1F1F !important;
-    font-weight: 500;
-}
-
-body[data-theme="light"] .as-modal .as-section-title {
-    color: #1F1F1F !important;
-    font-weight: 600;
-}
-
-body[data-theme="light"] .as-modal .as-hint {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-modal .as-field span {
-    color: #1F1F1F !important;
-    font-weight: 600;
-}
-
-body[data-theme="light"] .as-modal .as-field input {
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-modal .as-input-readonly {
-    opacity: 1 !important;
-    color: #1F1F1F !important;
-}
-
-body[data-theme="light"] .as-modal .as-field input::placeholder {
-    color: #6b7280 !important;
-}
-
-body[data-theme="light"] .as-modal .as-hint.as-success {
-    color: #059669 !important;
-    /* strong green */
-    font-weight: 500;
-}
-
-body[data-theme="light"] .as-modal .as-hint.as-error {
-    color: #dc2626 !important;
-    /* strong red */
-    font-weight: 500;
-}
-
 body[data-theme="light"],
 body[data-theme="light"] .main-layout,
 body[data-theme="light"] .dashboard-wrapper,
@@ -337,27 +249,89 @@ body[data-theme="light"] .dashboard-settings-btn:hover {
     color: #ffffff !important;
 }
 
-body[data-theme="light"] .vm-label {
-    color: var(--ink) !important;
+/* Account Settings Light */
+body[data-theme="light"] .as-overlay .as-head h2,
+body[data-theme="light"] .as-overlay .as-section-title,
+body[data-theme="light"] .as-overlay .as-field span {
+    color: #1F1F1F !important;  
 }
 
-
-body[data-theme="light"] .au-divider {
-    background: rgba(43, 43, 43, 0.438) !important;
+body[data-theme="light"] .as-overlay .as-hint,
+body[data-theme="light"] .as-overlay .as-toggle span,
+body[data-theme="light"] .as-overlay .as-readonly-tag {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .au-section-title {
-    border-bottom: 2px solid rgba(43, 43, 43, 0.438) !important;
+body[data-theme="light"] .as-overlay .as-field input {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .dev-photo {
-    background: var(--bg) !important;
+body[data-theme="light"] .as-overlay .as-field input::placeholder {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .dev-info {
-    background: var(--bg) !important;
+body[data-theme="light"] .as-overlay .as-close {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .dev-position {
-    color: var(--ink) !important;
+body[data-theme="light"] .as-overlay .as-btn-cancel {
+    color: #1F1F1F !important;
+}
+
+body[data-theme="light"] .as-overlay .as-btn-signout {
+    color: #dc2626 !important;
+}
+
+body[data-theme="light"] .as-overlay .as-btn-save {
+    color: white !important;
+}
+
+body[data-theme="light"] .as-overlay .as-error {
+    color: #ef4444 !important;
+}
+
+body[data-theme="light"] .as-overlay .as-success {
+    color: #10b981 !important;
+}
+
+body[data-theme="light"] .as-modal .as-toggle span {
+    color: #1F1F1F !important;
+    font-weight: 500;
+}
+
+body[data-theme="light"] .as-modal .as-section-title {
+    color: #1F1F1F !important;
+    font-weight: 600;
+}
+
+body[data-theme="light"] .as-modal .as-hint {
+    color: #1F1F1F !important;
+}
+
+body[data-theme="light"] .as-modal .as-field span {
+    color: #1F1F1F !important;
+    font-weight: 600;
+}
+
+body[data-theme="light"] .as-modal .as-field input {
+    color: #1F1F1F !important;
+}
+
+body[data-theme="light"] .as-modal .as-input-readonly {
+    opacity: 1 !important;
+    color: #1F1F1F !important;
+}
+
+body[data-theme="light"] .as-modal .as-field input::placeholder {
+    color: #6b7280 !important;
+}
+
+body[data-theme="light"] .as-modal .as-hint.as-success {
+    color: #059669 !important;
+    font-weight: 500;
+}
+
+body[data-theme="light"] .as-modal .as-hint.as-error {
+    color: #dc2626 !important;
+    font-weight: 500;
 }

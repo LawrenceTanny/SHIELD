@@ -211,7 +211,7 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
                 onChange={(e) => setNewsletter(e.target.checked)}
                 disabled={isLoading || isSaving}
               />
-              <span>Subscribe to SHIELD newsletter</span>
+              <span>Subscribe to ALERT PH newsletter</span>
             </label>
           </section>
 
