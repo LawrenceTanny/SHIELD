@@ -89,8 +89,6 @@ export default function MainLayout() {
   const handleThemeToggle = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-<<<<<<< HEAD
-=======
 
     if (!currentUser?.email) {
       return;
@@ -119,7 +117,6 @@ export default function MainLayout() {
       .catch((error) => {
         console.warn("Failed to save theme preference:", error?.message || error);
       });
->>>>>>> origin/main
   };
 
   const handleTabChange = (newTab) => {
@@ -435,10 +432,6 @@ export default function MainLayout() {
           <AccountSettings
             onClose={() => setAcctSettingsOpen(false)}
             currentUser={currentUser}
-<<<<<<< HEAD
-            currentTheme={theme}
-=======
->>>>>>> origin/main
             onUserUpdated={handleUserUpdated}
             onSignOut={handleSignOut}
           />
