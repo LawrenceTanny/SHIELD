@@ -1,10 +1,3 @@
-/* ═══════════════════════════════════════════
-   ABOUT US — brand-matched stylesheet
-   Fonts : Geist (display/labels), Geist Mono (body/positions)
-   Palette: --bg #1a1a1a | --accent #ff4400 | --ink #d9d9d9 | --surface #d9d9d9
-   ═══════════════════════════════════════════ */
-
-/* ── PAGE SHELL ── */
 .about-us-page {
   width: 95%;
   max-width: 1400px;
@@ -18,7 +11,6 @@
   gap: 0;
 }
 
-/* ── HEADER ── */
 .au-header {
   text-align: center;
   margin-bottom: 36px;
@@ -41,7 +33,6 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ── BODY ── */
 .au-body {
   display: flex;
   flex-direction: column;
@@ -49,7 +40,6 @@
   gap: 80px;
 }
 
-/* ── VISION / MISSION ── */
 .vm-section {
   display: flex;
   flex-direction: column;
@@ -84,7 +74,6 @@
   margin: 0;
 }
 
-/* ── SHARED SECTION TITLE ── */
 .au-section-title {
   font-family: "Geist", sans-serif;
   font-size: 3.8rem;
@@ -98,12 +87,10 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.219);
 }
 
-/* ── DATA PARTNERS ── */
 .partners-section {
   width: 100%;
 }
 
-/* ── DATA PARTNERS SINGLE ROW (ALL VISIBLE) ── */
 .partners-section {
   width: 100%;
   margin-top: 20px;
@@ -112,15 +99,12 @@
 .partners-grid {
   display: grid;
   margin-top: 50px;
-  /* This forces all items to stay on ONE row and share width equally */
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: 8px;
-  /* Tight gap to help things fit */
   width: 100%;
 }
 
-/* ── DATA PARTNERS STYLISTIC HOVER ── */
 .partner-card {
   background: #d9d9d9;
   border-radius: 12px;
@@ -130,56 +114,40 @@
   flex-direction: column;
   justify-content: space-between;
   text-decoration: none;
-
-  /* The "Secret Sauce": standard easing is too robotic. 
-     We use a custom cubic-bezier for a snappier, premium feel. */
   transition:
     background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Subtle initial border to prevent "jumping" on hover */
   border: 1px solid transparent;
   position: relative;
   overflow: hidden;
 }
 
 .partner-card:hover {
-  /* Subtle lift and light background shift */
   background: #e2e2e2;
   transform: translateY(-6px);
-
-  /* Brand accent border appears */
   border-color: rgba(255, 68, 0, 0.4);
-
-  /* Soft, spread-out shadow for depth */
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* ── LOGO ANIMATION ── */
 .partner-img {
   max-height: 50px;
   max-width: 90%;
   object-fit: contain;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s ease;
   filter: grayscale(100%) opacity(0.8);
-  /* Minimalist starting point */
 }
 
 .partner-card:hover .partner-img {
   transform: scale(1.05);
   filter: grayscale(0%) opacity(1);
-  /* Brings the brand to life on hover */
 }
 
-/* ── FOOTER & ARROW ANIMATION ── */
 .partner-footer {
   display: flex;
   align-items: center;
-  /* Vertically centers the arrow with the text */
   justify-content: space-between;
-  /* Pushes name to left, arrow to far right */
   padding-top: 8px;
   gap: 12px;
   width: 100%;
@@ -199,15 +167,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* Prevents the arrow from squishing */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Stylistic hover for the arrow */
 .partner-card:hover .partner-arrow {
   background: #ff4400;
   transform: translateX(4px);
-  /* Subtle nudge to the right */
 }
 
 .partner-logo-area {
@@ -215,7 +180,6 @@
   display: flex;
   align-items: left;
   justify-content: left;
-  /* Center logo for the wide-style cards */
 }
 
 .partner-name {
@@ -223,8 +187,6 @@
   font-size: 1rem;
   font-weight: 600;
   color: #1f1f1f;
-
-  /* Text wrapping logic */
   white-space: normal;
   word-wrap: break-word;
   display: -webkit-box;
@@ -232,16 +194,13 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 
-  /* Takes up all available space to push the arrow */
   flex-grow: 1;
   line-height: 1;
   letter-spacing: -0.03rem;
 }
 
-/* ── RESPONSIVE: Switch to Scroll at 425px ── */
 @media (max-width: 768px) {
   .partners-grid {
-    /* On tablet, maybe let them go to 2 rows so they aren't tiny */
     grid-auto-flow: row;
     grid-template-columns: repeat(3, 1fr);
   }
@@ -249,7 +208,6 @@
 
 @media (max-width: 425px) {
   .partners-grid {
-    /* On mobile, use the swipe/slide interaction we discussed */
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -258,19 +216,16 @@
 
   .partner-card {
     flex: 0 0 80%;
-    /* Show one card and a bit of the next */
     scroll-snap-align: start;
     height: 160px;
   }
 }
 
-/* ── DEVELOPMENT TEAM ANIMATED ── */
 .dev-grid {
   display: flex;
   gap: 16px;
   width: 100%;
   align-items: flex-end;
-  /* Reduced top padding from 40px to 10px to shorten the gap */
   padding: 10px 0 40px;
   height: 500px;
 }
@@ -281,7 +236,6 @@
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  /* Increased to 1.2s with ease-in-out for a slower, smoother feel */
   transition: flex 1.2s ease-in-out;
   cursor: pointer;
   min-width: 0;
@@ -294,7 +248,6 @@
   overflow: hidden;
   position: relative;
   background: var(--ink);
-  /* Synchronized with the flex expansion */
   transition: aspect-ratio 1.2s ease-in-out;
 }
 
@@ -303,12 +256,10 @@
   height: 100%;
   object-fit: cover;
   object-position: center 15%;
-  /* Slower zoom and repositioning */
   transition: transform 1.0s ease-in-out, object-position 1.0s ease-in-out;
   display: block;
 }
 
-/* ── GITHUB STRIP ── */
 .github-banner {
   position: absolute;
   top: 0;
@@ -316,7 +267,6 @@
   width: 100%;
   height: 32px;
   background: #ff4400;
-  /* var(--accent) */
   color: #000;
   font-family: "Geist Mono", monospace;
   font-size: 0.8rem;
@@ -324,10 +274,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Username left, Arrow right */
   padding: 0 12px;
   transform: translateY(-100%);
-  /* Banner slides down slightly faster than the card expands for pop */
   transition: transform 0.8s ease-in-out;
   z-index: 2;
 }
@@ -336,7 +284,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Space between GitHub logo and username */
   text-decoration: underline;
 }
 
@@ -345,47 +292,36 @@
   height: 22px;
   background: #1f1f1f;
   color: #d9d9d9;
-  /* var(--ink) */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transform: rotate(-45deg);
-  /* Matches the diagonal look in your reference */
 }
 
-/* ── HOVER STATE (FINISHING POINT) ── */
 .dev-card:hover {
   flex: 1.8;
-  /* Enlarges the card */
 }
 
 .dev-card:hover .dev-photo {
   aspect-ratio: 1 / 1.35;
-  /* Becomes the taller rectangle provided in the image */
 }
 
 .dev-card:hover .github-banner {
   transform: translateY(0);
-  /* Displays github profile strip */
 }
 
 .dev-card:hover .dev-img {
   transform: scale(1.05);
-  /* Very subtle zoom to keep the face in view */
   object-position: center center;
-  /* Re-centers the image for the tall view */
 }
 
-/* ── ANIMATED RULE LINE ── */
 .dev-rule {
   width: 100%;
   height: 2px;
   background: #ff4400;
-  /* var(--accent) */
   margin: 10px 0;
-  /* Starts as a small line, animates to full width */
   transform: scaleX(1);
   transform-origin: left;
   transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
@@ -393,14 +329,11 @@
 
 .dev-card:hover .dev-rule {
   transform: scaleX(1);
-  /* Expands with the width of the rectangle */
 }
 
-/* Info Styling */
 .dev-lastname {
   font-family: "Geist", sans-serif;
   font-size: 2rem;
-  /* Bold Last Name */
   font-weight: 500;
   letter-spacing: -0.085rem;
   margin-top: 10px;
@@ -425,11 +358,6 @@
   margin-top: 4px;
 }
 
-/* ═══════════════════════════════════════════
-   STRUCTURED RESPONSIVE SYSTEM
-   ═══════════════════════════════════════════ */
-
-/* --- TIER 1: Large Tablets & Small Laptops (max-width: 1024px) --- */
 @media (max-width: 1024px) {
   .about-us-page {
     padding: 40px 30px;
@@ -445,14 +373,12 @@
     font-size: 3rem;
   }
 
-  /* Data Partners: Switch from single row to 3-column grid */
   .partners-grid {
     grid-auto-flow: row;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
 
-  /* Dev Team: Allow wrapping to maintain card legibility */
   .dev-grid {
     flex-wrap: wrap;
     height: auto;
@@ -465,7 +391,6 @@
   }
 }
 
-/* --- TIER 2: Tablets (max-width: 768px) --- */
 @media (max-width: 768px) {
   .au-body {
     padding: 0 1rem;
@@ -474,7 +399,6 @@
 
   .vm-row {
     grid-template-columns: 1fr;
-    /* Stack label over text */
     gap: 10px;
   }
 
@@ -495,7 +419,6 @@
   }
 }
 
-/* --- TIER 3: Mobile Landscape / Large Phones (max-width: 600px) --- */
 @media (max-width: 600px) {
   .about-us-page {
     margin: 20px auto;
@@ -513,7 +436,6 @@
     letter-spacing: -0.1rem;
   }
 
-  /* Data Partners: Switch to the horizontal scroll/swipe layout */
   .partners-grid {
     display: flex;
     overflow-x: auto;
@@ -525,25 +447,20 @@
 
   .partner-card {
     flex: 0 0 75%;
-    /* Show one full card and a peek of the next */
     scroll-snap-align: start;
     height: 150px;
   }
 
-  /* Dev Team: Adjust for vertical focus */
   .dev-card {
     flex: 0 0 100%;
     max-width: 320px;
-    /* Keep them centered and not too wide */
   }
 
   .dev-card:hover {
     flex: 0 0 100%;
-    /* Disable width expansion on mobile hover to avoid layout jumps */
   }
 }
 
-/* --- TIER 4: Small Mobile Portrait (max-width: 400px) --- */
 @media (max-width: 400px) {
   .au-title {
     font-size: 2.2rem;
