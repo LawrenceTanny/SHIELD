@@ -285,7 +285,6 @@
     }
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
     .news-container {
         padding: 110px 40px 40px 40px;
