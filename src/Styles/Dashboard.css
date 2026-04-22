@@ -4,7 +4,7 @@
   --topbar-h: 70px;
   --footer-h: 40px;
   --panel-w: 400px;
-  --bg: #050c1a;
+  --bg: #1f1f1f;
   --surface: #D9D9D9;
   --border: #D9D9D9;
   --accent: #FF4400;
@@ -34,7 +34,6 @@ body {
   height: 100vh;
 }
 
-/* ── App grid ── */
 .app {
   display: grid;
   grid-template-rows: var(--topbar-h) 1fr var(--footer-h);
@@ -42,7 +41,6 @@ body {
   overflow: hidden;
 }
 
-/* ── Dashboard wrapper (used in Header layout) ── */
 .dashboard-wrapper {
   height: 100%;
   min-height: 100dvh;
@@ -85,7 +83,6 @@ body {
   }
 }
 
-/* ── HEADER ── */
 .topbar {
   display: flex;
   align-items: center;
@@ -513,8 +510,6 @@ body {
   color: rgba(24, 24, 24, 0.548);
 }
 
-
-/* ── MAP ── */
 .map-wrap {
   position: fixed;
   inset: 0;
@@ -823,7 +818,6 @@ body {
   backdrop-filter: blur(2px);
 }
 
-/* Filter Section Layout */
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -970,9 +964,6 @@ body {
   transform: translateX(16px);
 }
 
-/* ── Responsive ── */
-
-/* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   :root {
     --panel-w: 340px;
@@ -1079,7 +1070,6 @@ body {
   }
 }
 
-/* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   :root {
     --topbar-h: 65px;
@@ -1249,7 +1239,6 @@ body {
   }
 }
 
-/* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   :root {
     --topbar-h: 65px;
@@ -1450,7 +1439,6 @@ body {
   }
 }
 
-/* MOBILE PORTRAIT - < 640px */
 @media (max-width: 639px) {
   :root {
     --topbar-h: 65px;
@@ -1519,6 +1507,8 @@ body {
 
   .di-meta {
     font-size: 0.6rem;
+    padding-right: 100px;
+    line-height: 1;
   }
 
   .di-time {

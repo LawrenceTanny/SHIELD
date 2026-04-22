@@ -23,14 +23,8 @@ body[data-theme="light"] {
     --accent: #ff4400;
     --accent-d: rgba(255, 68, 0, 0.12);
     --accent-g: rgba(255, 68, 0, 0.32);
-    --ink: #142236;
-    --ink2: #0f1a2b;
-    --muted: rgba(20, 34, 54, 0.68);
-    --muted-dark: rgba(20, 34, 54, 0.68);
-    --as-ink: #142236;
-    --as-muted: rgba(20, 34, 54, 0.62);
-    --lm-ink: #142236;
-    --lm-muted: rgba(20, 34, 54, 0.62);
+    --ink: #1f1f1f;
+    --ink2: #1f1f1f;
 }
 
 body[data-theme="light"],
@@ -70,7 +64,6 @@ body[data-theme="light"] .danger-panel,
 body[data-theme="light"] .settings-drawer,
 body[data-theme="light"] .news-report-container,
 body[data-theme="light"] .preparedness-container,
-body[data-theme="light"] .about-us-page,
 body[data-theme="light"] .login-modal,
 body[data-theme="light"] .as-modal,
 body[data-theme="light"] .weather-badge,
