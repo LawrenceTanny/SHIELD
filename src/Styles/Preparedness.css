@@ -700,6 +700,8 @@ body {
     .print-logo {
         font-size: 28px;
         font-weight: 900;
+        font-family: "Aldrich", sans serif;
+        text-transform: uppercase;
         color: #ff4400 !important;
         font-family: monospace;
     }

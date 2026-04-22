@@ -390,25 +390,33 @@ body[data-theme="light"] .dashboard-settings-btn:hover {
     color: #ffffff !important;
 }
 
-body[data-theme="light"] .vm-label {
-    color: var(--ink) !important;
+/* Account Settings Light */
+body[data-theme="light"] .as-overlay .as-head h2,
+body[data-theme="light"] .as-overlay .as-section-title,
+body[data-theme="light"] .as-overlay .as-field span {
+    color: #1F1F1F !important;  
 }
 
-
-body[data-theme="light"] .au-divider {
-    background: rgba(43, 43, 43, 0.438) !important;
+body[data-theme="light"] .as-overlay .as-hint,
+body[data-theme="light"] .as-overlay .as-toggle span,
+body[data-theme="light"] .as-overlay .as-readonly-tag {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .au-section-title {
-    border-bottom: 2px solid rgba(43, 43, 43, 0.438) !important;
+body[data-theme="light"] .as-overlay .as-field input {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .dev-photo {
-    background: var(--bg) !important;
+body[data-theme="light"] .as-overlay .as-field input::placeholder {
+    color: #1F1F1F !important;
 }
 
-body[data-theme="light"] .dev-info {
-    background: var(--bg) !important;
+body[data-theme="light"] .as-overlay .as-close {
+    color: #1F1F1F !important;
+}
+
+body[data-theme="light"] .as-overlay .as-btn-cancel {
+    color: #1F1F1F !important;
 }
 
 body[data-theme="light"] .dev-position {

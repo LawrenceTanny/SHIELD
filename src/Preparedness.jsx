@@ -80,8 +80,8 @@ const PreparednessToolkit = () => {
   return (
     <div className="preparedness-container">
       <div className="print-only-header">
-        <span className="print-logo">SHIELD</span>
-        <span className="print-tagline">Synchronized Hazard Information & Emergency Live Dashboard</span>
+        <span className="print-logo">ALERT PH</span>
+        <span className="print-tagline">Philippine Disaster & Monitoring System</span>
       </div>
 
       <div className="toolkit-header">
