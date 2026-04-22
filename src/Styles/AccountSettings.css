@@ -64,7 +64,7 @@
 .as-head h2 {
   font-size: 2rem;
   font-weight: 400;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.05rem;
   color: var(--ink);
 }
 
@@ -118,7 +118,7 @@
 .as-section-title {
   font-size: 1.5rem;
   font-weight: 200;
-  letter-spacing: 0;
+  letter-spacing: -0.05rem;
   color: var(--ink);
 }
 

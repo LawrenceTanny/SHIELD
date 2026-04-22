@@ -341,10 +341,10 @@ body {
 .danger-item::after {
   content: "";
   position: absolute;
-  right: -15px;
+  right: -15vw;
   bottom: -0.3vw;
-  width: 9em;
-  height: 9em;
+  width: 9vw;
+  height: 9vw;
   background: linear-gradient(180deg, #1F1F1F 100%, #373737 100%);
   -webkit-mask-size: contain;
   mask-size: contain;
@@ -1006,6 +1006,7 @@ body {
     min-height: 135px;
     padding: 12px 16px 8px 36px;
     border-radius: 14px;
+    border: none;
   }
 
   .count-pill {
@@ -1083,7 +1084,6 @@ body {
     bottom: calc(var(--footer-h) + 12px);
     width: var(--panel-w);
     border-radius: 16px;
-    border: #D9D9D9 solid 0.5px;
     z-index: 800;
   }
 
@@ -1131,6 +1131,7 @@ body {
     min-height: 120px;
     padding: 10px 12px 6px 30px;
     border-radius: 12px;
+    border: none;
   }
 
   .dashboard-settings-btn {
@@ -1235,7 +1236,18 @@ body {
   }
 
   .map-wrap {
-    margin-left: calc(var(--panel-w) + 20px);
+    margin-left: 0 !important;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .map-canvas {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -1253,6 +1265,7 @@ body {
     width: var(--panel-w);
     border-radius: 12px;
     z-index: 1200;
+    border: none;
   }
 
   .danger-head {
@@ -1282,6 +1295,7 @@ body {
     min-height: 86px;
     padding: 7px 7px 5px 22px;
     border-radius: 9px;
+    border: none;
   }
 
   .danger-item::before {
@@ -1493,6 +1507,7 @@ body {
 
   .danger-item::before {
     width: 10px;
+    border: none;
   }
 
   .di-title {

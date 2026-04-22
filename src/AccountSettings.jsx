@@ -215,31 +215,8 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
             </label>
           </section>
 
-          <hr className="hr"></hr>
 
-          <section className="as-section">
-            <h3 className="as-section-title">Appearance</h3>
-            <label className="as-toggle">
-              <input
-                type="radio"
-                name="theme-preference"
-                checked={themePreference === "light"}
-                onChange={() => setThemePreference("light")}
-                disabled={isLoading || isSaving}
-              />
-              <span>Light mode</span>
-            </label>
-            <label className="as-toggle">
-              <input
-                type="radio"
-                name="theme-preference"
-                checked={themePreference === "dark"}
-                onChange={() => setThemePreference("dark")}
-                disabled={isLoading || isSaving}
-              />
-              <span>Dark mode</span>
-            </label>
-          </section>
+
 
         </div>
 
