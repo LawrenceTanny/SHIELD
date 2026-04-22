@@ -14,6 +14,7 @@ const TAB_STORAGE_KEY = "shield.activeTab";
 const THEME_STORAGE_KEY = "shield.theme";
 const ALLOWED_TABS = new Set(["home", "dashboard", "news", "about"]);
 
+
 function normalizeTheme(value) {
   return value === "dark" ? "dark" : "light";
 }
@@ -31,14 +32,14 @@ function getInitialTab() {
 
 function IconUser() {
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      height="24px" 
-      viewBox="0 -960 960 960" 
-      width="24px" 
-      fill="currentColor" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      fill="currentColor"
     >
-      <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm146.5-204.5Q340-521 340-580t40.5-99.5Q421-720 480-720t99.5 40.5Q620-639 620-580t-40.5 99.5Q539-440 480-440t-99.5-40.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm100-95.5q47-15.5 86-44.5-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160q53 0 100-15.5ZM523-537q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm-43-43Zm0 360Z"/>
+      <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm146.5-204.5Q340-521 340-580t40.5-99.5Q421-720 480-720t99.5 40.5Q620-639 620-580t-40.5 99.5Q539-440 480-440t-99.5-40.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm100-95.5q47-15.5 86-44.5-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160q53 0 100-15.5ZM523-537q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm-43-43Zm0 360Z" />
     </svg>
   );
 }
@@ -52,7 +53,7 @@ function IconMenu() {
       width="22px"
       fill="currentColor"
     >
-      <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+      <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
     </svg>
   );
 }
@@ -67,7 +68,7 @@ export default function MainLayout() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [acctSettingsOpen, setAcctSettingsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   const userRef = useRef(null);
   const mobileNavRef = useRef(null);
 
@@ -83,6 +84,11 @@ export default function MainLayout() {
         document.body.classList.remove("theme-transition");
       }, 420);
     }
+  };
+
+  const handleThemeToggle = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
   };
 
   const handleTabChange = (newTab) => {
@@ -194,7 +200,7 @@ export default function MainLayout() {
               className="brand-home-btn brand-name"
               onClick={() => handleTabChange("home")}
             >
-              ALERT PH 
+              ALERT PH
             </button>
             <span className="brand-sep" />
             <span className="brand-sub">Philippine Disaster & Monitoring System</span>
@@ -215,7 +221,7 @@ export default function MainLayout() {
           >
             News
           </button>
-          
+
           <button
             className={`tab-btn ${activeTab === "about" ? "tab-active" : ""}`}
             onClick={() => handleTabChange("about")}
@@ -223,10 +229,50 @@ export default function MainLayout() {
             About Us
           </button>
 
+
+
         </nav>
 
         {/* RIGHT NAV (User) */}
         <nav className="topbar-nav">
+          <button
+            type="button"
+            className={`theme-icon-btn ${theme === 'light' ? 'is-light' : 'is-dark'}`}
+            onClick={handleThemeToggle}
+            aria-label={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          >
+            <div className="icon-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5" /* Thicker lines match aldrich font feel */
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="theme-svg"
+              >
+                {/* ── MOON (VISIBLE IN LIGHT MODE) ── */}
+                <g className="moon-group">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </g>
+
+                {/* ── SUN (VISIBLE IN DARK MODE) ── */}
+                <g className="sun-group">
+                  <circle cx="12" cy="12" r="4" />
+                  <line x1="12" y1="2" x2="12" y2="4" />
+                  <line x1="12" y1="20" x2="12" y2="22" />
+                  <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+                  <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+                  <line x1="2" y1="12" x2="4" y2="12" />
+                  <line x1="20" y1="12" x2="22" y2="12" />
+                  <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+                  <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+                </g>
+              </svg>
+            </div>
+          </button>
+
           <div className="mobile-menu-wrap" ref={mobileNavRef}>
             <button
               className={"nav-btn" + (mobileNavOpen ? " nav-btn--on" : "")}
@@ -343,15 +389,17 @@ export default function MainLayout() {
 
 
       {loginOpen && <Login onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />}
-      {acctSettingsOpen && (
-        <AccountSettings
-          onClose={() => setAcctSettingsOpen(false)}
-          currentUser={currentUser}
-          currentTheme={theme}
-          onUserUpdated={handleUserUpdated}
-          onSignOut={handleSignOut}
-        />
-      )}
-    </div>
+      {
+        acctSettingsOpen && (
+          <AccountSettings
+            onClose={() => setAcctSettingsOpen(false)}
+            currentUser={currentUser}
+            currentTheme={theme}
+            onUserUpdated={handleUserUpdated}
+            onSignOut={handleSignOut}
+          />
+        )
+      }
+    </div >
   );
 }
