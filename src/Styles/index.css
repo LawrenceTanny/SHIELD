@@ -341,7 +341,6 @@ body[data-theme="light"] .vm-label {
     color: var(--ink) !important;
 }
 
-
 body[data-theme="light"] .au-divider {
     background: rgba(43, 43, 43, 0.438) !important;
 }
