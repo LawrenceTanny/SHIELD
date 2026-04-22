@@ -492,7 +492,6 @@ body {
   display: none;
 }
 
-/* ── SKELETON LOADING ── */
 .loading-skeleton {
   flex: 1;
   padding: 30px;
@@ -537,9 +536,6 @@ body {
   width: 100%;
 }
 
-/* ── RESPONSIVE ── */
-
-/* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .main-header {
     margin: 0;
@@ -566,7 +562,6 @@ body {
   }
 }
 
-/* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .main-header {
     margin: 0;
@@ -606,7 +601,6 @@ body {
   }
 }
 
-/* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .main-header {
     margin: 0;
@@ -662,7 +656,6 @@ body {
   }
 }
 
-/* MOBILE PORTRAIT - < 640px */
 @media (max-width: 639px) {
   :root {
     --header-h: 65px;
