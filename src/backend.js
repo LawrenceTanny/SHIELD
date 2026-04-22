@@ -926,8 +926,18 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
-app.get('/api/auth/me', requireAuth, async (req, res) => {
-  return res.status(200).json({ user: toPublicUser(req.authUser) });
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      return res.status(200).json({ user: null });
+    }
+
+    return res.status(200).json({ user: toPublicUser(user) });
+  } catch (error) {
+    console.error('Error resolving auth session:', error);
+    return res.status(500).json({ message: 'Failed to resolve session.' });
+  }
 });
 
 app.get('/api/account', requireAuth, async (req, res) => { // PARA SA ACCOUNTS LOLLLL
