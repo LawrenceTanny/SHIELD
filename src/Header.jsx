@@ -89,6 +89,34 @@ export default function MainLayout() {
   const handleThemeToggle = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
+
+    if (!currentUser?.email) {
+      return;
+    }
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/account`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        preferences: {
+          theme: nextTheme
+        }
+      })
+    })
+      .then((response) => response.json().then((payload) => ({ response, payload })))
+      .then(({ response, payload }) => {
+        if (!response.ok) {
+          throw new Error(payload?.message || "Failed to save theme preference.");
+        }
+
+        if (payload?.user) {
+          setCurrentUser(payload.user);
+        }
+      })
+      .catch((error) => {
+        console.warn("Failed to save theme preference:", error?.message || error);
+      });
   };
 
   const handleTabChange = (newTab) => {
@@ -394,7 +422,6 @@ export default function MainLayout() {
           <AccountSettings
             onClose={() => setAcctSettingsOpen(false)}
             currentUser={currentUser}
-            currentTheme={theme}
             onUserUpdated={handleUserUpdated}
             onSignOut={handleSignOut}
           />

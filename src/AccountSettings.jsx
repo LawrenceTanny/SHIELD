@@ -12,19 +12,67 @@ async function readJsonSafe(response) {
   }
 }
 
-export default function AccountSettings({ onClose, currentUser, currentTheme = "light", onUserUpdated, onSignOut }) {
+export default function AccountSettings({ onClose, currentUser, onUserUpdated, onSignOut }) {
   const [displayName, setDisplayName] = useState(currentUser?.name || "");
   const [email] = useState(currentUser?.email || "");
+  const [province, setProvince] = useState(currentUser?.province || "");
+  const [city, setCity] = useState(currentUser?.city || "");
+  const [provinces, setProvinces] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [citySourceProvinceCode, setCitySourceProvinceCode] = useState("");
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [receiveAlerts, setReceiveAlerts] = useState(true);
   const [newsletter, setNewsletter] = useState(false);
-  const [themePreference, setThemePreference] = useState(currentTheme === "dark" ? "dark" : "light");
   const [statusMessage, setStatusMessage] = useState("");
   const [messageType, setMessageType] = useState("neutral");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const normalize = (value) => String(value || "").trim().toLowerCase();
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
+  };
+
+  const fetchCitiesByProvinceCode = async (provinceCode) => {
+    if (!provinceCode) {
+      setCities([]);
+      setCitySourceProvinceCode("");
+      return [];
+    }
+
+    setIsLocationLoading(true);
+    try {
+      const response = await fetch(`https://psgc.cloud/api/provinces/${provinceCode}/cities-municipalities`);
+      const data = await response.json();
+      const sorted = Array.isArray(data) ? data.sort((a, b) => a.name.localeCompare(b.name)) : [];
+      setCities(sorted);
+      setCitySourceProvinceCode(provinceCode);
+      return sorted;
+    } catch (_error) {
+      setCities([]);
+      setCitySourceProvinceCode(provinceCode);
+      return [];
+    } finally {
+      setIsLocationLoading(false);
+    }
+  };
+
+  const handleProvinceChange = async (e) => {
+    const nextProvince = e.target.value;
+    setProvince(nextProvince);
+    setCity("");
+
+    const selectedProvince = provinces.find((item) => item.name === nextProvince);
+    if (!selectedProvince) {
+      setCities([]);
+      setCitySourceProvinceCode("");
+      return;
+    }
+
+    await fetchCitiesByProvinceCode(selectedProvince.code);
   };
 
   useEffect(() => {
@@ -51,9 +99,10 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
         const user = payload?.user;
         if (user) {
           setDisplayName(user.name || currentUser.name || "");
+          setProvince(user.province || currentUser.province || "");
+          setCity(user.city || currentUser.city || "");
           setReceiveAlerts(user?.preferences?.receiveDisasterAlerts !== false);
           setNewsletter(user?.preferences?.subscribeNewsletter === true);
-          setThemePreference(user?.preferences?.theme === "dark" ? "dark" : "light");
         }
       } catch (error) {
         if (error.name !== "AbortError") {
@@ -73,8 +122,43 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
   }, [currentUser?.email, currentUser?.name]);
 
   useEffect(() => {
-    setThemePreference(currentTheme === "dark" ? "dark" : "light");
-  }, [currentTheme]);
+    let isCancelled = false;
+
+    const loadProvinces = async () => {
+      try {
+        const response = await fetch("https://psgc.cloud/api/provinces");
+        const data = await response.json();
+        const sorted = Array.isArray(data) ? data.sort((a, b) => a.name.localeCompare(b.name)) : [];
+        if (!isCancelled) {
+          setProvinces(sorted);
+        }
+      } catch (_error) {
+        if (!isCancelled) {
+          setProvinces([]);
+        }
+      }
+    };
+
+    loadProvinces();
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const selectedProvince = provinces.find((item) => normalize(item.name) === normalize(province));
+    if (!selectedProvince) {
+      setCities([]);
+      setCitySourceProvinceCode("");
+      return;
+    }
+
+    if (selectedProvince.code === citySourceProvinceCode) {
+      return;
+    }
+
+    fetchCitiesByProvinceCode(selectedProvince.code);
+  }, [province, provinces]);
 
   const handleSave = async () => {
     if (!currentUser?.email) {
@@ -89,6 +173,46 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
       return;
     }
 
+    const selectedProvince = provinces.find((item) => normalize(item.name) === normalize(province));
+    if (!selectedProvince) {
+      setStatusMessage("Please select a valid Province.");
+      setMessageType("error");
+      return;
+    }
+
+    let cityOptions = cities;
+    if (selectedProvince.code !== citySourceProvinceCode) {
+      cityOptions = await fetchCitiesByProvinceCode(selectedProvince.code);
+    }
+
+    const selectedCity = cityOptions.find((item) => normalize(item.name) === normalize(city));
+    if (!selectedCity) {
+      setStatusMessage("Please select a valid City.");
+      setMessageType("error");
+      return;
+    }
+
+    const wantsPasswordChange = currentPassword || newPassword || confirmPassword;
+    if (wantsPasswordChange) {
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        setStatusMessage("Fill out the current password, new password, and confirmation.");
+        setMessageType("error");
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setStatusMessage("New password must be at least 6 characters.");
+        setMessageType("error");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setStatusMessage("New passwords do not match.");
+        setMessageType("error");
+        return;
+      }
+    }
+
     setIsSaving(true);
     setStatusMessage("");
 
@@ -99,10 +223,14 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
         credentials: "include",
         body: JSON.stringify({
           name: displayName.trim(),
+          province: selectedProvince.name,
+          city: selectedCity.name,
+          currentPassword: wantsPasswordChange ? currentPassword : undefined,
+          newPassword: wantsPasswordChange ? newPassword : undefined,
+          confirmPassword: wantsPasswordChange ? confirmPassword : undefined,
           preferences: {
             receiveDisasterAlerts: receiveAlerts,
-            subscribeNewsletter: newsletter,
-            theme: themePreference
+            subscribeNewsletter: newsletter
           }
         })
       });
@@ -115,6 +243,10 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
       if (typeof onUserUpdated === "function" && payload?.user) {
         onUserUpdated(payload.user);
       }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
 
       setStatusMessage("Account settings saved.");
       setMessageType("success");
@@ -188,6 +320,82 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
               <span>Email <em className="as-readonly-tag">read-only</em></span>
               <input type="email" value={email} readOnly className="as-input-readonly" />
             </label>
+
+            <div className="as-field-grid">
+              <label className="as-field">
+                <span>Province</span>
+                <select
+                  value={province}
+                  onChange={handleProvinceChange}
+                  disabled={isLoading || isSaving || !provinces.length || isLocationLoading}
+                >
+                  <option value="" disabled>
+                    {provinces.length ? "Select a Province" : "Loading Provinces..."}
+                  </option>
+                  {provinces.map((item) => (
+                    <option key={item.code} value={item.name}>{item.name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="as-field">
+                <span>City</span>
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={isLoading || isSaving || !province || isLocationLoading || !cities.length}
+                >
+                  <option value="" disabled>
+                    {!province
+                      ? "Select Province First"
+                      : isLocationLoading
+                        ? "Loading Cities..."
+                        : cities.length
+                          ? "Select a City"
+                          : "No Cities Available"}
+                  </option>
+                  {cities.map((item) => (
+                    <option key={item.code} value={item.name}>{item.name}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <hr className="hr"></hr>
+
+          <section className="as-section">
+            <h3 className="as-section-title">Security</h3>
+            <label className="as-field">
+              <span>Current Password</span>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password"
+                disabled={isLoading || isSaving}
+              />
+            </label>
+            <label className="as-field">
+              <span>New Password</span>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                disabled={isLoading || isSaving}
+              />
+            </label>
+            <label className="as-field">
+              <span>Confirm New Password</span>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter new password"
+                disabled={isLoading || isSaving}
+              />
+            </label>
           </section>
 
           <hr className="hr"></hr>
@@ -215,6 +423,15 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
             </label>
           </section>
 
+          <hr className="hr"></hr>
+
+          <section className="as-section">
+            <h3 className="as-section-title">Account</h3>
+            <button className="as-btn-signout" type="button" onClick={handleSignOutClick}>
+              Sign Out
+            </button>
+          </section>
+
 
 
 
@@ -224,9 +441,6 @@ export default function AccountSettings({ onClose, currentUser, currentTheme = "
 
         {/* Footer */}
         <div className="as-footer">
-          <button className="as-btn-signout" onClick={handleSignOutClick}>
-            Sign Out
-          </button>
           <button className="as-btn-cancel" onClick={onClose}>Cancel</button>
           <button className="as-btn-save" onClick={handleSave} disabled={isLoading || isSaving}>
             {isSaving ? "Saving..." : "Save Changes"}
