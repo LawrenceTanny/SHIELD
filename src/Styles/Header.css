@@ -299,7 +299,7 @@ body {
 
 .theme-icon-btn {
   background: transparent;
-  border: none;
+  border: 2px solid transparent;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -312,9 +312,26 @@ body {
   overflow: hidden;
 }
 
+.theme-icon-btn:focus-visible {
+  outline: none;
+  border-color: #FF4400;
+  background: rgba(255, 68, 0, 0.08);
+}
+
+.theme-icon-btn:active {
+  transform: translateY(0);
+}
+
+.theme-icon-btn:hover,
+.theme-icon-btn:focus-visible {
+  box-shadow: 0 0 15px rgba(255, 68, 0, 0.18);
+}
+
+@media (hover: hover) and (pointer: fine) {
 .theme-icon-btn:hover {
   border: 2px solid #FF4400;
   background: rgba(255, 68, 0, 0.08);
+}
 }
 
 .icon-wrapper {
