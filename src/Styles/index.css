@@ -256,6 +256,7 @@ body[data-theme="light"] .dashboard-settings-btn:hover {
     color: #ffffff !important;
 }
 
+/* Account Settings Light */
 body[data-theme="light"] .as-overlay .as-head h2,
 body[data-theme="light"] .as-overlay .as-section-title,
 body[data-theme="light"] .as-overlay .as-field span {

@@ -107,6 +107,8 @@ body {
 .brand-name {
   font-size: 1.55rem;
   font-weight: 900;
+  font-family: "Aldrich", sans serif;
+  text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--accent);
   text-shadow: 0 0 22px var(--accent-g);
