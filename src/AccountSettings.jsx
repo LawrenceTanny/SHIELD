@@ -291,7 +291,6 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
     <div className="as-overlay" onClick={handleOverlayClick}>
       <div className="as-modal">
 
-        {/* Header */}
         <div className="as-head">
           <h2>Account Settings</h2>
           <button className="as-close" onClick={onClose} aria-label="Close">✕</button>
@@ -300,7 +299,6 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
         <hr className="hr"></hr>
 
         <div className="as-body">
-          {/* Profile Info */}
           <section className="as-section">
             <h3 className="as-section-title">Profile</h3>
             {statusMessage && (
@@ -424,16 +422,12 @@ export default function AccountSettings({ onClose, currentUser, onUserUpdated, o
           </section>
 
 
-<<<<<<< HEAD
-
-=======
           <section className="as-section">
             <h3 className="as-section-title">Account</h3>
             <button className="as-btn-signout" type="button" onClick={handleSignOutClick}>
               Sign Out
             </button>
           </section>
->>>>>>> origin/main
 
 
 
