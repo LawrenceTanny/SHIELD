@@ -183,6 +183,49 @@ body[data-theme="light"] .status-indicator--error {
   gap: 14px;
 }
 
+.reset-header {
+  margin-bottom: 14px;
+}
+
+.reset-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--lm-ink);
+}
+
+.reset-header p {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--lm-muted);
+}
+
+.password-field-wrap {
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-inline-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2px;
+}
+
+.login-inline-actions--center {
+  justify-content: center;
+  margin-top: 2px;
+}
+
 .flip-ltr {
   animation: modal-morph-ltr 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -351,6 +394,10 @@ body[data-theme="light"] .status-indicator--error {
   appearance: none;
 }
 
+.lf-label input.input-error {
+  border: 2px solid #ff4d6d;
+}
+
 .lf-label select option {
   color: #142236;
 }
@@ -390,6 +437,18 @@ body[data-theme="light"] .status-indicator--error {
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
+}
+
+body[data-theme="light"] .reset-header h3 {
+  color: #111827;
+}
+
+body[data-theme="light"] .reset-header p {
+  color: rgba(17, 24, 39, 0.75);
+}
+
+body[data-theme="light"] .password-toggle-icon {
+  color: #374151;
 }
 
 @media (max-width: 640px) {

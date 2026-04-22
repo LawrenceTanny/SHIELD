@@ -26,6 +26,7 @@ export default function Login({ onClose, onLogin }) {
   const [messageType, setMessageType] = useState("neutral");
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [resetToken, setResetToken] = useState("");
 
   const isRequiredMissing = (key) => !form[key]?.trim();
   const normalize = (value) => value.trim().toLowerCase();
@@ -38,6 +39,17 @@ export default function Login({ onClose, onLogin }) {
   };
 
   const switchTab = (nextTab) => {
+    if (nextTab === "forgot" || nextTab === "reset") {
+      setTab(nextTab);
+      setSubmitAttempted(false);
+      setStatusMessage("");
+      setMessageType("neutral");
+      setEmailError(false);
+      setShowPassword(false);
+      setShowConfirm(false);
+      return;
+    }
+
     if (nextTab === tab || isMorphing) return;
     const nextFlip = nextTab === "register" ? "flip-ltr" : "flip-rtl";
     if (morphTimerRef.current) clearTimeout(morphTimerRef.current);
@@ -50,6 +62,8 @@ export default function Login({ onClose, onLogin }) {
     setStatusMessage("");
     setMessageType("neutral");
     setEmailError(false);
+    setShowPassword(false);
+    setShowConfirm(false);
   };
 
   const isPasswordStrong = (password) => {
@@ -76,6 +90,18 @@ export default function Login({ onClose, onLogin }) {
     return () => {
       if (morphTimerRef.current) clearTimeout(morphTimerRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const tokenFromUrl = new URLSearchParams(window.location.search).get("resetToken");
+    if (tokenFromUrl) {
+      setResetToken(tokenFromUrl);
+      setTab("reset");
+      setForm((prev) => ({ ...prev, password: "", confirm: "" }));
+      setStatusMessage("");
+      setMessageType("neutral");
+    }
   }, []);
 
   const handleProvinceChange = (e) => {
@@ -107,10 +133,97 @@ export default function Login({ onClose, onLogin }) {
     setMessageType("neutral");
     setEmailError(false);
 
-    if (!validateEmail(form.email)) {
+    if ((tab === "signin" || tab === "register" || tab === "forgot") && !validateEmail(form.email)) {
       setEmailError(true);
       setStatusMessage("Invalid Email format");
       setMessageType("error");
+      return;
+    }
+
+    if (tab === "forgot") {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/forgot-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email: form.email })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          setStatusMessage(result?.message || "Unable to process your request right now.");
+          setMessageType("error");
+          return;
+        }
+
+        setStatusMessage("If an account exists for this email, a reset link has been sent.");
+        setMessageType("success");
+      } catch (error) {
+        setStatusMessage("Server connection error.");
+        setMessageType("error");
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    if (tab === "reset") {
+      if (!resetToken) {
+        setStatusMessage("Reset token is missing. Please use the latest reset link from your email.");
+        setMessageType("error");
+        return;
+      }
+
+      if (!isPasswordStrong(form.password)) {
+        setStatusMessage("Password must be at least 6 characters.");
+        setMessageType("error");
+        return;
+      }
+
+      if (form.password !== form.confirm) {
+        setStatusMessage("Passwords do not match!");
+        setMessageType("error");
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/reset-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            token: resetToken,
+            password: form.password,
+            confirmPassword: form.confirm
+          })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          setStatusMessage(result?.message || "Failed to reset password.");
+          setMessageType("error");
+          return;
+        }
+
+        setStatusMessage("Password reset successful. You can sign in now.");
+        setMessageType("success");
+        setForm((prev) => ({ ...prev, password: "", confirm: "" }));
+        setTab("signin");
+
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("resetToken");
+          window.history.replaceState({}, "", url.toString());
+        }
+      } catch (error) {
+        setStatusMessage("Server connection error.");
+        setMessageType("error");
+      } finally {
+        setIsLoading(false);
+      }
+
       return;
     }
 
@@ -231,12 +344,14 @@ export default function Login({ onClose, onLogin }) {
           <p className="login-tagline">Philippine Disaster & Monitoring System</p>
         </div>
 
-        <div className="login-tabs">
-          <button type="button" className={`ltab ${tab === "signin" ? "ltab--on" : ""}`} onClick={() => switchTab("signin")} disabled={isMorphing}>Sign In</button>
-          <button type="button" className={`ltab ${tab === "register" ? "ltab--on" : ""}`} onClick={() => switchTab("register")} disabled={isMorphing}>Register</button>
-        </div>
+        {(tab === "signin" || tab === "register") && (
+          <div className="login-tabs">
+            <button type="button" className={`ltab ${tab === "signin" ? "ltab--on" : ""}`} onClick={() => switchTab("signin")} disabled={isMorphing}>Sign In</button>
+            <button type="button" className={`ltab ${tab === "register" ? "ltab--on" : ""}`} onClick={() => switchTab("register")} disabled={isMorphing}>Register</button>
+          </div>
+        )}
 
-        {isMorphing ? (
+        {(tab === "signin" || tab === "register") && isMorphing ? (
           <div className="login-skeleton" aria-hidden="true">
             <div className="sk-line sk-status"></div>
             <div className="sk-line sk-label"></div>
@@ -260,6 +375,17 @@ export default function Login({ onClose, onLogin }) {
         {statusMessage && (
           <div className={`status-indicator status-indicator--${messageType}`}>
             {statusMessage}
+          </div>
+        )}
+
+        {(tab === "forgot" || tab === "reset") && (
+          <div className="reset-header">
+            <h3>{tab === "forgot" ? "Forgot Password" : "Reset Password"}</h3>
+            <p>
+              {tab === "forgot"
+                ? "Enter your account email and we will send you a reset link."
+                : "Set a new password for your account."}
+            </p>
           </div>
         )}
 
@@ -299,45 +425,57 @@ export default function Login({ onClose, onLogin }) {
             </>
           )}
 
-          <label className="lf-label">
-            <span>Email {submitAttempted && isRequiredMissing("email") && <span className="required-mark">*</span>}</span>
-            <input 
-              type="text" value={form.email} onChange={set("email")} placeholder="juan@example.com" 
-              required style={{ border: emailError ? "2px solid #ff4d6d" : "1px solid #ddd" }}
-            />
-          </label>
-
-          <label className="lf-label">
-            <span>Password {submitAttempted && isRequiredMissing("password") && <span className="required-mark">*</span>}</span>
-            <div style={{ position: "relative" }}>
-              <input 
-                type={showPassword ? "text" : "password"} value={form.password} onChange={set("password")} 
-                placeholder="••••••••" required style={{ width: "100%", paddingRight: "40px" }}
-              />
-              <span 
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#666" }}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </span>
-            </div>
-          </label>
-
-          {tab === "register" && (
+          {(tab === "signin" || tab === "register" || tab === "forgot") && (
             <label className="lf-label">
-              <span>Confirm Password {submitAttempted && isRequiredMissing("confirm") && <span className="required-mark">*</span>}</span>
-              <div style={{ position: "relative" }}>
-                <input 
-                  type={showConfirm ? "text" : "password"} 
-                  value={form.confirm} 
-                  onChange={set("confirm")} 
+              <span>Email {submitAttempted && isRequiredMissing("email") && <span className="required-mark">*</span>}</span>
+              <input
+                type="text"
+                value={form.email}
+                onChange={set("email")}
+                placeholder="juan@example.com"
+                required
+                className={emailError ? "input-error" : ""}
+              />
+            </label>
+          )}
+
+          {(tab === "signin" || tab === "register" || tab === "reset") && (
+            <label className="lf-label">
+              <span>{tab === "reset" ? "New Password" : "Password"} {submitAttempted && isRequiredMissing("password") && <span className="required-mark">*</span>}</span>
+              <div className="password-field-wrap">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={set("password")}
                   placeholder="••••••••"
-                  required 
+                  required
                   style={{ width: "100%", paddingRight: "40px" }}
                 />
-                <span 
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle-icon"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </span>
+              </div>
+            </label>
+          )}
+
+          {(tab === "register" || tab === "reset") && (
+            <label className="lf-label">
+              <span>Confirm Password {submitAttempted && isRequiredMissing("confirm") && <span className="required-mark">*</span>}</span>
+              <div className="password-field-wrap">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={form.confirm}
+                  onChange={set("confirm")}
+                  placeholder="••••••••"
+                  required
+                  style={{ width: "100%", paddingRight: "40px" }}
+                />
+                <span
                   onClick={() => setShowConfirm(!showConfirm)}
-                  style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#666" }}
+                  className="password-toggle-icon"
                 >
                   {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </span>
@@ -345,9 +483,47 @@ export default function Login({ onClose, onLogin }) {
             </label>
           )}
 
+          {tab === "signin" && (
+            <div className="login-inline-actions">
+              <button
+                type="button"
+                className="login-link"
+                onClick={() => {
+                  setForm((prev) => ({ ...prev, password: "", confirm: "" }));
+                  switchTab("forgot");
+                }}
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           <button type="submit" className="login-submit" disabled={isLoading}>
-            {isLoading ? "Please wait..." : tab === "signin" ? "Sign In" : "Register"}
+            {isLoading
+              ? "Please wait..."
+              : tab === "signin"
+                ? "Sign In"
+                : tab === "register"
+                  ? "Register"
+                  : tab === "forgot"
+                    ? "Send Reset Link"
+                    : "Reset Password"}
           </button>
+
+          {(tab === "forgot" || tab === "reset") && (
+            <div className="login-inline-actions login-inline-actions--center">
+              <button
+                type="button"
+                className="login-link"
+                onClick={() => {
+                  setForm((prev) => ({ ...prev, password: "", confirm: "" }));
+                  switchTab("signin");
+                }}
+              >
+                Back to sign in
+              </button>
+            </div>
+          )}
           </div>
         </form>
           </>

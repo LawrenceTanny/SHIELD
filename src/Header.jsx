@@ -193,6 +193,16 @@ export default function MainLayout() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hasResetToken = Boolean(new URLSearchParams(window.location.search).get("resetToken"));
+    if (hasResetToken) {
+      setLoginOpen(true);
+      setUserMenuOpen(false);
+      setAcctSettingsOpen(false);
+    }
+  }, []);
+
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
     applyTheme(user?.preferences?.theme);
