@@ -147,7 +147,7 @@
 .news-card p {
   font-family: "Geist", sans-serif;
   font-size: 0.8rem;
-  color: #cccccc;
+  color: var(--ink);
   max-width: 90%;
   line-height: 1.2;
   margin: 0;
@@ -280,7 +280,7 @@
   line-height: 1.5;
   font-size: 0.9rem;
   margin: 0;
-  color: #cccccc;
+  color: var(--ink);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
