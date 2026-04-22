@@ -523,11 +523,11 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
     };
   }, [isLoadingWeather, weatherError, weatherStations]);
 
-    const weatherStackStyle = isMobileSheet
-      ? {
-          bottom: `calc(max(8px, env(safe-area-inset-bottom)) + ${(sheetHeight ?? dragStateRef.current.collapsedHeight ?? 0) + 8}px)`,
-        }
-      : undefined;
+  const weatherStackStyle = isMobileSheet
+    ? {
+      bottom: `calc(max(8px, env(safe-area-inset-bottom)) + ${(sheetHeight ?? dragStateRef.current.collapsedHeight ?? 0) + 8}px)`,
+    }
+    : undefined;
 
   useEffect(() => {
     if (focusedId !== null && !filtered.some((d) => d.id === focusedId)) {
@@ -598,15 +598,11 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
                   exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
                   whileHover={{
                     y: -5,
-                    backgroundColor: "#E2E2E2",
                     transition: { duration: 0.2 }
                   }}
                   whileTap={{ scale: 0.98 }}
                   className={`danger-item sev-${d.severity.toLowerCase()} type-${d.type.toLowerCase().replace(/\s+/g, '-')} ${focusedId === d.id ? 'is-focused' : ''}`}
                   onClick={() => toggle(d.id)}
-                  style={{
-                    backgroundColor: focusedId === d.id ? "rgba(116, 116, 116, 0.09)" : "#D9D9D9"
-                  }}
                 >
                   <div className="di-content-wrapper">
                     <div className="di-row">
