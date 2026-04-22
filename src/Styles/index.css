@@ -23,8 +23,8 @@ body[data-theme="light"] {
     --accent: #ff4400;
     --accent-d: rgba(255, 68, 0, 0.12);
     --accent-g: rgba(255, 68, 0, 0.32);
-    --ink: #142236;
-    --ink2: #0f1a2b;
+    --ink: #1f1f1f;
+    --ink2: #1f1f1f;
 }
 
 body[data-theme="light"] .as-overlay .as-head h2,
@@ -152,7 +152,6 @@ body[data-theme="light"] .danger-panel,
 body[data-theme="light"] .settings-drawer,
 body[data-theme="light"] .news-report-container,
 body[data-theme="light"] .preparedness-container,
-body[data-theme="light"] .about-us-page,
 body[data-theme="light"] .login-modal,
 body[data-theme="light"] .as-modal,
 body[data-theme="light"] .weather-badge,
@@ -336,4 +335,29 @@ body[data-theme="light"] .dashboard-settings-btn:hover {
     background: rgba(31, 31, 31, 0.58) !important;
     border-color: rgba(31, 31, 31, 0.68) !important;
     color: #ffffff !important;
+}
+
+body[data-theme="light"] .vm-label {
+    color: var(--ink) !important;
+}
+
+
+body[data-theme="light"] .au-divider {
+    background: rgba(43, 43, 43, 0.438) !important;
+}
+
+body[data-theme="light"] .au-section-title {
+    border-bottom: 2px solid rgba(43, 43, 43, 0.438) !important;
+}
+
+body[data-theme="light"] .dev-photo {
+    background: var(--bg) !important;
+}
+
+body[data-theme="light"] .dev-info {
+    background: var(--bg) !important;
+}
+
+body[data-theme="light"] .dev-position {
+    color: var(--ink) !important;
 }
