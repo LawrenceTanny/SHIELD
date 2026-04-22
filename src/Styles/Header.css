@@ -299,11 +299,7 @@ body {
 
 .theme-icon-btn {
   background: transparent;
-<<<<<<< HEAD
-  border: none;
-=======
   border: 2px solid transparent;
->>>>>>> origin/main
   display: flex;
   align-items: center;
   gap: 12px;
@@ -316,8 +312,6 @@ body {
   overflow: hidden;
 }
 
-<<<<<<< HEAD
-=======
 .theme-icon-btn:focus-visible {
   outline: none;
   border-color: #FF4400;
@@ -334,15 +328,11 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
->>>>>>> origin/main
-.theme-icon-btn:hover {
-  border: 2px solid #FF4400;
-  background: rgba(255, 68, 0, 0.08);
+  .theme-icon-btn:hover {
+    border: 2px solid #FF4400;
+    background: rgba(255, 68, 0, 0.08);
+  }
 }
-<<<<<<< HEAD
-=======
-}
->>>>>>> origin/main
 
 .icon-wrapper {
   position: relative;
