@@ -142,6 +142,7 @@
   background: rgba(255, 68, 0, 0.08);
 }
 
+/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -149,8 +150,22 @@
 }
 
 .status-slot {
-  min-height: 52px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    margin-bottom 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+}
+
+.status-slot:has(.is-visible) {
+  grid-template-rows: 1fr;
   margin-bottom: 12px;
+}
+
+/* Inner wrapper needed for grid 0fr collapse to work */
+.status-slot>.status-indicator {
+  overflow: hidden;
+  min-height: 0;
 }
 
 .status-indicator {
@@ -159,22 +174,25 @@
   letter-spacing: 0.02em;
   display: flex;
   align-items: center;
-  min-height: 40px;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--lm-border);
   background: rgba(255, 255, 255, 0.06);
   color: var(--lm-ink);
-  transition: opacity 150ms ease, transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  transition: opacity 200ms ease, transform 200ms ease,
+    border-color 200ms ease, background-color 200ms ease,
+    padding 240ms ease;
   line-height: 1.35;
 }
 
 .status-indicator.is-hidden {
   opacity: 0;
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: transparent;
   background: transparent;
   pointer-events: none;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .status-indicator--success {
@@ -463,13 +481,11 @@ body[data-theme="light"] .status-indicator--error {
 }
 
 .login-link {
-  font-family: "Geist Mono", monospace;
-  text-transform: uppercase;
   background: none;
   border: none;
   color: var(--lm-accent);
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
