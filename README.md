@@ -1,5 +1,5 @@
-# SHIELD
-Synchronized Hazard Information & Emergency Live Dashboard (SHIELD)
+# ALERT PH
+Philippine Disaster & Monitoring System
 
 ## Installation Guide:
 Open VS Code, open a terminal.
