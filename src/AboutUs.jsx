@@ -22,7 +22,6 @@ export default function AboutUs() {
     return (
         <div className="about-us-page">
 
-            {/* HEADER */}
             <div className="au-header">
                 <h1 className="au-title">About Us</h1>
                 <div className="au-divider" />
@@ -30,7 +29,6 @@ export default function AboutUs() {
 
             <main className="au-body">
 
-                {/* VISION / MISSION */}
                 <section className="vm-section">
                     <div className="vm-row">
                         <span className="vm-label">Vision</span>
@@ -51,7 +49,6 @@ export default function AboutUs() {
                     </div>
                 </section>
 
-                {/* DATA PARTNERS */}
                 <section className="partners-section">
                     <h2 className="au-section-title">Data Partners</h2>
                     <div className="partners-grid">
@@ -79,7 +76,6 @@ export default function AboutUs() {
                     </div>
                 </section>
 
-                {/* DEVELOPMENT TEAM */}
                 <section className="dev-section">
                     <h2 className="au-section-title">Development Team</h2>
                     <div className="dev-grid">
@@ -92,7 +88,6 @@ export default function AboutUs() {
                                 className="dev-card"
                             >
                                 <div className="dev-photo">
-                                    {/* New Banner Logic */}
                                     <div className="github-banner">
                                         <div className="github-user-wrapper">
                                             <img src="../mark-github-24.svg" alt="github icon" className="github-icon" />
