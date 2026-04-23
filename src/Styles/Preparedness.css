@@ -675,7 +675,7 @@ body {
         left: 0 !important;
         width: 100% !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 12px !important;
         border: none !important;
         box-shadow: none !important;
         background: white !important;
@@ -726,8 +726,8 @@ body {
         display: block !important;
         width: 100% !important;
         min-height: auto !important;
-        margin-bottom: 15px !important;
-        padding: 10px 15px !important;
+        margin-bottom: 10px !important;
+        padding: 8px 12px !important;
         border: 1px solid #ddd !important;
         border-left: 6px solid #ff4400 !important;
         background: white !important;
@@ -745,7 +745,8 @@ body {
         display: flex !important;
         align-items: center !important;
         gap: 10px !important;
-        padding: 8px 0 !important;
+        padding: 6px 0 !important;
+        line-height: 1.3 !important;
         border-bottom: 1px solid #eee !important;
         background: transparent !important;
     }
@@ -834,6 +835,10 @@ body {
         text-align: right !important;
     }
 
+    .contact-item {
+    padding: 4px 0 !important;
+    }
+
     .guides-stack {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -861,9 +866,9 @@ body {
     }
 
     .print-only-steps li {
-        font-size: 14px !important;
-        line-height: 1.4 !important;
-        margin-bottom: 5px !important;
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 3px !important;
         position: relative !important;
         color: black !important;
     }
@@ -873,6 +878,22 @@ body {
         position: absolute;
         left: -15px;
         color: #ff4400 !important;
+    }
+
+    .emergency-contacts {
+    page-break-after: always;
+    }
+
+    .gobag {
+    page-break-before: always;
+    }
+
+    .action-guides {
+    page-break-before: avoid;
+    }
+
+    .toolkit-card.action-guides {
+    margin-top: 20px !important;
     }
 
     .pdf-btn,
