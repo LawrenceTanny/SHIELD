@@ -255,7 +255,9 @@ body[data-theme="light"] .side-widget p {
 body[data-theme="light"] .contact-item,
 body[data-theme="light"] .contact-item:last-child,
 body[data-theme="light"] .checklist-item,
-body[data-theme="light"] .toolkit-card h2 {
+body[data-theme="light"] .toolkit-card h2,
+body[data-theme="light"] .news-header,
+body[data-theme="light"] .toolkit-header {
     border-bottom: 1px solid rgba(24, 24, 24, 0.514);
 }
 
