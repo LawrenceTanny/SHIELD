@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 30px 30px 0 0;
-  border-top: 2px solid rgba(255,255,255,0.08);
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   color: #D9D9D9;
   font-size: 0.75rem;
@@ -22,7 +22,6 @@
   opacity: 0.9;
 }
 
-/* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .app-footer {
     margin: auto 18px 0;
@@ -31,7 +30,6 @@
   }
 }
 
-/* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .app-footer {
     margin: auto 14px 0;
@@ -41,7 +39,6 @@
   }
 }
 
-/* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .app-footer {
     margin: auto 10px 0;
@@ -51,7 +48,6 @@
   }
 }
 
-/* MOBILE PORTRAIT - < 640px */
 @media (max-width: 639px) {
   .app-footer {
     margin: auto 8px 0;
