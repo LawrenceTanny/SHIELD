@@ -151,9 +151,9 @@ body {
 
 .contact-number {
     font-family: 'Geist Mono', monospace;
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
     font-weight: 400;
-    color: #ffffff;
+    color: var(--ink);
     letter-spacing: -0.02em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -357,7 +357,7 @@ body {
     color: var(--ink);
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: -0.05em;
+    letter-spacing: 0.05em;
 }
 
 .description {
