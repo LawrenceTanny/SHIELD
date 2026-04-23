@@ -65,11 +65,12 @@
 
 .vm-text {
   font-family: "Geist Mono", monospace;
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   line-height: 1.85;
   padding-right: 2rem;
   color: var(--ink);
   letter-spacing: 0.04em;
+  font-weight: 500;
   text-transform: uppercase;
   margin: 0;
 }
@@ -354,7 +355,7 @@
 
 .dev-position {
   font-family: "Geist Mono", monospace;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   color: var(--ink);
   margin-top: 4px;
