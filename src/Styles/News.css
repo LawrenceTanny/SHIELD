@@ -301,6 +301,7 @@
   align-items: center;
   justify-content: space-between;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .carousel-content {
@@ -316,7 +317,7 @@
   width: 40px;
   font-size: 24px;
   border-radius: 50%;
-  transform: translateY(-50%);
+  transform: translateY(60%);
   z-index: 100 !important;
   background: rgba(48, 48, 48, 0.4);
   backdrop-filter: blur(8px);
@@ -761,9 +762,7 @@
   }
 
   .carousel-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
+    display: none;
   }
 
   .carousel-indicators {
@@ -863,10 +862,6 @@
     height: 120px;
   }
 
-  .carousel-btn {
-    display: none;
-  }
-
   .carousel-indicators {
     bottom: 10px;
   }
@@ -881,10 +876,6 @@
 
   .social-feed-item {
     width: 100%;
-  }
-
-  .carousel-btn {
-    display: none;
   }
 
   .carousel-container {

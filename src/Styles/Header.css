@@ -36,7 +36,6 @@ body {
   height: 100vh;
 }
 
-/* ── MAIN LAYOUT ── */
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -45,7 +44,6 @@ body {
   background: var(--bg);
 }
 
-/* ── HEADER ── */
 .main-header {
   display: flex;
   align-items: center;
@@ -64,7 +62,6 @@ body {
   transition: all 0.3s ease;
 }
 
-/* HEADER LEFT - BRAND */
 .header-left {
   display: flex;
   align-items: center;
@@ -328,10 +325,10 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-.theme-icon-btn:hover {
-  border: 2px solid #FF4400;
-  background: rgba(255, 68, 0, 0.08);
-}
+  .theme-icon-btn:hover {
+    border: 2px solid #FF4400;
+    background: rgba(255, 68, 0, 0.08);
+  }
 }
 
 .icon-wrapper {
@@ -416,8 +413,8 @@ body {
   }
 
   .theme-icon-btn {
-    padding: 6px 12px;
-    gap: 8px;
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -492,7 +489,6 @@ body {
   display: none;
 }
 
-/* ── SKELETON LOADING ── */
 .loading-skeleton {
   flex: 1;
   padding: 30px;
@@ -537,9 +533,6 @@ body {
   width: 100%;
 }
 
-/* ── RESPONSIVE ── */
-
-/* LAPTOP - 1024px to 1439px */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .main-header {
     margin: 0;
@@ -566,7 +559,6 @@ body {
   }
 }
 
-/* TABLET - 768px to 1023px */
 @media (max-width: 1023px) and (min-width: 768px) {
   .main-header {
     margin: 0;
@@ -606,7 +598,6 @@ body {
   }
 }
 
-/* MOBILE LANDSCAPE - 640px to 767px */
 @media (max-width: 767px) and (min-width: 640px) {
   .main-header {
     margin: 0;
@@ -662,7 +653,6 @@ body {
   }
 }
 
-/* MOBILE PORTRAIT - < 640px */
 @media (max-width: 639px) {
   :root {
     --header-h: 65px;

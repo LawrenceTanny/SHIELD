@@ -58,18 +58,19 @@
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.03em;
-  color: #ffffff;
+  color: var(--ink);
   padding-top: 2px;
   line-height: 1.1;
 }
 
 .vm-text {
   font-family: "Geist Mono", monospace;
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   line-height: 1.85;
   padding-right: 2rem;
   color: var(--ink);
   letter-spacing: 0.04em;
+  font-weight: 500;
   text-transform: uppercase;
   margin: 0;
 }
@@ -84,7 +85,7 @@
   text-align: center;
   line-height: 1.05;
   padding-bottom: 10px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.219);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .partners-section {
@@ -191,6 +192,7 @@
   word-wrap: break-word;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
@@ -234,6 +236,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: none;
   text-decoration: none;
   color: inherit;
   transition: flex 1.2s ease-in-out;
@@ -352,7 +355,7 @@
 
 .dev-position {
   font-family: "Geist Mono", monospace;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   color: var(--ink);
   margin-top: 4px;

@@ -48,8 +48,8 @@ app.use(cors({
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true
-})); 
-app.use(express.json()); 
+}));
+app.use(express.json());
 
 app.use(session({
   name: 'shield.sid',
@@ -717,7 +717,7 @@ app.post('/api/signup', async (req, res) => {
     const result = await usersCollection.insertOne({
       name: name,
       email: normalizedEmail,
-      password: hashedPassword, 
+      password: hashedPassword,
       location: {
         province: province,
         city: city
@@ -803,8 +803,8 @@ app.post('/api/login', async (req, res) => {
 
     req.session.userId = String(user._id);
 
-    res.status(200).json({ 
-      message: "Login successful!", 
+    res.status(200).json({
+      message: "Login successful!",
       user: toPublicUser(user)
     });
 
@@ -1336,7 +1336,7 @@ app.post('/api/admin/news/reset', async (req, res) => {
     await collection.deleteOne({ _id: 'latest' });
     cachedNews = null;
     lastNewsFetchTime = 0;
-    
+
     console.log('[NEWS ADMIN] Cache cleared. Next fetch will be fresh.');
     res.status(200).json({ message: 'News cache cleared. Next /api/news call will fetch fresh data.' });
   } catch (error) {
@@ -1361,8 +1361,8 @@ app.get('/api/weather', async (req, res) => {
   ];
 
   try {
-    const apiKey = process.env.OPENWEATHERMAP_API_KEY; 
-    
+    const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+
     if (!apiKey) {
       return res.status(500).json({ message: "Weather API key missing." });
     }
@@ -1447,7 +1447,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.NODEMAILER_EMAIL,
-    pass: process.env.NODEMAILER_PASS  
+    pass: process.env.NODEMAILER_PASS
   }
 });
 // Halos ako lang gumawa ng backend hayssst
@@ -1459,7 +1459,7 @@ app.post('/api/admin/alert', async (req, res) => {
       return res.status(400).json({ message: "Missing alert details." });
     }
     const usersCollection = await getUsersCollection();
-    const affectedUsers = await usersCollection.find({ 
+    const affectedUsers = await usersCollection.find({
       "location.province": targetProvince,
       accountStatus: 'Active',
       "preferences.receiveDisasterAlerts": { $ne: false }
@@ -1470,7 +1470,7 @@ app.post('/api/admin/alert', async (req, res) => {
     const emailList = affectedUsers.map(user => user.email);
     const mailOptions = {
       from: `"Alert PH Emergency System" <${process.env.NODEMAILER_EMAIL}>`,
-      bcc: emailList, 
+      bcc: emailList,
       subject: `ALERT PH: ${disasterType} Warning for ${targetProvince}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #ff4d4d; border-radius: 10px; overflow: hidden;">
@@ -1493,8 +1493,8 @@ app.post('/api/admin/alert', async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log(`Alert successfully sent to ${emailList.length} users in ${targetProvince}`);
 
-    res.status(200).json({ 
-      message: `Success! Alert sent to ${emailList.length} residents in ${targetProvince}.` 
+    res.status(200).json({
+      message: `Success! Alert sent to ${emailList.length} residents in ${targetProvince}.`
     });
 
   } catch (error) {
@@ -1711,7 +1711,7 @@ app.post('/api/admin/email/test', async (req, res) => {
       to,
       subject: 'SHIELD test email',
       text: `If you received this email, SMTP is working. Sent at ${new Date().toISOString()}`
-    });   
+    });
 
     res.status(200).json({ message: `Test email sent to ${to}` });
   } catch (error) {

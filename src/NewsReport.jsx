@@ -33,6 +33,20 @@ export default function NewsReport() {
   const [loadError, setLoadError] = useState('');
   const carouselRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) >= 40) {
+      delta > 0 ? handleNextSlide() : handlePrevSlide();
+    }
+    touchStartX.current = null;
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -161,11 +175,13 @@ export default function NewsReport() {
             <h2>Latest News</h2>
           </div>
 
-          <div 
-            className="carousel-container" 
+          <div
+            className="carousel-container"
             ref={carouselRef}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <button className="carousel-btn prev-btn" onClick={handlePrevSlide} disabled={isLoading || latestNews.length <= 1}>
               ‹
