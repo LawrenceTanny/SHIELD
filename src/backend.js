@@ -15,7 +15,7 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 const app = express();
 
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://alertph.com';
 const CLIENT_ORIGINS = process.env.CLIENT_ORIGINS || '';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SESSION_COOKIE_SAMESITE = process.env.SESSION_COOKIE_SAMESITE || (IS_PRODUCTION ? 'none' : 'lax');
