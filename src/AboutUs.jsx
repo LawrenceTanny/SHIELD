@@ -3,11 +3,11 @@ import "./Styles/AboutUs.css";
 
 export default function AboutUs() {
     const developers = [
-        { id: 1, firstName: "Lawrence", lastName: "Tan", position: "Lead Developer", photo: "../tan_1x1.png", github: "https://github.com/LawrenceTanny" },
+        { id: 1, firstName: "Lawrence", lastName: "Tan", position: "Lead Developer", photo: "../Profiles/Tan.png", github: "https://github.com/LawrenceTanny" },
         { id: 2, firstName: "Wyeth", lastName: "Rellamas", position: "Frontend Developer", photo: "../wyeth_1x1.png", github: "https://github.com/Rellamas" },
         { id: 3, firstName: "Clark", lastName: "Maglaque", position: "Frontend Developer", photo: "../clark_1x1.png", github: "https://github.com/def-Antoni" },
         { id: 4, firstName: "Kent", lastName: "Hipolito", position: "Backend Developer", photo: "../kent_1x1.png", github: "https://github.com/KentHipolito" },
-        { id: 5, firstName: "Erl", lastName: "Samson", position: "Backend Developer", photo: "../erl_1x1.png", github: "https://github.com/yaziz26" },
+        { id: 5, firstName: "Erl", lastName: "Samson", position: "Quality Assurance", photo: "../erl_1x1.png", github: "https://github.com/yaziz26" },
     ];
 
     const apiPartners = [

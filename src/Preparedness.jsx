@@ -17,8 +17,11 @@ const PreparednessToolkit = () => {
     { name: 'Emergency Services', number: '911' },
     { name: 'Philippine Red Cross', number: '143 / (02) 8790-2300' },
     { name: 'Philippine Coast Guard', number: '(02) 8527-3877' },
-    { name: 'Disaster Hotline', number: '1-800-DISASTER' },
-    { name: 'Local Police', number: '311' },
+    { name: 'NDRRMC', number: '(02) 8911-1406' },
+    { name: 'Philippine National Police', number: '117' },
+    { name: 'Bureau of Fire Protection', number: '(02) 8426-0219' },
+    { name: 'PAGASA', number: '(02) 8284-0800' },
+    { name: 'PHIVOLCS', number: '(02) 8426-1468 to 79' },
   ];
 
   const actionGuides = [
