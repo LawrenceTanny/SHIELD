@@ -321,7 +321,7 @@ body[data-theme="light"] .hero-highlight-card h3 {
 
 body[data-theme="light"] .latest-news .section-header h2,
 body[data-theme="light"] .social-section .section-header h2 {
-    background: rgba(235, 240, 247, 0.9) !important;
+    background: rgba(255, 255, 255, 0.72) !important;
 }
 
 body[data-theme="light"] .news-item-media::after {
@@ -370,7 +370,7 @@ body[data-theme="light"] .cloud-layer--light {
 }
 
 body[data-theme="light"] .weather-icon {
-   background: rgba(50, 50, 50, 0.76) !important;
+    background: rgba(50, 50, 50, 0.76) !important;
 
     border-radius: 999px;
     padding: 6px;
