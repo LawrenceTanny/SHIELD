@@ -911,6 +911,10 @@ body {
   background-image: url("/public/thunderstorm_icon.svg");
 }
 
+.filter-indicator.type-wildfire {
+  background-image: url("/public/wildfire_icon.svg");
+}
+
 .severity-dot {
   width: 12px;
   height: 12px;
