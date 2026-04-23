@@ -219,8 +219,6 @@ body[data-theme="light"] .home-container::before {
     filter: invert(1) hue-rotate(180deg) saturate(1.05) contrast(1.02);
 }
 
-body[data-theme="light"] .hero-description,
-body[data-theme="light"] .description p,
 body[data-theme="light"] .dev-position,
 body[data-theme="light"] .as-hint,
 body[data-theme="light"] .news-card p,
@@ -245,7 +243,6 @@ body[data-theme="light"] .as-section-title,
 body[data-theme="light"] .lf-label,
 body[data-theme="light"] .toolkit-card,
 body[data-theme="light"] .info-card,
-body[data-theme="light"] .dev-card,
 body[data-theme="light"] .partner-card,
 body[data-theme="light"] .contact-number,
 body[data-theme="light"] .checklist-item,
@@ -255,10 +252,18 @@ body[data-theme="light"] .side-widget p {
     color: var(--ink2) !important;
 }
 
+body[data-theme="light"] .au-divider {
+    background: rgba(24, 24, 24, 0.514);
+}
+
+
 body[data-theme="light"] .contact-item,
 body[data-theme="light"] .contact-item:last-child,
 body[data-theme="light"] .checklist-item,
-body[data-theme="light"] .toolkit-card h2 {
+body[data-theme="light"] .toolkit-card h2,
+body[data-theme="light"] .news-header,
+body[data-theme="light"] .au-section-title,
+body[data-theme="light"] .toolkit-header {
     border-bottom: 1px solid rgba(24, 24, 24, 0.514);
 }
 
@@ -333,9 +338,22 @@ body[data-theme="light"] .news-date {
 }
 
 body[data-theme="light"] .side-widget {
-    background-color: #ffffff !important;
-    border-color: rgba(20, 34, 54, 0.16) !important;
+    background: linear-gradient(166deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 245, 247, 0.9) 100%) !important;
+    border: 2px solid rgba(20, 34, 54, 0.12) !important;
     border-left: 1rem solid rgba(255, 68, 0, 0.8) !important;
+    border-radius: 16px !important;
+    padding: 10px 20px 30px 20px !important;
+    box-shadow: 0 20px 60px rgba(10, 20, 35, 0.1) !important;
+}
+
+body[data-theme="light"] .side-widget h3 {
+    font-size: 2rem !important;
+    color: #1f1f1f !important;
+}
+
+body[data-theme="light"] .side-widget p {
+    font-size: 13px !important;
+    color: #4b5563 !important;
 }
 
 body[data-theme="light"] .map-wrap::after {
@@ -397,11 +415,10 @@ body[data-theme="light"] .dashboard-settings-btn:hover {
     color: #ffffff !important;
 }
 
-/* Account Settings Light */
 body[data-theme="light"] .as-overlay .as-head h2,
 body[data-theme="light"] .as-overlay .as-section-title,
 body[data-theme="light"] .as-overlay .as-field span {
-    color: #1F1F1F !important;  
+    color: #1F1F1F !important;
 }
 
 body[data-theme="light"] .as-overlay .as-hint,
@@ -462,4 +479,89 @@ body[data-theme="light"] .danger-item::before {
 
 body[data-theme="light"] .danger-item::after {
     background: var(--ink) !important;
+}
+
+body[data-theme="light"] .modal-overlay {
+    background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+body[data-theme="light"] .modal-content {
+    background: linear-gradient(166deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 247, 250, 0.98) 100%);
+    border-color: rgba(20, 34, 54, 0.12);
+    box-shadow: 0 20px 60px rgba(10, 20, 35, 0.2);
+}
+
+body[data-theme="light"] .modal-header {
+    border-bottom-color: rgba(20, 34, 54, 0.12);
+}
+
+body[data-theme="light"] .modal-header h3,
+body[data-theme="light"] .modal-body li {
+    color: #111827;
+}
+
+body[data-theme="light"] .modal-body li::before {
+    color: #ff4400;
+}
+
+body[data-theme="light"] .modal-icon-img {
+    filter: brightness(0);
+}
+
+body[data-theme="light"] .close-btn {
+    background: rgba(17, 24, 39, 0.05);
+    border-color: rgba(17, 24, 39, 0.12);
+    color: #111827;
+}
+
+body[data-theme="light"] .close-btn:hover {
+    color: #111827;
+    background: rgba(255, 68, 0, 0.12);
+}
+
+body[data-theme="light"] .dev-card,
+body[data-theme="light"] .dev-overlay {
+    background: none !important;
+}
+
+body[data-theme="light"] .dev-photo {
+    background: #f3f5f7 !important;
+}
+
+body[data-theme="light"] .filter-indicator {
+    filter: invert(1);
+}
+
+/* ── LIGHT MODE: checklist-progress ── */
+body[data-theme="light"] .checklist-progress {
+    border-top: 1px solid rgba(24, 24, 24, 0.514);
+}
+
+body[data-theme="light"] .progress-bar-wrap {
+    background: rgba(24, 24, 24, 0.226) !important;
+}
+
+body[data-theme="light"] .progress-label {
+    color: rgba(20, 34, 54, 0.55) !important;
+}
+
+/* ── LIGHT MODE: theme-icon-btn — always a circle ── */
+body[data-theme="light"] .theme-icon-btn,
+.theme-icon-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+body[data-theme="light"] .theme-icon-btn {
+    background: rgba(20, 34, 54, 0.06) !important;
+    border: 1px solid rgba(20, 34, 54, 0.14) !important;
+    color: var(--ink) !important;
 }

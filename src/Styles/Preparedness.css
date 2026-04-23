@@ -101,7 +101,7 @@ body {
 }
 
 .contact-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .contact-item::before {
@@ -151,9 +151,9 @@ body {
 
 .contact-number {
     font-family: 'Geist Mono', monospace;
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
     font-weight: 400;
-    color: #ffffff;
+    color: var(--ink);
     letter-spacing: -0.02em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -181,14 +181,14 @@ body {
     user-select: none;
     line-height: 1.4;
     transition: all 0.2s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.123);
     border-radius: 0;
     background: none;
     position: relative;
 }
 
 .checklist-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .checklist-item:hover {
@@ -351,7 +351,7 @@ body {
 
 .action-footer-text {
     font-family: 'Geist Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     line-height: 1.4;
     margin: 0;
     color: var(--ink);
@@ -504,45 +504,6 @@ body {
     transform: rotate(90deg);
 }
 
-body[data-theme="light"] .modal-overlay {
-    background: rgba(255, 255, 255, 0.28);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-body[data-theme="light"] .modal-content {
-    background: linear-gradient(166deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 247, 250, 0.98) 100%);
-    border-color: rgba(20, 34, 54, 0.12);
-    box-shadow: 0 20px 60px rgba(10, 20, 35, 0.2);
-}
-
-body[data-theme="light"] .modal-header {
-    border-bottom-color: rgba(20, 34, 54, 0.12);
-}
-
-body[data-theme="light"] .modal-header h3,
-body[data-theme="light"] .modal-body li {
-    color: #111827;
-}
-
-body[data-theme="light"] .modal-body li::before {
-    color: #ff4400;
-}
-
-body[data-theme="light"] .modal-icon-img {
-    filter: brightness(0);
-}
-
-body[data-theme="light"] .close-btn {
-    background: rgba(17, 24, 39, 0.05);
-    border-color: rgba(17, 24, 39, 0.12);
-    color: #111827;
-}
-
-body[data-theme="light"] .close-btn:hover {
-    color: #111827;
-    background: rgba(255, 68, 0, 0.12);
-}
 
 @keyframes fadeIn {
     from {

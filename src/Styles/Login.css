@@ -1,10 +1,10 @@
 :root {
-  --lm-bg:      #050c1a;
+  --lm-bg: #050c1a;
   --lm-surface: #1a1a1a;
-  --lm-border:  rgba(255,255,255,0.1);
-  --lm-accent:  #ff4400;
-  --lm-ink:     #e4f3ff;
-  --lm-muted:   rgba(228,243,255,0.6);
+  --lm-border: rgba(255, 255, 255, 0.1);
+  --lm-accent: #ff4400;
+  --lm-ink: #e4f3ff;
+  --lm-muted: rgba(228, 243, 255, 0.6);
 }
 
 .login-overlay {
@@ -31,10 +31,10 @@
 
 .login-modal {
   position: relative;
-  border: 2px solid rgba(255,255,255,0.08);
+  border: 2px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   background: linear-gradient(166deg, #2020203d 0%, #5252522d 100%);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   border-radius: 18px;
   width: 100%;
   padding: 36px 32px 28px;
@@ -49,6 +49,7 @@
     transform: scale(0.72);
     filter: blur(2px);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -73,9 +74,16 @@
   justify-content: center;
   transition: border-color 130ms, color 130ms;
 }
-.login-close:hover { border-color: var(--lm-accent); color: var(--lm-accent); }
 
-.login-brand { text-align: center; margin-bottom: 22px; }
+.login-close:hover {
+  border-color: var(--lm-accent);
+  color: var(--lm-accent);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 22px;
+}
 
 .login-logo {
   font-family: "aldrich", sans-serif;
@@ -84,7 +92,7 @@
   font-weight: 900;
   letter-spacing: 0.12em;
   color: var(--lm-accent);
-  text-shadow: 0 0 28px rgba(255,68,0,0.6);
+  text-shadow: 0 0 28px rgba(255, 68, 0, 0.6);
   margin-bottom: 4px;
 }
 
@@ -120,61 +128,99 @@
   cursor: pointer;
   transition: background 130ms, color 130ms;
 }
+
 .ltab--on {
   color: var(--ink2);
   border: #D9D9D9 solid 1px;
   backdrop-filter: blur(8px);
   background: var(--surface);
 }
-.ltab:not(.ltab--on):hover { 
-  color: var(--ink);
-  border-color: rgba(255,68,0,0.3);
-  background: rgba(255,68,0,0.08); }
 
-/* Form */
+.ltab:not(.ltab--on):hover {
+  color: var(--ink);
+  border-color: rgba(255, 68, 0, 0.3);
+  background: rgba(255, 68, 0, 0.08);
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
+.status-slot {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    margin-bottom 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+}
+
+.status-slot:has(.is-visible) {
+  grid-template-rows: 1fr;
+  margin-bottom: 12px;
+}
+
+.status-slot>.status-indicator {
+  overflow: hidden;
+  min-height: 0;
+}
+
 .status-indicator {
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  font-family: "Geist Mono", monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--lm-border);
   background: rgba(255, 255, 255, 0.06);
   color: var(--lm-ink);
-  border: 1px solid var(--lm-border);
+  transition: opacity 200ms ease, transform 200ms ease,
+    border-color 200ms ease, background-color 200ms ease,
+    padding 240ms ease;
+  line-height: 1.35;
+}
+
+.status-indicator.is-hidden {
+  opacity: 0;
+  transform: translateY(-4px);
+  border-color: transparent;
+  background: transparent;
+  pointer-events: none;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .status-indicator--success {
-  color: #2e7d32;
-  border-color: rgba(46, 125, 50, 0.35);
+  color: #9ff0b6;
+  border-color: rgba(79, 194, 115, 0.5);
+  background: rgba(26, 86, 50, 0.35);
 }
 
 .status-indicator--error {
-  color: #c41c3b;
-  border-color: rgba(196, 28, 59, 0.35);
+  color: #ffb4b4;
+  border-color: rgba(222, 91, 91, 0.5);
+  background: rgba(120, 27, 38, 0.34);
 }
 
 body[data-theme="light"] .status-indicator {
   background: rgba(255, 255, 255, 0.96);
-  color: #111827;
-  border-color: rgba(17, 24, 39, 0.12);
+  color: #1f2937;
+  border-color: rgba(31, 41, 55, 0.2);
 }
 
 body[data-theme="light"] .status-indicator--success {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(220, 252, 231, 0.95);
   color: #166534;
-  border-color: rgba(22, 101, 52, 0.2);
+  border-color: rgba(22, 101, 52, 0.3);
 }
 
 body[data-theme="light"] .status-indicator--error {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(254, 226, 226, 0.95);
   color: #b91c1c;
-  border-color: rgba(185, 28, 28, 0.2);
+  border-color: rgba(185, 28, 28, 0.28);
 }
 
 .login-fields-animated {
@@ -294,12 +340,10 @@ body[data-theme="light"] .status-indicator--error {
 
 .sk-line {
   border-radius: 10px;
-  background: linear-gradient(
-    100deg,
-    rgba(255, 255, 255, 0.06) 20%,
-    rgba(255, 255, 255, 0.15) 40%,
-    rgba(255, 255, 255, 0.06) 60%
-  );
+  background: linear-gradient(100deg,
+      rgba(255, 255, 255, 0.06) 20%,
+      rgba(255, 255, 255, 0.15) 40%,
+      rgba(255, 255, 255, 0.06) 60%);
   background-size: 220% 100%;
   animation: sk-shimmer 1.3s linear infinite;
 }
@@ -339,6 +383,7 @@ body[data-theme="light"] .status-indicator--error {
   from {
     background-position: 100% 0;
   }
+
   to {
     background-position: -120% 0;
   }
@@ -349,7 +394,7 @@ body[data-theme="light"] .status-indicator--error {
   gap: 10px;
 }
 
-.login-row > .lf-label {
+.login-row>.lf-label {
   flex: 1;
   min-width: 0;
 }
@@ -377,18 +422,22 @@ body[data-theme="light"] .status-indicator--error {
   padding: 10px 12px;
   border-radius: 9px;
   border: 1px solid var(--lm-border);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--lm-ink);
   font-size: 0.92rem;
   outline: none;
   transition: border-color 130ms, box-shadow 130ms;
 }
+
 .lf-label input:focus,
 .lf-label select:focus {
   border-color: var(--lm-accent);
-  box-shadow: 0 0 0 3px rgba(255,68,0,0.15);
+  box-shadow: 0 0 0 3px rgba(255, 68, 0, 0.15);
 }
-.lf-label input::placeholder { color: rgba(228,243,255,0.25); }
+
+.lf-label input::placeholder {
+  color: rgba(228, 243, 255, 0.25);
+}
 
 .lf-label select {
   appearance: none;
@@ -417,9 +466,10 @@ body[data-theme="light"] .status-indicator--error {
   letter-spacing: 0.04em;
   transition: opacity 130ms, box-shadow 130ms;
 }
+
 .login-submit:hover {
   opacity: 0.88;
-  box-shadow: 0 0 18px rgba(255,68,0,0.4);
+  box-shadow: 0 0 18px rgba(255, 68, 0, 0.4);
 }
 
 .login-hint {
