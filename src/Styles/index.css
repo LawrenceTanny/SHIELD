@@ -191,7 +191,7 @@ body[data-theme="light"] .settings-drawer,
 body[data-theme="light"] .weather-badge,
 body[data-theme="light"] .map-layer-toggle {
     background: linear-gradient(166deg, rgba(246, 249, 252, 0.34) 0%, rgba(232, 238, 246, 0.42) 100%) !important;
-    border: 1px solid var(--border) !important;
+    border: 2px solid var(--border) !important;
     box-shadow: 0 16px 35px rgba(10, 20, 35, 0.12) !important;
     color: var(--ink) !important;
 }
@@ -370,7 +370,8 @@ body[data-theme="light"] .cloud-layer--light {
 }
 
 body[data-theme="light"] .weather-icon {
-    background: rgba(16, 24, 39, 0.76) !important;
+   background: rgba(50, 50, 50, 0.76) !important;
+
     border-radius: 999px;
     padding: 6px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);

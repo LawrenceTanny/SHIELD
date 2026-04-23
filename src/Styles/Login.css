@@ -38,7 +38,7 @@
   border-radius: 18px;
   width: 100%;
   padding: 36px 32px 28px;
-  max-height: min(92vh, 860px);
+  max-height: min(78vh, 660px);
   overflow-y: auto;
   will-change: transform, opacity, filter;
 }
@@ -439,6 +439,10 @@ body[data-theme="light"] .status-indicator--error {
   color: rgba(228, 243, 255, 0.25);
 }
 
+body[data-theme="light"] .lf-label input::placeholder {
+  color: #6b7280;
+}
+
 .lf-label select {
   appearance: none;
 }
@@ -508,6 +512,7 @@ body[data-theme="light"] .password-toggle-icon {
 
   .login-modal {
     padding: 26px 16px 18px;
+    max-height: min(74vh, 560px);
   }
 
   .login-row {
