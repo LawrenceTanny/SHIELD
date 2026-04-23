@@ -383,7 +383,7 @@ function hashResetToken(token) {
 function buildPasswordResetUrl(resetToken) {
   const base = String(process.env.PASSWORD_RESET_URL_BASE || CLIENT_ORIGIN || '').trim();
   const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const url = new URL(normalizedBase || 'http://localhost:5173');
+  const url = new URL(normalizedBase || 'https://alertph.com');
   url.searchParams.set('resetToken', resetToken);
   return url.toString();
 }
@@ -1058,8 +1058,8 @@ let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
 const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 11)));
-const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 4));
-const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 5));
+const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 5));
+const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 6));
 
 function getManilaDateKey(date = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
