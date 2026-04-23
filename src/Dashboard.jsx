@@ -359,7 +359,9 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
               : [];
 
             if (normalized.length === 0) {
-              throw new Error("Disaster API returned empty data.");
+              setDisasters([]);
+              setDataError("");
+              return;
             }
 
             setDisasters(normalized);
@@ -471,10 +473,21 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
     };
   }, []);
 
+  const DEFAULT_TYPES = [
+    "Earthquake",
+    "Typhoon",
+    "Flood",
+    "Landslide",
+    "Volcanic Activity",
+    "Thunderstorm",
+    "Wildfire"
+  ];
+
   const typeOptions = useMemo(() => {
-    const s = new Set(disasters.map((d) => d.type));
-    return ["All", ...Array.from(s).sort()];
-  }, [disasters]);
+    const dynamic = new Set(disasters.map((d) => d.type));
+    const combined = new Set([...DEFAULT_TYPES, ...dynamic]);
+    return ["All", ...Array.from(combined).sort()];
+}, [disasters]);
 
   const filtered = useMemo(() => disasters.filter((d) => {
     const tOk = selType === "All" || d.type === selType;
@@ -577,12 +590,12 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
                 </li>
               ))
             )}
-            {!isLoadingData && dataError && disasters.length === 0 && (
+            {!isLoadingData && dataError && disasters.length > 0 && (
               <li className="danger-item" style={{ minHeight: "auto" }}>
                 {dataError}
               </li>
             )}
-            {!isLoadingData && filtered.length === 0 && !dataError && (
+            {!isLoadingData && filtered.length === 0 && (
               <li className="danger-item-empty" style={{ minHeight: "auto" }}>
                 No active disasters found right now.
               </li>
