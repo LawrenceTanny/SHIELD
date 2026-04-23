@@ -101,7 +101,7 @@ body {
 }
 
 .contact-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .contact-item::before {
@@ -188,7 +188,7 @@ body {
 }
 
 .checklist-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .checklist-item:hover {
@@ -351,13 +351,13 @@ body {
 
 .action-footer-text {
     font-family: 'Geist Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     line-height: 1.4;
     margin: 0;
     color: var(--ink);
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: -0.05em;
 }
 
 .description {
