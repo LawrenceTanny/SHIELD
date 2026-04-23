@@ -530,7 +530,7 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
     }
 
     return {
-      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}C` : "--",
+      tempText: summary.tempC !== null ? `${Math.round(summary.tempC)}` : "--",
       condition: summary.condition || "Weather",
       iconUrl: summary.iconUrl,
     };
@@ -665,7 +665,7 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
                   }}
                 />
               )}
-              <div className="weather-temp">{weatherDisplay.tempText}</div>
+              <div className="weather-temp">{weatherDisplay.tempText}°C</div>
               <div className="weather-condition">{weatherDisplay.condition}</div>
             </div>
           </div>
