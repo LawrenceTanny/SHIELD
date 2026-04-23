@@ -142,7 +142,6 @@
   background: rgba(255, 68, 0, 0.08);
 }
 
-/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -162,7 +161,6 @@
   margin-bottom: 12px;
 }
 
-/* Inner wrapper needed for grid 0fr collapse to work */
 .status-slot>.status-indicator {
   overflow: hidden;
   min-height: 0;
