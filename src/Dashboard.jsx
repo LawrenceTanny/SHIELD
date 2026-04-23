@@ -358,9 +358,9 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
                 .filter(Boolean)
               : [];
 
-            if (normalized.length === 0) {
-              throw new Error("Disaster API returned empty data.");
-            }
+            // if (normalized.length === 0) {
+            //   throw new Error("Disaster API returned empty data.");
+            // }
 
             setDisasters(normalized);
             setDataError("");
@@ -471,16 +471,33 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
     };
   }, []);
 
-  const typeOptions = useMemo(() => {
-    const s = new Set(disasters.map((d) => d.type));
-    return ["All", ...Array.from(s).sort()];
-  }, [disasters]);
+const DEFAULT_TYPES = [
+  "Earthquake",
+  "Typhoon",
+  "Flood",
+  "Landslide",
+  "Volcanic Activity",
+  "Thunderstorm",
+  "Wildfire"
+];
 
-  const filtered = useMemo(() => disasters.filter((d) => {
-    const tOk = selType === "All" || d.type === selType;
-    const sOk = selSev === "All" || d.severity === selSev;
-    return tOk && sOk;
-  }), [disasters, selType, selSev]);
+const typeOptions = useMemo(() => {
+  const dynamic = new Set(disasters.map((d) => d.type));
+  const combined = new Set([...DEFAULT_TYPES, ...dynamic]);
+  return ["All", ...Array.from(combined).sort()];
+}, [disasters]);
+
+const filtered = useMemo(() => disasters.filter((d) => {
+  const tOk =
+    selType === "All" ||
+    d.type?.toLowerCase() === selType.toLowerCase();
+
+  const sOk =
+    selSev === "All" ||
+    d.severity?.toLowerCase() === selSev.toLowerCase();
+
+  return tOk && sOk;
+}), [disasters, selType, selSev]);
 
   useEffect(() => {
     if (!isMobileSheet || typeof window === "undefined") {
@@ -564,7 +581,9 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
             onPointerCancel={handleDangerDragEnd}
           >
             <h2>Active Dangers</h2>
-            <span className="count-pill">{filtered.length}</span>
+            <span className="count-pill">
+              {isLoadingData ? "--" : filtered.length || 0}
+              </span>
           </div>
           <hr className="hr"></hr>
           <ul ref={dangerListRef} className="danger-list">
@@ -582,7 +601,7 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
                 {dataError}
               </li>
             )}
-            {!isLoadingData && filtered.length === 0 && !dataError && (
+            {!isLoadingData && filtered.length === 0 && (
               <li className="danger-item-empty" style={{ minHeight: "auto" }}>
                 No active disasters found right now.
               </li>
