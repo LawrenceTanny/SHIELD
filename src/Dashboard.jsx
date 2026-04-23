@@ -38,8 +38,6 @@ function IconClose() {
   );
 }
 
-
-
 function MapController({ focused }) {
   const map = useMap();
   useEffect(() => {
@@ -487,7 +485,7 @@ export default function Dashboard({ theme = "light", settingsOpen, setSettingsOp
     const dynamic = new Set(disasters.map((d) => d.type));
     const combined = new Set([...DEFAULT_TYPES, ...dynamic]);
     return ["All", ...Array.from(combined).sort()];
-}, [disasters]);
+  }, [disasters]);
 
   const filtered = useMemo(() => disasters.filter((d) => {
     const tOk = selType === "All" || d.type === selType;
