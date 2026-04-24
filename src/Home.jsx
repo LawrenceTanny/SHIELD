@@ -40,9 +40,9 @@ export default function HomeContent({ onGoDashboard }) {
                     ))}
                 </div>
 
-                <div className="steps-container">
-                    <p className="steps-title">BE READY. BE PREPARED.</p>
-                    <hr className="steps-divider" />
+            <div className="steps-container">
+                <p className="steps-title">BE READY. BE PREPARED.</p>
+                <hr className="steps-divider" />
 
                     <div className="steps-row">
                         <div className="step-pill">

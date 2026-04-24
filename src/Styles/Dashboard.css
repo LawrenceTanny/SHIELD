@@ -55,7 +55,7 @@ body {
   text-transform: uppercase;
   top: 105px;
   right: 0;
-  z-index: 1005;
+  z-index: 1060;
   padding: 10px 14px;
   border-radius: 12px 0 0 12px;
   border: 2px solid rgba(255, 255, 255, 0.08);
@@ -819,7 +819,7 @@ body {
 .settings-backdrop.active {
   opacity: 1;
   pointer-events: auto;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(1px);
 }
 
 .filter-group {
@@ -915,6 +915,17 @@ body {
 
 .filter-indicator.type-wildfire {
   background-image: url("/public/wildfire_icon.svg");
+  filter: invert(1);
+}
+
+.filter-item.active .filter-indicator.type-wildfire {
+  filter: invert(1) brightness(0.2);
+}
+
+@media (max-width: 767px) {
+  .settings-backdrop.active {
+    backdrop-filter: blur(2px);
+  }
 }
 
 .severity-dot {
