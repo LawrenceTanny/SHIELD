@@ -17,6 +17,7 @@ export default function AboutUs() {
         { id: 4, name: "USGS", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg", url: "https://www.usgs.gov/" },
         { id: 5, name: "GNews", logo: "https://gnews.io/build/assets/logo-black-CGTmaMaU.svg", url: "https://gnews.io/" },
         { id: 6, name: "OpenStreetMap Nominatim", logo: "https://nominatim.openstreetmap.org/ui/theme/logo.png", url: "https://nominatim.openstreetmap.org/" },
+        { id: 7, name: "PSGC Cloud", logo: "https://psgc.cloud/images/logo-dark.png", url: "https://psgc.cloud/" },
     ];
 
     return (
