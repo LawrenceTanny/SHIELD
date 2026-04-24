@@ -1299,7 +1299,7 @@ app.get('/api/news', async (req, res) => {
   }
 });
 
-// Admin endpoint to view cache status
+// ADMIN NEWS STATUS
 app.get('/api/admin/news/status', async (req, res) => {
   try {
     const collection = await getNewsCacheCollection();

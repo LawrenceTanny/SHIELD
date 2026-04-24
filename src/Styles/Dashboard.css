@@ -923,7 +923,7 @@ body {
 }
 
 @media (max-width: 767px) {
-  .settings-backdrop.active {
+  .settings-backdrop.active{
     backdrop-filter: blur(2px);
   }
 }
@@ -1478,6 +1478,15 @@ body {
     --footer-h: 36px;
     --panel-w: 0px;
   }
+  .settings{
+    backdrop-filter: none;
+    z-index: 1999 ;
+  }
+  .settings-backdrop.active{
+    backdrop-filter: blur(0.7px);
+    z-index: 1250;
+
+  } 
 
   .danger-panel {
     display: flex !important;
@@ -1597,6 +1606,8 @@ body {
     flex: 1;
     min-height: 0;
   }
+
+  .settings
 
   .settings-section::-webkit-scrollbar {
     width: 3px;
