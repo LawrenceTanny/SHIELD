@@ -568,5 +568,5 @@ body[data-theme="light"] .theme-icon-btn {
 }
 
 body[data-theme="light"] .filter-indicator.type-wildfire {
-    filter: invert(0);
+    filter: invert(1);
 }

@@ -915,7 +915,7 @@ body {
 
 .filter-indicator.type-wildfire {
   background-image: url("/public/wildfire_icon.svg");
-  filter: invert(1);
+  filter: invert(0);
 }
 
 .filter-item.active .filter-indicator.type-wildfire {
