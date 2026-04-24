@@ -5,12 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Styles/Dashboard.css";
 
 const FALLBACK_DISASTERS = [
-  { id: 1, type: "Typhoon", title: "Tropical Cyclone Wind Signal #2", severity: "High", city: "Legazpi City", lat: 13.1391, lng: 123.7438, source: "PAGASA", updatedAt: "2026-03-14 08:30", status: "Active" },
-  { id: 2, type: "Earthquake", title: "Magnitude 5.4", severity: "Medium", city: "Naga City", lat: 13.6218, lng: 123.1948, source: "PHIVOLCS", updatedAt: "2026-03-14 09:05", status: "Active" },
-  { id: 3, type: "Flood", title: "Heavy Rainfall Advisory", severity: "Low", city: "Sorsogon City", lat: 12.9716, lng: 124.0053, source: "PAGASA", updatedAt: "2026-03-14 10:20", status: "Monitoring" },
-  { id: 4, type: "Landslide", title: "Soil Movement Risk", severity: "High", city: "Tabaco City", lat: 13.3587, lng: 123.7338, source: "Local DRRM", updatedAt: "2026-03-14 10:50", status: "Active" },
-  { id: 5, type: "Volcanic Activity", title: "Increased unrest near Kanlaon", severity: "Medium", city: "Canlaon City", lat: 10.3865, lng: 123.1966, source: "PHIVOLCS", updatedAt: "2026-03-14 11:15", status: "Monitoring" },
-  { id: 6, type: "Thunderstorm", title: "Severe thunderstorm warning", severity: "Low", city: "Davao City", lat: 7.1907, lng: 125.4553, source: "PAGASA", updatedAt: "2026-03-14 11:40", status: "Active" }
+  // remove fallback
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
