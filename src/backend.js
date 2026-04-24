@@ -1067,8 +1067,8 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 11)));
-const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 5));
+const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 12)));
+const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 6));
 const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 6));
 
 function getManilaDateKey(date = new Date()) {
