@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Styles/AccountSettings.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 async function readJsonSafe(response) {
   const raw = await response.text();

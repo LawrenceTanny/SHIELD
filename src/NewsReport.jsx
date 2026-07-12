@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './Styles/News.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://shield-app-wmz37.ondigitalocean.app';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const LATEST_NEWS_LIMIT = 7;
 
 

@@ -15,11 +15,19 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 const app = express();
 
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://alertph.com';
-const CLIENT_ORIGINS = process.env.CLIENT_ORIGINS || '';
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+const CLIENT_ORIGINS = process.env.CLIENT_ORIGINS;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const SESSION_COOKIE_SAMESITE = process.env.SESSION_COOKIE_SAMESITE || (IS_PRODUCTION ? 'none' : 'lax');
-const SESSION_COOKIE_SECURE = String(process.env.SESSION_COOKIE_SECURE || (IS_PRODUCTION ? 'true' : 'false')) === 'true';
+const SESSION_COOKIE_SAMESITE = process.env.SESSION_COOKIE_SAMESITE;
+const SESSION_COOKIE_SECURE = String(process.env.SESSION_COOKIE_SECURE) === 'true';
+
+// External API URLs
+const GNEWS_API_BASE_URL = process.env.GNEWS_API_BASE_URL;
+const USGS_API_URL = process.env.USGS_API_URL;
+const NASA_API_URL = process.env.NASA_API_URL;
+const NOMINATIM_API_URL = process.env.NOMINATIM_API_URL;
+const OPENWEATHER_API_URL = process.env.OPENWEATHER_API_URL;
+const OPENWEATHER_TILE_URL = process.env.OPENWEATHER_TILE_URL;
 
 const allowedOrigins = new Set(
   [
@@ -29,6 +37,7 @@ const allowedOrigins = new Set(
     'http://localhost:5174',
     'http://localhost:5175',
     'https://shield.lawrencetan1104.workers.dev',
+    'https://domnet.serveousercontent.com',
     'http://alertph.com',
     'https://alertph.com'
   ].filter(Boolean)
@@ -53,7 +62,7 @@ app.use(express.json());
 
 app.use(session({
   name: 'shield.sid',
-  secret: process.env.SESSION_SECRET || 'dev-insecure-session-secret-change-me',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
@@ -70,6 +79,48 @@ app.use(session({
   }
 }));
 
+// CSRF Token Management
+function generateCsrfToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+function getCsrfToken(req) {
+  if (!req.session) return null;
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = generateCsrfToken();
+  }
+  return req.session.csrfToken;
+}
+
+function verifyCsrfToken(req) {
+  const tokenFromSession = req.session?.csrfToken;
+  const tokenFromHeader = req.headers['x-csrf-token'];
+  
+  if (!tokenFromSession || !tokenFromHeader) {
+    return false;
+  }
+  
+  return tokenFromSession === tokenFromHeader;
+}
+
+// Middleware: CSRF token validation for state-changing requests
+const csrfProtection = (req, res, next) => {
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    if (!verifyCsrfToken(req)) {
+      return res.status(403).json({ message: 'CSRF token validation failed.' });
+    }
+  }
+  next();
+};
+
+app.use(csrfProtection);
+
+// Endpoint: Get/Generate CSRF Token
+app.get('/api/csrf-token', (req, res) => {
+  const token = getCsrfToken(req);
+  res.status(200).json({ csrfToken: token });
+});
+
 const client = new MongoClient(process.env.MONGO_URI);
 
 let usersCollection;
@@ -81,17 +132,17 @@ let newsCacheCollection;
 
 let cachedDisastersPayload = null;
 let cachedDisastersFetchedAt = 0;
-const disasterCacheTtlMs = Number(process.env.DISASTER_CACHE_TTL_MS || 10 * 60 * 1000);
+const disasterCacheTtlMs = Number(process.env.DISASTER_CACHE_TTL_MS);
 
 const reverseGeocodeMemoryCache = new Map();
-const reverseGeocodeMinDelayMs = Number(process.env.REVERSE_GEOCODE_MIN_DELAY_MS || 5000);
+const reverseGeocodeMinDelayMs = Number(process.env.REVERSE_GEOCODE_MIN_DELAY_MS);
 let reverseGeocodeQueue = Promise.resolve();
 let lastReverseGeocodeAt = 0;
 
-const DISASTER_REFRESH_INTERVAL_MS = Number(process.env.DISASTER_REFRESH_INTERVAL_MS || 60 * 1000);
-const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS || 5 * 60 * 1000);
-const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS || 'false').toLowerCase() === 'true';
-const PASSWORD_RESET_TOKEN_TTL_MINUTES = Math.max(5, Number(process.env.PASSWORD_RESET_TOKEN_TTL_MINUTES || 20));
+const DISASTER_REFRESH_INTERVAL_MS = Number(process.env.DISASTER_REFRESH_INTERVAL_MS);
+const ALERT_POLL_INTERVAL_MS = Number(process.env.ALERT_POLL_INTERVAL_MS);
+const ENABLE_AUTO_ALERTS = String(process.env.ENABLE_AUTO_ALERTS).toLowerCase() === 'true';
+const PASSWORD_RESET_TOKEN_TTL_MINUTES = Number(process.env.PASSWORD_RESET_TOKEN_TTL_MINUTES);
 
 let disasterRefreshInFlight = null;
 let lastDisasterRefreshRun = {
@@ -381,9 +432,9 @@ function hashResetToken(token) {
 }
 
 function buildPasswordResetUrl(resetToken) {
-  const base = String(process.env.PASSWORD_RESET_URL_BASE || CLIENT_ORIGIN || '').trim();
+  const base = String(process.env.PASSWORD_RESET_URL_BASE).trim();
   const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const url = new URL(normalizedBase || 'https://alertph.com');
+  const url = new URL(normalizedBase);
   url.searchParams.set('resetToken', resetToken);
   return url.toString();
 }
@@ -452,10 +503,10 @@ async function reverseGeocodeCoordinates(lat, lng) {
 
     lastReverseGeocodeAt = Date.now();
 
-    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=10`;
+    const url = `${NOMINATIM_API_URL}?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=10`;
     const response = await fetch(url, {
       headers: {
-        'User-Agent': `SHIELD/1.0 (${process.env.NODEMAILER_EMAIL || 'shield-app'})`,
+        'User-Agent': `SHIELD/1.0 (${process.env.NODEMAILER_EMAIL})`,
         'Accept': 'application/json',
         'Accept-Language': 'en'
       }
@@ -498,8 +549,8 @@ async function reverseGeocodeCoordinates(lat, lng) {
 }
 
 async function fetchDisastersFromProviders() {
-  const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=20';
-  const nasaUrl = 'https://eonet.gsfc.nasa.gov/api/v3/events?bbox=116.9,4.5,126.6,21.5&status=open';
+  const usgsUrl = `${USGS_API_URL}?format=geojson&minlatitude=4.5&maxlatitude=21.5&minlongitude=116.9&maxlongitude=126.6&minmagnitude=5.0&orderby=time&limit=20`;
+  const nasaUrl = `${NASA_API_URL}?bbox=116.9,4.5,126.6,21.5&status=open`;
   const requestTimeoutMs = 15000;
 
   const fetchJsonWithTimeout = async (url) => {
@@ -1067,9 +1118,9 @@ app.get('/api/disasters', async (req, res) => {// DISASTERS API, earthquake from
 let cachedNews = null;
 let lastNewsFetchTime = 0;
 let newsRefreshInFlight = null;
-const GNEWS_MAX_PER_REQUEST = Math.min(10, Math.max(1, Number(process.env.GNEWS_MAX_PER_REQUEST || 12)));
-const GNEWS_TARGET_RESULTS = Math.max(1, Number(process.env.GNEWS_TARGET_RESULTS || 6));
-const GNEWS_MAX_PAGES = Math.max(1, Number(process.env.GNEWS_MAX_PAGES || 6));
+const GNEWS_MAX_PER_REQUEST = Number(process.env.GNEWS_MAX_PER_REQUEST);
+const GNEWS_TARGET_RESULTS = Number(process.env.GNEWS_TARGET_RESULTS);
+const GNEWS_MAX_PAGES = Number(process.env.GNEWS_MAX_PAGES);
 
 function getManilaDateKey(date = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
@@ -1138,7 +1189,7 @@ app.get('/api/news', async (req, res) => {
           let candidateSucceeded = true;
 
           for (let page = 1; page <= GNEWS_MAX_PAGES && allArticles.length < GNEWS_TARGET_RESULTS; page += 1) {
-            const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&country=ph&max=${maxResults}&page=${page}&sortby=publishedAt&apikey=${apiKey}`;
+            const url = `${GNEWS_API_BASE_URL}/search?q=${query}&lang=en&country=ph&max=${maxResults}&page=${page}&sortby=publishedAt&apikey=${apiKey}`;
             console.log('[NEWS API] GNews URL:', url.replace(apiKey, '***API_KEY***'));
 
             const response = await fetch(url);
@@ -1368,7 +1419,7 @@ app.get('/api/weather', async (req, res) => {
     }
 
     const requests = PH_WEATHER_POINTS.map((point) => {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${point.lat}&lon=${point.lng}&appid=${apiKey}&units=metric`;
+      const url = `${OPENWEATHER_API_URL}/weather?lat=${point.lat}&lon=${point.lng}&appid=${apiKey}&units=metric`;
       return fetch(url)
         .then(async (response) => {
           const data = await response.json();
@@ -1422,7 +1473,7 @@ app.get('/api/weather/clouds-tile/:z/:x/:y.png', async (req, res) => {
     }
 
     const { z, x, y } = req.params;
-    const tileUrl = `https://tile.openweathermap.org/map/clouds_new/${z}/${x}/${y}.png?appid=${apiKey}`;
+    const tileUrl = `${OPENWEATHER_TILE_URL}/${z}/${x}/${y}.png?appid=${apiKey}`;
     const response = await fetch(tileUrl);
 
     if (!response.ok) {
