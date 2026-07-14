@@ -37,6 +37,8 @@ const allowedOrigins = new Set(
     'http://localhost:5174',
     'http://localhost:5175',
     'https://shield.lawrencetan1104.workers.dev',
+    'https://tanstack.top',
+    'https://alertph.tanstack.top',
     'https://domnet.serveousercontent.com',
     'http://alertph.com',
     'https://alertph.com'
