@@ -8,7 +8,7 @@ const FALLBACK_DISASTERS = [
   // remove fallback
 ];
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").trim();
 const OWM_CLOUDS_TILE_URL = `${API_BASE_URL}/api/weather/clouds-tile/{z}/{x}/{y}.png`;
 
 const PH_CENTER = [12.8797, 121.774];

@@ -3,7 +3,7 @@ import validator from "validator";
 import { Eye, EyeOff } from "lucide-react";
 import "./Styles/Login.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").trim();
 
 export default function Login({ onClose, onLogin }) {
   const morphTimerRef = useRef(null);

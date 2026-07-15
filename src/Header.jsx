@@ -30,6 +30,8 @@ function getInitialTab() {
   return ALLOWED_TABS.has(savedTab) ? savedTab : "home";
 }
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app").trim();
+
 function IconUser() {
   return (
     <svg
@@ -94,7 +96,7 @@ export default function MainLayout() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/account`, {
+    fetch(`${API_BASE_URL}/api/account`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -163,7 +165,7 @@ export default function MainLayout() {
 
     const loadSessionUser = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/auth/me`, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           credentials: "include",
           signal: controller.signal
         });
@@ -215,7 +217,7 @@ export default function MainLayout() {
 
   const handleSignOut = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_BASE_URL || "https://shield-app-wmz37.ondigitalocean.app"}/api/logout`, {
+      await fetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         credentials: "include"
       });
